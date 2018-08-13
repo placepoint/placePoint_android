@@ -1,0 +1,81 @@
+<resources>
+    <string name="app_name">PlacePoint</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Pub Name</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="home">Home</string>
+    <string name="business_profile">Business Profile</string>
+    <string name="my_timeline">My Posts</string>
+    <string name="categories">Categories</string>
+    <string name="add_post">Post</string>
+    <string name="agent_login">Agent Login</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_conditions"><u><![CDATA[Terms & Conditions]]></u></string>
+    <string name="title_activity_login">Login</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">EMAIL ID</string>
+    <string name="prompt_password">PASSWORD</string>
+    <string name="action_sign_in">Login</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="logo">logo</string>
+    <string name="splash_bg">splash_bg</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="register">Register</string>
+    <string name="don_t_have_an_account">Don\'t have an account?</string>
+    <string name="search_here">Search Here</string>
+    <string name="toolbar_title"></string>
+    <string name="dummy">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</string>
+    <string name="business_category">Business Category</string>
+    <string name="bus_location">Business Location</string>
+    <string name="bus_name">Business Name</string>
+    <string name="bname_err">Business Name is required.</string>
+    <string name="bloc_error">Business Location is required.</string>
+    <string name="bcat_err">Business Category is required.</string>
+    <string name="choose_business_name">Choose Business Name</string>
+    <string name="add_business_content">Add Business Content</string>
+    <string name="thu">T</string>
+    <string name="sun">S</string>
+    <string name="sat">S</string>
+    <string name="fri">F</string>
+    <string name="wed">W</string>
+    <string name="tue">T</string>
+    <string name="mon">M</string>
+    <string name="closing_hours">Closing Hours :</string>
+    <string name="opening_hours">Opening Hours :</string>
+    <string name="pick_address_from_maps">Pick Address From Maps</string>
+    <string name="enter_contact">Enter Contact No.</string>
+    <string name="fail_to_crop">Failed To Crop Image</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="permission_title_rationale">Permission needed</string>
+    <string name="permission_read_storage_rationale">Storage read permission is needed to pick files.</string>
+    <string name="permission_write_storage_rationale">Storage write permission is needed to save the image.</string>
+    <string name="image_res">Only 5 images can be selected</string>
+
+    <string name="title_activity_business_detail_map">Map</string>
+    <string name="image_res_one">Ony 1 image can be selected</string>
+    <string name="title_activity_profile_map">Map</string>
+    <string name="address_string">Address :</string>
+    <string name="youtube_url">Youtube URL(Optional)</string>
+    <string name="network_error">No Internet Connection.</string>
+    <string name="server_error">Server Error</string>
+    <string name="select_five_images">Please Select Five Images</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="scheduletext">To schedule a post to run on interval like every saturday or any specific date usind scheduling</string>
+    <string name="standardText">    Standard   \u20ac 100/year</string>
+    <string name="premiumText">    Premium   \u20ac 150/year</string>
+    <string name="freePlan">Free   \u20ac 0/year</string>
+</resources>

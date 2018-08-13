@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/home"
+            android:icon="@drawable/ic_change_city"
+            android:title="Click to change city" />
+        <item
+            android:id="@+id/businessProfile"
+            android:icon="@drawable/ic_profile"
+            android:title="@string/business_profile" />
+        <item
+            android:id="@+id/myTimeline"
+            android:icon="@drawable/ic_timeline"
+            android:title="@string/my_timeline" />
+        <item
+            android:id="@+id/category"
+            android:icon="@drawable/ic_categories"
+            android:title="@string/categories" />
+
+        <item
+            android:id="@+id/login"
+            android:icon="@drawable/ic_login"
+            android:title="@string/agent_login" />
+        <item
+            android:id="@+id/nav_privacy"
+            android:icon="@drawable/ic_privacy_policy"
+            android:title="@string/privacy_policy" />
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/ic_logout"
+            android:title="Logout" />
+        <item
+            android:id="@+id/updatePassword"
+            android:icon="@drawable/ic_terms"
+            android:title="Update Password" />
+
+    </group>
+
+    <!--<group android:checkableBehavior="single"-->
+        <!--android:id="@+id/group1">-->
+            <!--<item-->
+                <!--android:id="@+id/nav_privacy"-->
+                <!--android:icon="@drawable/ic_privacy_policy"-->
+                <!--android:title="@string/privacy_policy" />-->
+            <!--<item-->
+                <!--android:visible="false"-->
+                <!--android:id="@+id/nav_terms"-->
+                <!--android:icon="@drawable/ic_terms"-->
+                <!--android:title="@string/terms_conditions" />-->
+    <!--</group>-->
+</menu>

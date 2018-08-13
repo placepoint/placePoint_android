@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <android.support.v7.widget.RecyclerView
+
+        android:id="@+id/my_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical" />
+    <!--<LinearLayout-->
+
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:id="@+id/btnLay"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="right">-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/cancel"-->
+            <!--android:layout_width="80dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginRight="16dp"-->
+            <!--android:gravity="center"-->
+            <!--android:padding="10dp"-->
+            <!--android:text="CANCEL"-->
+            <!--android:textColor="@color/black" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/ok"-->
+            <!--android:layout_width="80dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginRight="16dp"-->
+            <!--android:gravity="center"-->
+            <!--android:padding="10dp"-->
+            <!--android:text="OK"-->
+            <!--android:textColor="@color/black" />-->
+    <!--</LinearLayout>-->
+
+
+
+</RelativeLayout>

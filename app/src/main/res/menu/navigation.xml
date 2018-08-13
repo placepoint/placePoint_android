@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home_bottom"
+        android:title="Home"
+        app:showAsAction="always|withText" />
+
+    <item
+        android:id="@+id/nav_category"
+        android:icon="@drawable/ic_categories_bottom"
+        android:title="Categories"
+        app:showAsAction="always|withText"/>
+
+    <item
+        android:id="@+id/nav_business"
+        android:icon="@drawable/ic_business_bottom"
+        android:title="Business"
+        app:showAsAction="always|withText"/>
+ <item
+        android:id="@+id/nav_more"
+        android:icon="@drawable/ic_more_bottom"
+        android:title="More"
+     app:showAsAction="always|withText"/>
+
+</menu>

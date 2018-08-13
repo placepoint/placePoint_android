@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.phaseII.placepoint">
+
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
+    <application
+        android:allowBackup="false"
+        android:hardwareAccelerated="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".SplashActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".DashBoard.DashBoardActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".Login.LoginActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".Town.TownActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator" />
+        <activity android:name=".MultichoiceCategories.MultipleCategories" />
+        <activity
+            android:name=".Categories.SubCategories.SubCategoriesActivity"
+            android:label="" />
+        <activity
+            android:name=".AboutBusiness.AboutBusinessActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".ForgotPassword.ForgotPasswordActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".Register.RegisterActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDvgQ0lh8_yqLCWMUVwRQSxTSxMYOAiOE4" />
+
+        <activity
+            android:name=".Cropper.CropperActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".Business.AddPost.PostCropper"
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".BusinessDetailMap.BusinessDetailMapActivity"
+            android:label="@string/title_activity_business_detail_map"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".Business.Profile.BusinessProfileMap.ProfileMapActivity"
+            android:label="@string/title_activity_profile_map"
+            tools:ignore="InnerclassSeparator" />
+        <activity android:name=".AboutBusiness.BusinessViewPager" />
+        <activity
+            android:name=".Categories.CategoryActivity"
+            android:label="" />
+        <activity
+            android:name=".PrivacyPolicy.PrivacyPolicyActivity"
+            android:label=""
+            android:parentActivityName=".PrivacyPolicy.PrivacyPolicyActivity" />
+        <activity
+            android:name=".Home.BusinessListing.MapsActivity"
+            android:label="" />
+        <activity
+            android:name=".Payment.PaymentActivity"
+            android:label="" />
+        <activity android:name=".SubscriptionPlan.SubscriptionActivity"
+            android:label=""/>
+    </application>
+
+</manifest>
