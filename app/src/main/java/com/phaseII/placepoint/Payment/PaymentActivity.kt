@@ -191,6 +191,7 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
     }
 
     override fun saveEmail(email: String?) {
+
         Constants.getPrefs(this)?.edit()?.putString(Constants.EMAIL, email)?.apply()
     }
 
