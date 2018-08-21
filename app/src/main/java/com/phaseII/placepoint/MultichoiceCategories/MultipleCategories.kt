@@ -193,6 +193,37 @@ class MultipleCategories : AppCompatActivity(), CategoryHelper,MultiChoiceRadioA
                 childList.add(model)
             }
         }
+        val taxiTownId = Constants.getPrefs(this)!!.getString(Constants.TAXI_TOWNID, "");
+        val choosenTownId = Constants.getPrefs(this)!!.getString(Constants.TOWN_ID2, "");
+        var idList = taxiTownId!!.split(",")
+        var show = 0
+        if (idList.contains(choosenTownId)) {
+            show = 1
+        }
+        var listparent = ArrayList<ModelCategoryData>()
+        var listparentchild = ArrayList<ModelCategoryData>()
+        var mainList = ArrayList<ModelCategoryData>()
+        if (show == 0) {
+
+            for (k in 0 until parentList.size) {
+                if (parentList[k].name != "Taxis") {
+                    listparent.add(parentList[k])
+                }
+            }
+            parentList = listparent
+      for (k in 0 until childList.size) {
+                if (childList[k].name != "Taxis") {
+                    listparentchild.add(childList[k])
+                }
+            }
+            childList = listparentchild
+       for (k in 0 until list2.size) {
+                if (list2[k].name != "Taxis") {
+                    mainList.add(list2[k])
+                }
+            }
+            list2 = mainList
+        }
         mAdapter = ExpandableAdapter(this, parentList, childList,list2,highlightCat)
         expandableList.setAdapter(mAdapter)
 //        expandableList.setOnGroupExpandListener { groupPosition ->

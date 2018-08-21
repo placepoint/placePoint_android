@@ -70,7 +70,12 @@ class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
             from = intent.extras.getString("from")
             busName = intent.extras.getString("busName")
 
-
+if(from=="businessListadapter"){
+    Constants.getPrefs(this)!!.edit().putString("distance",intent.getStringExtra("distance")).apply()
+    Constants.getPrefs(this)!!.edit().putString("mobNumber",intent.getStringExtra("mobNumber")).apply()
+    Constants.getPrefs(this)!!.edit().putString("lati",intent.getStringExtra("lati")).apply()
+    Constants.getPrefs(this)!!.edit().putString("longi",intent.getStringExtra("longi")).apply()
+}
            // intent.putExtra("showallpost")
             /* val modelBusiness = intent.extras!!.getParcelable<ModelBusiness>("model")
              if (modelBusiness != null) {

@@ -5,26 +5,27 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
+import android.support.constraint.ConstraintLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.github.vivchar.viewpagerindicator.ViewPagerIndicator
@@ -32,6 +33,7 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.PendingResult
 import com.google.android.gms.location.*
 import com.phaseII.placepoint.AboutBusiness.*
+import com.phaseII.placepoint.BusEvents.TAXI_EVENT
 import com.phaseII.placepoint.BusinessDetailMap.BusinessDetailMapActivity
 import com.phaseII.placepoint.ConstantClass.GpsTracker
 import com.phaseII.placepoint.ConstantClass.Utils
@@ -43,6 +45,7 @@ import com.phaseII.placepoint.R
 import com.phaseII.placepoint.Town.ModelTown
 import kotlinx.android.synthetic.main.about_business_scroll.*
 import kotlinx.android.synthetic.main.business_description.*
+import kotlinx.android.synthetic.main.business_item.view.*
 import kotlinx.android.synthetic.main.day_layout.*
 import kotlinx.android.synthetic.main.location_text_layout.*
 import org.json.JSONArray
@@ -74,6 +77,13 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     private lateinit var categoryText: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var emailText: TextView
+    private lateinit var title: TextView
+    private lateinit var description: TextView
+    private lateinit var distance: TextView
+    private lateinit var navigationImage: ImageView
+    private lateinit var taxiImage: ImageView
+    private lateinit var callImage: ImageView
+    private lateinit var constraintLayout2: ConstraintLayout
     private lateinit var model1: ModelBusiness
     //  var busId: String = ""
     var cat_list: ArrayList<ModelCategoryData> = arrayListOf()
@@ -108,13 +118,8 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
         mPresenter = AboutBusinessPresenter(this)
         // Pager = findViewById(R.id.pager)
         //view_pager_indicator = findViewById(R.id.view_pager_indicator)
-        horz_recycler = view.findViewById(R.id.horz_recycler)
-        emailText = view.findViewById(R.id.emailText)
-        subscriptionType = view.findViewById(R.id.subscriptionType)
-        towns = view.findViewById(R.id.towns)
-        openMap = view.findViewById(R.id.openMap)
-        progressBar = view.findViewById(R.id.progressBar)
-        categoryText = view.findViewById(R.id.categoryText)
+        initialise(view)
+
 //        try {
 //            //modelBusiness = intent.extras!!.getParcelable<ModelBusiness>("model")
 //            busId = intent.extras.getString("busId")
@@ -213,7 +218,69 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
         return view
     }
 
+    private fun initialise(view: View) {
+        horz_recycler = view.findViewById(R.id.horz_recycler)
+        title = view.findViewById(R.id.title)
+        description = view.findViewById(R.id.description)
+        navigationImage = view.findViewById(R.id.navigationImage)
+        taxiImage = view.findViewById(R.id.taxiImage)
+        callImage = view.findViewById(R.id.callImage)
+        distance = view.findViewById(R.id.distance)
+        emailText = view.findViewById(R.id.emailText)
+        subscriptionType = view.findViewById(R.id.subscriptionType)
+        towns = view.findViewById(R.id.towns)
+        openMap = view.findViewById(R.id.openMap)
+        progressBar = view.findViewById(R.id.progressBar)
+        categoryText = view.findViewById(R.id.categoryText)
+        constraintLayout2 = view.findViewById(R.id.constraintLayout2)
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        try{
+
+            Constants.getBus().register(this)
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+        try{
+            if (ActivityCompat.checkSelfPermission(activity!!,
+                            Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity!! as Activity, arrayOf(Manifest.permission.CALL_PHONE), 1)
+                return
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        try{
+
+            Constants.getBus().unregister(this)
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+    }
     private fun setClickHandler(view: View) {
+
+        callImage.setOnClickListener{
+            showDialog(Constants.getPrefs(activity!!)!!.getString("mobNumber",""))
+        }
+         taxiImage.setOnClickListener{
+//             Constants.getBus().post(TAXI_EVENT("taxi"))
+             Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome","yes").apply()
+             activity!!.finish()
+        }
+        navigationImage.setOnClickListener{
+            var gmmIntentUri = Uri.parse("google.navigation:q=${Constants.getPrefs(activity!!)!!.getString("lati","")},${Constants.getPrefs(activity!!)!!.getString("longi","")}")
+//            var  gmmIntentUri = Uri.parse("google.navigation:q=30.7398,76.7827")
+            var mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+            mapIntent.setPackage("com.google.android.apps.maps")
+            activity!!.startActivity(mapIntent)
+        }
         openMap.setOnClickListener {
             val tracker = GpsTracker(activity)
             if (tracker.canGetLocation()) {
@@ -228,6 +295,33 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
                 }
             }
         }
+    }
+
+    private fun showDialog(phoneNo: String?) {
+        val dialog = AlertDialog.Builder(activity!!)
+        dialog.setCancelable(false)
+        dialog.setTitle("Make a call")
+        dialog.setMessage(phoneNo)
+        dialog.setPositiveButton("Call", DialogInterface.OnClickListener { dialog, id ->
+            //            val callIntent = Intent(Intent.ACTION_CALL)
+//            callIntent.data = Uri.parse(phoneNo)
+//            startActivity(callIntent)
+            val callIntent = Intent(Intent.ACTION_CALL)
+            callIntent.data = Uri.parse("tel:$phoneNo")
+            if (ActivityCompat.checkSelfPermission(activity!!,
+                            Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.CALL_PHONE), 1)
+                return@OnClickListener
+            }
+
+            activity!!.startActivity(callIntent)
+        })
+                .setNegativeButton("Cancel ", DialogInterface.OnClickListener { dialog, which ->
+                    //Action for "Cancel".
+                })
+
+        val alert = dialog.create()
+        alert.show()
     }
 
 //    private fun setToolBar(view: View) {
@@ -351,9 +445,24 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
 //      if (Constants.getPrefs())
 //        subscriptionType.text=
         try {
+
             if (list != null) {
                 for (i in 0 until list.size) {
                     model = list[i]
+                    constraintLayout2.visibility=View.VISIBLE
+
+                    Constants.getPrefs(activity!!)!!.edit().putString("mobNumber",model.contact_no).apply()
+                    Constants.getPrefs(activity!!)!!.edit().putString("lati",model.lat).apply()
+                    Constants.getPrefs(activity!!)!!.edit().putString("longi",model.long).apply()
+                  try {
+                      var gps = GpsTracker(this.activity)
+                      var distance2 = Constants.findDistanceFromCurrentPosition(gps.getLatitude(), gps.getLongitude()
+                              , model.lat.toDouble(), model.long.toDouble())
+                      var roundDis = String.format("%.2f", distance2)
+                      title.text = "" + roundDis.toString() + " Km away"
+                  }catch (e:Exception){
+                      e.printStackTrace()
+                  }
                     setPager(model)
                     if (!model.email.isEmpty()) {
                         emailText.visibility = View.VISIBLE
@@ -378,6 +487,21 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
                             if (loc_list[i2].id == townid) {
                                 towns.text = loc_list[i2].townname
                             }
+                        }
+
+                        //Show taxi------------------------
+                        try {
+                            val taxiTownId = Constants.getPrefs(activity!!)!!.getString(Constants.TAXI_TOWNID, "");
+                            val choosenTownId = townid
+                            var idList = taxiTownId!!.split(",")
+
+                            if (idList.contains(choosenTownId)) {
+                                taxiImage.visibility = View.VISIBLE
+                            } else {
+                                taxiImage.visibility = View.GONE
+                            }
+                        }catch (e:Exception){
+                            e.printStackTrace()
                         }
                         // ********************Setting selected Categories by user****************
 
@@ -903,7 +1027,7 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
             val timeForOpening = Constants.findingOpenWhen2(modelBusiness, dayValue1)
             if (!timeForOpening.isEmpty()) {
                 openStatusAt.visibility = View.VISIBLE
-                openStatusAt.text = "Open at $timeForOpening"
+                openStatusAt.text = "Open $timeForOpening"
             } else {
                 openStatusAt.visibility = View.GONE
             }
@@ -917,7 +1041,7 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
                 val timeForOpening = Constants.findingOpenWhen2(modelBusiness, dayValue1)
                 if (!timeForOpening.isEmpty()) {
                     openStatusAt.visibility = View.VISIBLE
-                    openStatusAt.text = "Open at $timeForOpening"
+                    openStatusAt.text = "Open $timeForOpening"
                 } else {
                     openStatusAt.visibility = View.GONE
                 }
@@ -942,7 +1066,7 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
                     val timeForOpening = Constants.findingOpenWhen2(modelBusiness, dayValue1)
                     if (!timeForOpening.isEmpty()) {
                         openStatusAt.visibility = View.VISIBLE
-                        openStatusAt.text = "Open at $timeForOpening"
+                        openStatusAt.text = "Open $timeForOpening"
                     } else {
                         openStatusAt.visibility = View.GONE
                     }

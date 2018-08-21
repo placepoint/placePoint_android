@@ -93,6 +93,7 @@ class AddPostFragment : Fragment(), AddNewHelper
     lateinit var selectMonth: TextView
     lateinit var selectDay: TextView
     lateinit var dayTime: TextView
+    lateinit var scrollView: ScrollView
 
     lateinit var selectCategory: TextView
     lateinit var upgrade: Button
@@ -136,6 +137,7 @@ class AddPostFragment : Fragment(), AddNewHelper
         expandLayout = view.findViewById(R.id.expandLay)
         hidenLay = view.findViewById(R.id.hidenLay)
         upgrade = view.findViewById(R.id.upgrade)
+        scrollView = view.findViewById(R.id.scrollView)
 
         specificTime = view.findViewById(R.id.specificTime)
         specificDay = view.findViewById(R.id.specificDay)
@@ -171,7 +173,7 @@ class AddPostFragment : Fragment(), AddNewHelper
         editText.setRawInputType(InputType.TYPE_CLASS_TEXT)
         editText.addTextChangedListener(mTextEditorWatcher)
         // setToolBar(view)
-
+        croppedImage.visibility = View.GONE
         saveForDialog()
         clearPrefs()
         Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_CATEGORY).apply()
@@ -239,6 +241,7 @@ class AddPostFragment : Fragment(), AddNewHelper
                     expandLayout.visibility = View.VISIBLE
                     nowCheck.visibility = View.VISIBLE
                     hidenLay.visibility = View.VISIBLE
+                    scrollView.fullScroll(View.FOCUS_DOWN)
                 } else {
                     open = 0
                     expandLayout.visibility = View.GONE
@@ -313,6 +316,20 @@ class AddPostFragment : Fragment(), AddNewHelper
 
 
         }
+
+        editText.setFocusableInTouchMode(false);
+        editText.setFocusable(false);
+        editText.setFocusableInTouchMode(true);
+        editText.setFocusable(true);
+
+//        editText.setOnEditorActionListener() { v, actionId, event ->
+//            if(actionId == EditorInfo.IME_ACTION_DONE){
+//
+//                true
+//            } else {
+//                false
+//            }
+//        }
         return view
 
     }
@@ -322,6 +339,7 @@ class AddPostFragment : Fragment(), AddNewHelper
             editTime = ""
             editDay = ""
             editType = ""
+
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_TYPE).apply()
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_DAY).apply()
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_TIME).apply()
@@ -1148,6 +1166,10 @@ class AddPostFragment : Fragment(), AddNewHelper
 
     override fun onResume() {
         super.onResume()
+        editText.setFocusableInTouchMode(false);
+        editText.setFocusable(false);
+        editText.setFocusableInTouchMode(true);
+        editText.setFocusable(true);
         if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3" ||
                 Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "2") {
             noSubLay.visibility = View.VISIBLE
@@ -1250,35 +1272,42 @@ class AddPostFragment : Fragment(), AddNewHelper
         if (event.value.type == "1") {
             dayLay.visibility = View.VISIBLE
             dayTime.text = event.value.time
-            selectDay.text = event.value.day
+
             val day = event.value.day
-            if (day == "Monday") {
+            if (day == "1") {
                 adposition2 = 0
                 checkedItem2 = 0
+                selectDay.text = "Monday"
             }
-            if (day == "Tuesday") {
+            if (day == "2") {
                 adposition2 = 1
                 checkedItem2 = 1
+                selectDay.text =  "Tuesday"
             }
-            if (day == "Wednesday") {
+            if (day == "3") {
                 adposition2 = 2
                 checkedItem2 = 2
+                selectDay.text = "Wednesday"
             }
-            if (day == "Thursday") {
+            if (day == "4") {
                 adposition2 = 3
                 checkedItem2 = 3
+                selectDay.text = "Thursday"
             }
-            if (day == "Friday") {
+            if (day == "5") {
                 adposition2 = 4
                 checkedItem2 = 4
+                selectDay.text = "Friday"
             }
-            if (day == "Saturday") {
+            if (day == "6") {
                 adposition2 = 5
                 checkedItem2 = 5
+                selectDay.text = "Saturday"
             }
-            if (day == "Sunday") {
+            if (day == "7") {
                 adposition2 = 6
                 checkedItem2 = 6
+                selectDay.text =  "Sunday"
             }
         }
         if (event.value.type == "2") {
@@ -1298,10 +1327,22 @@ class AddPostFragment : Fragment(), AddNewHelper
         }
         // }
         addPost.setOnClickListener {
+//            val post = addPost.text.toString()
+//            if (post.equals("DONE")) {
+//                // Toast.makeText(activity,"Pending",Toast.LENGTH_LONG).show()
+//                mPresenter.editPost(postID)
+//            }
             val post = addPost.text.toString()
             if (post.equals("DONE")) {
-                // Toast.makeText(activity,"Pending",Toast.LENGTH_LONG).show()
+                //Toast.makeText(activity,"Pending",Toast.LENGTH_LONG).show()
                 mPresenter.editPost(postID)
+            } else {
+                val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(postText.windowToken, 0)
+                if (!isServiceRunning) {
+
+                    mPresenter.addPost(isServiceRunning)
+                }
             }
         }
         nowCheck.visibility = View.GONE

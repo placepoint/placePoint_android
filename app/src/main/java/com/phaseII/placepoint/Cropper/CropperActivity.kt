@@ -1,8 +1,10 @@
 package com.phaseII.placepoint.Cropper
 
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
@@ -17,22 +19,23 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 import com.phaseII.placepoint.R
-
+import android.provider.MediaStore.Images
+import java.io.ByteArrayOutputStream
 
 
 class CropperActivity : BaseActivity(), CropperHelper, ImageAdapter.sendDataListener {
-   // lateinit var imageView: ImageView
-   lateinit var image_profile: ImageCropView
+    // lateinit var imageView: ImageView
+    lateinit var image_profile: ImageCropView
     lateinit var mPresenter: CropperPresenter
     lateinit var filePath: String
     lateinit var done: FloatingActionButton
     lateinit var recycler: RecyclerView
     var pagerList: ArrayList<Uri> = arrayListOf()
     var pos: Int = 0
-    var from:String=""
+    var from: String = ""
     var recyclerItems: MutableList<Uri> = arrayListOf()
     private var listFromCamera: ArrayList<Uri>? = arrayListOf()
-    lateinit var resultUri:Uri
+    lateinit var resultUri: Uri
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cropper)
@@ -48,16 +51,16 @@ class CropperActivity : BaseActivity(), CropperHelper, ImageAdapter.sendDataList
 
 
         try {
-            from=intent.getStringExtra("from")
-            if (from=="post"){
+            from = intent.getStringExtra("from")
+            if (from == "post") {
                 image_profile.setAspectRatio(1, 1)
-            }else{
+            } else {
                 image_profile.setAspectRatio(2, 1)
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
-
+        var v = 0
         try {
             val args = intent.getBundleExtra("BUN")
             listFromCamera = (args.getSerializable("LIST") as ArrayList<Uri>?)
@@ -66,9 +69,22 @@ class CropperActivity : BaseActivity(), CropperHelper, ImageAdapter.sendDataList
             image_profile.setImageFilePath(filePath)
         } catch (e: Exception) {
             e.printStackTrace()
+
+            v = 1
         }
-
-
+        try {
+            if (v == 1) {
+                val args = intent.getBundleExtra("BUN")
+                listFromCamera = (args.getSerializable("LIST") as ArrayList<Uri>?)
+                mPresenter.setBottomRecyclerImages(listFromCamera as ArrayList<Uri>)
+                val buri=getBitmapFromUri(listFromCamera!![0])
+                val ff=getImageUri(this,buri)
+                filePath = getRealPathFromURI(ff,this)
+                image_profile.setImageFilePath(filePath)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         recycler.stopNestedScroll()
         recycler.setHasFixedSize(true)
         mPresenter = CropperPresenter(this@CropperActivity)
@@ -80,11 +96,15 @@ class CropperActivity : BaseActivity(), CropperHelper, ImageAdapter.sendDataList
             if (!image_profile.isChangingScale) {
                 val b = image_profile.croppedImage
                 if (b != null) {
-                    val f = bitmapConvertToFile(b)
-                    val ur = Uri.fromFile(f)
-                    val hashSet = HashSet<Uri>()
-                    if (!pagerList.contains(ur)) {
-                        pagerList.add(ur)
+                    try {
+                        val f = bitmapConvertToFile(b)
+                        val ur = Uri.fromFile(f)
+                        val hashSet = HashSet<Uri>()
+                        if (!pagerList.contains(ur)) {
+                            pagerList.add(ur)
+                        }
+                    }catch (e:Exception){
+                        e.printStackTrace()
                     }
                 } else {
                     Toast.makeText(this@CropperActivity, R.string.fail_to_crop, Toast.LENGTH_SHORT).show();
@@ -129,23 +149,37 @@ class CropperActivity : BaseActivity(), CropperHelper, ImageAdapter.sendDataList
 //        }
     }
 
+    fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
+        val bytes = ByteArrayOutputStream()
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path = Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null)
+        return Uri.parse(path)
+    }
+    fun getBitmapFromUri(uri: Uri): Bitmap {
+        var parcelFileDescriptor =
+                this.contentResolver.openFileDescriptor(uri, "r")
+        var fileDescriptor = parcelFileDescriptor.fileDescriptor
+        var image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
+        parcelFileDescriptor.close()
+        return image;
+    }
 
     override fun onDataRecieve(uri: Uri, position: Int, items: ArrayList<Uri>) {
         pos = position
         try {
 
-           if (!image_profile.isChangingScale) {
+            if (!image_profile.isChangingScale) {
                 val b = image_profile.croppedImage
                 //val b = MediaStore.Images.Media.getBitmap(this.contentResolver, resultUri)
 
-            if (b != null) {
+                if (b != null) {
                     val f = SaveImage(b)
                     val ur = Uri.fromFile(f)
                     if (!pagerList.contains(ur)) {
                         pagerList.add(ur)
                     }
-                  filePath = getRealPathFromURI(uri, this)
-                   image_profile.setImageFilePath(filePath)
+                    filePath = getRealPathFromURI(uri, this)
+                    image_profile.setImageFilePath(filePath)
 //                var uri1:Uri= Uri.parse(filePath)
 //                image_profile1.setImageUriAsync(uri1)
                 } else {
@@ -158,8 +192,7 @@ class CropperActivity : BaseActivity(), CropperHelper, ImageAdapter.sendDataList
     }
 
 
-
-    private fun SaveImage(finalBitmap: Bitmap):File {
+    private fun SaveImage(finalBitmap: Bitmap): File {
 
         val root = Environment.getExternalStorageDirectory().toString()
         val myDir = File("$root/Android/data/com.example.user24.placepoint/Asaved_images")
@@ -212,8 +245,6 @@ class CropperActivity : BaseActivity(), CropperHelper, ImageAdapter.sendDataList
             recycler.adapter = ImageAdapter(this@CropperActivity, listFromCamera!!)
         }
     }
-
-
 
 
     fun bitmapConvertToFile(bitmap: Bitmap): File? {

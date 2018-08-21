@@ -3,6 +3,7 @@ package com.phaseII.placepoint.Business.AddPost
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -12,12 +13,14 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.Toast
+import com.naver.android.helloyako.imagecrop.util.BitmapLoadUtils
 import com.phaseII.placepoint.Cropper.BaseActivity
 import com.phaseII.placepoint.Cropper.CropperHelper
 import com.phaseII.placepoint.Cropper.CropperPresenter
 import com.phaseII.placepoint.Cropper.ImageAdapter
 import com.phaseII.placepoint.R
 import com.theartofdev.edmodo.cropper.CropImageView
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
@@ -78,7 +81,7 @@ class PostCropper : BaseActivity(), CropperHelper, ImageAdapter.sendDataListener
             finish()
 
         }
-
+        var v = 0
         try {
             val args = intent.getBundleExtra("BUN")
             listFromCamera = (args.getSerializable("LIST") as ArrayList<Uri>?)
@@ -105,9 +108,39 @@ class PostCropper : BaseActivity(), CropperHelper, ImageAdapter.sendDataListener
 
         } catch (e: Exception) {
             e.printStackTrace()
+
+            v = 1
+        }
+        try {
+            if (v == 1) {
+                val args = intent.getBundleExtra("BUN")
+                listFromCamera = (args.getSerializable("LIST") as ArrayList<Uri>?)
+                mPresenter.setBottomRecyclerImages(listFromCamera as ArrayList<Uri>)
+                val buri=getBitmapFromUri(listFromCamera!![0])
+                val ff=getImageUri(this,buri)
+                filePath = getRealPathFromURI(ff,this)
+                image_profile1.setImageUriAsync(ff)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
+
+    fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
+        val bytes = ByteArrayOutputStream()
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null)
+        return Uri.parse(path)
+    }
+    fun getBitmapFromUri(uri: Uri): Bitmap {
+        var parcelFileDescriptor =
+                this.contentResolver.openFileDescriptor(uri, "r")
+        var fileDescriptor = parcelFileDescriptor.fileDescriptor
+        var image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
+        parcelFileDescriptor.close()
+        return image;
+    }
 
     override fun onDataRecieve(uri: Uri, position: Int, items: ArrayList<Uri>) {
         pos = position

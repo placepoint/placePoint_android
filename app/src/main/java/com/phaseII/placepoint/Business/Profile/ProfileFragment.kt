@@ -7,6 +7,7 @@ import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
@@ -51,17 +52,10 @@ import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
 import com.phaseII.placepoint.MultichoiceCategories.MultipleCategories
 
 import com.phaseII.placepoint.R
-import com.phaseII.placepoint.R.id.expireOn
 import com.phaseII.placepoint.Register.MultipleCatagoryAdapter
 import com.phaseII.placepoint.SubscriptionPlan.SubscriptionActivity
 import com.phaseII.placepoint.Town.ModelTown
 import com.phaseII.placepoint.Town.TownActivity
-import kotlinx.android.synthetic.main.add_business_label.*
-import kotlinx.android.synthetic.main.bus_desc_layout.*
-import kotlinx.android.synthetic.main.business_profile_scroll.*
-import kotlinx.android.synthetic.main.contact_layout.*
-import kotlinx.android.synthetic.main.graph_radio_buttons_layout.*
-import kotlinx.android.synthetic.main.time_picker_layout.*
 import org.json.JSONArray
 import java.io.File
 import java.io.FileOutputStream
@@ -86,6 +80,19 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
     lateinit var progressBar: ProgressBar
     lateinit var progressBar2: ProgressBar
     lateinit var closeEndHours: TextView
+
+    lateinit var coverTitle: TextView
+    lateinit var header: TextView
+    lateinit var add_label: TextView
+    lateinit var open_hour_label: TextView
+    lateinit var openingLabel: TextView
+    lateinit var emailText: TextView
+    lateinit var townText: TextView
+    lateinit var catText: TextView
+
+
+
+
     lateinit var select_town: TextView
     lateinit var emailIdText: EditText
     lateinit var select_category: TextView
@@ -170,6 +177,14 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                               savedInstanceState: Bundle?): View? {
 
         val v = inflater.inflate(R.layout.fragment_business_profile, container, false)
+        header = v.findViewById(R.id.header)
+        coverTitle = v.findViewById(R.id.coverTitle)
+        add_label = v.findViewById(R.id.add_label)
+        open_hour_label = v.findViewById(R.id.open_hour_label)
+        openingLabel = v.findViewById(R.id.openingLabel)
+        emailText = v.findViewById(R.id.emailText)
+        townText = v.findViewById(R.id.townText)
+        catText = v.findViewById(R.id.catText)
         openHoursStart = v.findViewById(R.id.openHoursStart)
         openHoursEnd = v.findViewById(R.id.openHoursEnd)
         closeStartHours = v.findViewById(R.id.closeHoursStart)
@@ -252,18 +267,21 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
             packageName.text = "Free Package"
             desc_layout.isClickable = true
             bus_desc.isFocusableInTouchMode=false
+            emailIdText.isFocusableInTouchMode=false
             disablePickers()
             disableTitles()
         } else if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "2") {
             packageName.text = "Standard Package"
             desc_layout.isClickable = false
             bus_desc.isFocusableInTouchMode=true
+            emailIdText.isFocusableInTouchMode=true
             enablePickers()
             enableTitles()
         } else if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "1") {
             packageName.text = "Premium Package"
             desc_layout.isClickable = false
             bus_desc.isFocusableInTouchMode=true
+            emailIdText.isFocusableInTouchMode=true
             change.visibility = View.GONE
             enablePickers()
             enableTitles()
@@ -271,6 +289,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
             packageName.text = "Admin"
             desc_layout.isClickable = false
             bus_desc.isFocusableInTouchMode=true
+            emailIdText.isFocusableInTouchMode=true
             change.visibility = View.GONE
             enablePickers()
             enableTitles()
@@ -1554,6 +1573,14 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                     intent1.type = "image/*"
                     intent1.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
                     intent1.action = Intent.ACTION_GET_CONTENT
+                    intent1.putExtra("crop", "true")
+                    intent1.putExtra("scale", true)
+                    intent1.putExtra("outputX", 256)
+                    intent1.putExtra("outputY", 256)
+                    intent1.putExtra("aspectX", 1)
+                    intent1.putExtra("aspectY", 1)
+                    intent1.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString())
+                   // intent1.putExtra(MediaStore.EXTRA_OUTPUT, getBitmapFromUri())
                     startActivityForResult(Intent.createChooser(intent1, "Select Picture"), SELECT_PICTURES)
 
                 } catch (e: Exception) {
@@ -1563,6 +1590,8 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         }
 
     }
+
+
 
 
     protected fun requestPermission(permission: String, rationale: String, requestCode: Int) {
@@ -2228,15 +2257,35 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         return ""
     }
 
-    override fun setBusinessPrefilledData(data: String, end_time: String) {
+    override fun setBusinessPrefilledData(data: String, end_time: String, user_type: String) {
         if (activity != null && isAdded) {
             if (end_time != "N/A") {
 
-                expirePlanOn.text = "Expires- "+  parseDateToddMMyyyy(end_time)
+                try {
+                    val currentTime = getCurrentTime()
+
+                    val sdf = SimpleDateFormat("yyyy-MM-dd")
+                    val start = sdf.parse(currentTime)
+                    val end = sdf.parse(end_time)
+                    if (start.after(end)) {
+                        expirePlanOn.text = "Expired on- "+ parseDateToddMMyyyy(end_time)
+                    } else {
+                        expirePlanOn.text = "Expires on- " + parseDateToddMMyyyy(end_time)
+                    }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                }
             }
             Constants.getPrefs(activity!!)?.edit()?.putString(Constants.SINGLE_BUSINESS_LIST, data)?.apply()
+            Constants.getPrefs(activity!!)?.edit()?.putString(Constants.USERTYPE, user_type)?.apply()
             mPresenter.setSingleBusinessPrefilledData()
         }
+    }
+
+    private fun getCurrentTime(): String {
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd")
+        return sdf.format(Date())
     }
 
 
@@ -2933,7 +2982,8 @@ private fun disableTitles() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return "null"
+        return ""
+        //return model.cover_image+"jpg"
     }
 
     private fun getRealPathFromURI(uri: Uri?): String {
@@ -3553,7 +3603,11 @@ private fun disableTitles() {
                     number.setText(model.contact_no)
                     lat = model.lat
                     long = model.long
-                    bus_desc.setText(model.description)
+                    if (model.description!="[]") {
+                        bus_desc.setText(model.description)
+                    }else{
+                        bus_desc.setText("")
+                    }
 
                     try {
                         Glide.with(activity!!)

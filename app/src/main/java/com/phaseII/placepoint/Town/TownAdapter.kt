@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.phaseII.placepoint.Categories.CategoryActivity
 import com.phaseII.placepoint.Constants
-import com.phaseII.placepoint.DashBoard.DashBoardActivity
 import com.phaseII.placepoint.R
 import com.phaseII.placepoint.Service
 import kotlinx.android.synthetic.main.town_item.view.*
@@ -57,43 +56,46 @@ class TownAdapter(val context: TownActivity, var list: List<ModelTown>,
 
             if (Constants.getPrefs(context)!!.getString("getAuthCode", "") == "") {
                 Constants.getPrefs(context)?.edit()?.putString(Constants.OPEN_TOWN, "no")?.apply()
-                Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_ID, model.id)?.apply()
-                Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_NAME, model.townname)?.apply()
+                //Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_ID, model.id)?.apply()
+               // Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_NAME, model.townname)?.apply()
 
-                runAppAuthService()
+                runAppAuthService(model.id, model.townname)
 
 
             }else {
-                if (Constants.getPrefs(context)!!.getString(Constants.CATEGORY_IDS,"").isEmpty()){
+                //if (Constants.getPrefs(context)!!.getString(Constants.CATEGORY_IDS,"").isEmpty()){
                     Constants.getPrefs(context)?.edit()?.putString(Constants.OPEN_TOWN, "no")?.apply()
-                Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_ID, model.id)?.apply()
-                Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_NAME, model.townname)?.apply()
+               // Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_ID, model.id)?.apply()
+               // Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_NAME, model.townname)?.apply()
 
                 val intent = Intent(context, CategoryActivity::class.java)
                 intent.putExtra("from","cat")
                 intent.putExtra("from1",from)
+                intent.putExtra("townId",model.id)
+                intent.putExtra("townName", model.townname)
                 context.startActivity(intent)
                // context.finish()
-                }else {
-                    val intent = Intent(context, DashBoardActivity::class.java)
-                    context.startActivity(intent)
-                    Constants.getPrefs(context)?.edit()?.putString(Constants.OPEN_TOWN, "no")?.apply()
-                    Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_ID, model.id)?.apply()
-                    Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_NAME, model.townname)?.apply()
-                    context.finish()
-                }
+//                }else {
+//                    val intent = Intent(context, DashBoardActivity::class.java)
+//                    context.startActivity(intent)
+//                    Constants.getPrefs(context)?.edit()?.putString(Constants.OPEN_TOWN, "no")?.apply()
+//                    Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_ID, model.id)?.apply()
+//                    Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_NAME, model.townname)?.apply()
+//                    context.finish()
+//                }
             }
 //            }
         }
     }
 
-    private fun runAppAuthService() {
-        val town_id = Constants.getPrefs(context)?.getString(Constants.TOWN_ID, "")
+    private fun runAppAuthService(townId: String, townname: String) {
+        val town_id = townId
+       // val town_id = Constants.getPrefs(context)?.getString(Constants.TOWN_ID, "")
         val device_id = Constants.getDeviceId(context)
         val device_type = Constants.DEVICE_TYPE
-        appAuthService(device_id, town_id, device_type)
+        appAuthService(device_id, town_id, device_type,townname)
     }
-    private fun appAuthService(device_id: String, town_id: String?, device_type: String) {
+    private fun appAuthService(device_id: String, town_id: String?, device_type: String, townname: String) {
 
         val retrofit = Constants.getWebClient()
         val service = retrofit!!.create(Service::class.java)
@@ -108,7 +110,7 @@ class TownAdapter(val context: TownActivity, var list: List<ModelTown>,
                         val status = `object`.optString("status")
                         if (status.equals("true", ignoreCase = true)) {
                             val data = `object`.optJSONArray("data")
-                            saveAuthDataToPrefs(setData(data))
+                            saveAuthDataToPrefs(setData(data),town_id,townname)
                             //  view.getCategories()
                         }
                     } catch (e: IOException) {
@@ -126,7 +128,7 @@ class TownAdapter(val context: TownActivity, var list: List<ModelTown>,
         })
     }
 
-    private fun saveAuthDataToPrefs(data: JSONObject) {
+    private fun saveAuthDataToPrefs(data: JSONObject, town_id: String?, townname: String) {
         try {
             if (data != null) {
                 Constants.getPrefs(context)?.edit()?.putString(Constants.ID, data.optString("id"))?.apply()
@@ -140,18 +142,21 @@ class TownAdapter(val context: TownActivity, var list: List<ModelTown>,
             e.printStackTrace()
         }
         Constants.getPrefs(context)?.edit()?.putString("getAuthCode", "no")?.apply()
-        if (Constants.getPrefs(context)!!.getString(Constants.CATEGORY_IDS,"").isEmpty()){
+       // if (Constants.getPrefs(context)!!.getString(Constants.CATEGORY_IDS,"").isEmpty()){
 
             val intent = Intent(context, CategoryActivity::class.java)
             intent.putExtra("from","cat")
             intent.putExtra("from1",from)
+            intent.putExtra("townId",town_id)
+            intent.putExtra("townName",townname)
+
             context.startActivity(intent)
            // context.finish()
-        }else {
-            val intent = Intent(context, DashBoardActivity::class.java)
-            context.startActivity(intent)
-            context.finish()
-        }
+//        }else {
+//            val intent = Intent(context, DashBoardActivity::class.java)
+//            context.startActivity(intent)
+//            context.finish()
+//        }
 //        val intent = Intent(context, DashBoardActivity::class.java)
 //        context.startActivity(intent)
 //        context.finish()

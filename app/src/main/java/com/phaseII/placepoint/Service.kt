@@ -130,14 +130,35 @@ interface Service {
                            @Part("contact_no") contact_no: RequestBody,
                            @Part("lat") lat: RequestBody,
                            @Part("long") long: RequestBody,
-                           @Part("oldimages") oldimages: RequestBody,
                            @Part("description") bus_desc: RequestBody,
+                           @Part("oldimages") oldimages: RequestBody,
+                           @Part("business_email") business_email: RequestBody,
+                           @Part coverImage: MultipartBody.Part?): Call<ResponseBody>
+
+ @Multipart
+    @POST("updateBusinessPage")
+    fun updateBusinessPage2(@Part("business_name") business_name: RequestBody,
+                           @Part("auth_code") auth_code: RequestBody,
+                           @Part("town_id") town_id: RequestBody,
+                           @Part("email") email: RequestBody,
+                           @Part("category_id") category_id: RequestBody,
+                           @Part surveyImage: ArrayList<MultipartBody.Part>,
+                           @Part("image_status") image_status: RequestBody,
+                           @Part("video_link") video_link: RequestBody,
+                           @Part("opening_hours") opening_hours: RequestBody,
+                           @Part("image_count") image_count: RequestBody,
+                           @Part("address") address: RequestBody,
+                           @Part("contact_no") contact_no: RequestBody,
+                           @Part("lat") lat: RequestBody,
+                           @Part("long") long: RequestBody,
+                            @Part("description") bus_desc: RequestBody,
+                           @Part("oldimages") oldimages: RequestBody,
                            @Part("business_email") business_email: RequestBody): Call<ResponseBody>
 
 
     @Multipart
     @POST("updateBusinessPage")
-    fun updateBusinessPage2(@Part("business_name") bus_name: RequestBody?,
+    fun updateBusinessPage3(@Part("business_name") bus_name: RequestBody?,
                             @Part("auth_code") auth_code: RequestBody?,
                             @Part("town_id") town_id: RequestBody?,
                             @Part("email") email: RequestBody?,
@@ -155,23 +176,11 @@ interface Service {
                             @Part("business_email") business_email: RequestBody?,
                             @Part coverImage: MultipartBody.Part?): Call<ResponseBody>
 
-    @FormUrlEncoded
-    @POST("getBusinessDetails")
-    fun getBusinessDetail(@Field("auth_code") auth_code: String?,
-                          @Field("town_id") town_id: String?,
-                          @Field("limit") limit: String?,
-                          @Field("page") page: String?,
-                          @Field("category_id") category_id: String?): Call<ResponseBody>
 
-    @FormUrlEncoded
-    @POST("getSingleBusiness")
-    fun getSingleBusiness(@Field("auth_code") auth_code: String,
-                          @Field("business_id") business_id: String,
-                          @Field("mydetail") mydetail: String): Call<ResponseBody>
 
     @FormUrlEncoded
     @POST("updateBusinessPage")
-    fun updateBusinessPage3(@Field("business_name") bus_name: String,
+    fun updateBusinessPage33(@Field("business_name") bus_name: String,
                             @Field("auth_code") auth_code: String,
                             @Field("town_id") town_id: String,
                             @Field("email") email: String,
@@ -188,7 +197,22 @@ interface Service {
                             @Field("oldimages") oldimages: String,
                             @Field("business_email") business_email: String): Call<ResponseBody>
 
+
+
     @FormUrlEncoded
+    @POST("getBusinessDetails")
+    fun getBusinessDetail(@Field("auth_code") auth_code: String?,
+                          @Field("town_id") town_id: String?,
+                          @Field("limit") limit: String?,
+                          @Field("page") page: String?,
+                          @Field("category_id") category_id: String?): Call<ResponseBody>
+
+    @FormUrlEncoded
+    @POST("getSingleBusiness")
+    fun getSingleBusiness(@Field("auth_code") auth_code: String,
+                          @Field("business_id") business_id: String,
+                          @Field("mydetail") mydetail: String): Call<ResponseBody>
+ @FormUrlEncoded
     @POST("forgotPassword")
     fun forgotPassword(@Field("auth_code") auth_code: String,
                        @Field("email") business_id: String): Call<ResponseBody>

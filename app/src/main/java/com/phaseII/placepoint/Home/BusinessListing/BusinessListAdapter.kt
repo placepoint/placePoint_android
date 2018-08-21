@@ -25,6 +25,7 @@ import android.content.pm.PackageManager
 import android.app.Activity
 import android.location.Location
 import android.support.v4.app.ActivityCompat
+import com.phaseII.placepoint.BusEvents.CALL_EVENT
 import com.phaseII.placepoint.BusEvents.TAXI_EVENT
 import com.phaseII.placepoint.Constants
 import kotlinx.android.synthetic.main.business_item.view.*
@@ -55,6 +56,9 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
 
         val modelBusiness = list.get(position)
 
+        if (modelBusiness.user_type==null){
+            modelBusiness.user_type=""
+        }
         if (modelBusiness.business_user_id == "0" || modelBusiness.user_type == "3") {
             holder.itemView.view_foreground.visibility = View.GONE
             holder.itemView.layoutSecond.visibility = View.VISIBLE
@@ -75,7 +79,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
                 holder.itemView.address.text = modelBusiness.address
             }
             holder.itemView.freeCall.setOnClickListener {
-
+               // Constants.getBus().post(CALL_EVENT(modelBusiness.contact_no))
                 showDialog(modelBusiness.contact_no)
             }
         } else {
@@ -91,25 +95,24 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
             if (nameCat == "Taxis" || relatedTo == "TaxiRelatedData") {
                 holder.itemView.taxiImage.visibility = View.GONE
                 holder.itemView.navigationImage.visibility = View.GONE
-            }else{
-                holder.itemView.taxiImage.visibility = View.VISIBLE
-                holder.itemView.navigationImage.visibility = View.VISIBLE
             }
+//            else{
+//                holder.itemView.taxiImage.visibility = View.VISIBLE
+//                holder.itemView.navigationImage.visibility = View.VISIBLE
+//            }
             holder.itemView.view_foreground.visibility = View.VISIBLE
             holder.itemView.layoutSecond.visibility = View.GONE
             holder.itemView.title.text = modelBusiness.business_name
             try {
-
-                var distance = findDistance(currentLatitude, currentLongitude
-                        , modelBusiness.lat.toDouble(), modelBusiness.long.toDouble())
-// var distance = findDistance(53.350140, -6.266155
+//var roundDis:String=Constants.findDistanceFromCurrentPosition(currentLatitude,currentLatitude , modelBusiness.lat.toDouble(), modelBusiness.long.toDouble())
+//                var distance = findDistance(currentLatitude, currentLongitude
 //                        , modelBusiness.lat.toDouble(), modelBusiness.long.toDouble())
-//               var distance = findDistance(30.6425  , 76.8173
-//                        , 30.7046, 76.7179)
-                var addList = modelBusiness.address.split(",")
+ var distance = Constants.findDistanceFromCurrentPosition(currentLatitude, currentLongitude
+                        , modelBusiness.lat.toDouble(), modelBusiness.long.toDouble())
+                var roundDis = String.format("%.2f", distance)
                 val stringBuilder = StringBuilder("")
                 var prefix = ""
-                var roundDis = String.format("%.2f", distance)
+                var addList = modelBusiness.address.split(",")
                 if (addList.size > 2) {
                     for (i in 0 until 2) {
                         stringBuilder.append(prefix)
@@ -158,6 +161,11 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
                 intent.putExtra("from", "businessListadapter")
                 intent.putExtra("busName", modelBusiness.business_name)
                 intent.putExtra("subscriptionType",modelBusiness.user_type)
+
+                intent.putExtra("distance", holder.itemView.distance.text.toString().trim())
+                intent.putExtra("mobNumber",modelBusiness.contact_no)
+                intent.putExtra("lati",modelBusiness.lat)
+                intent.putExtra("longi",modelBusiness.long)
                 context.startActivity(intent)
             }
             holder.itemView.taxiImage.setOnClickListener {
@@ -175,6 +183,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
                 context.startActivity(mapIntent)
             }
             holder.itemView.callImage.setOnClickListener {
+               // Constants.getBus().post(CALL_EVENT(modelBusiness.contact_no))
                 showDialog(modelBusiness.contact_no)
             }
         }
@@ -195,32 +204,6 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
         return (distanceInMeters.toDouble() / 1000)
     }
 
-    private fun distance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-        val theta = lon1 - lon2
-        var dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + (Math.cos(deg2rad(lat1))
-                * Math.cos(deg2rad(lat2))
-                * Math.cos(deg2rad(theta)))
-        dist = Math.acos(dist)
-        dist = rad2deg(dist)
-        //dist *= 60.0 * 1.1515
-        return dist
-    }
-
-    private fun deg2rad(deg: Double): Double {
-        var dd = deg * Math.PI / 180.0
-        // return convertMilesToKms(dd)
-        return dd
-    }
-
-    private fun rad2deg(rad: Double): Double {
-        var dd = rad * 180.0 / Math.PI
-        return convertMilesToKms(dd)
-        // return dd
-    }
-
-    fun convertMilesToKms(miles: Double): Double {
-        return (miles / 0.621371).toDouble()
-    }
 
     private fun showDialog(phoneNo: String) {
 
@@ -234,12 +217,12 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
 //            startActivity(callIntent)
             val callIntent = Intent(Intent.ACTION_CALL)
             callIntent.data = Uri.parse("tel:$phoneNo")
-
             if (ActivityCompat.checkSelfPermission(context,
                             Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.CALL_PHONE), 1);
+                ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.CALL_PHONE), 1)
                 return@OnClickListener
             }
+
             context.startActivity(callIntent)
         })
                 .setNegativeButton("Cancel ", DialogInterface.OnClickListener { dialog, which ->
@@ -250,6 +233,23 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
         alert.show()
     }
 
+//@Override
+//public void onRequestPermissionsResult(int requestCode,
+//                                       String permissions[], int[] grantResults) {
+//    switch (requestCode) {
+//        case REQUEST_PHONE_CALL: {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "+918511812660"));
+//                startActivity(intent);
+//            }
+//            else
+//            {
+//
+//            }
+//            return;
+//        }
+//    }
+//}
     private fun logicForOpenCloseButton(modelBusiness: ModelBusiness, timing: TextView,
                                         statusLay: LinearLayout, openAt: TextView) {
         val currentDay = getCurrentTimeAndDate()
@@ -332,7 +332,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
                     val timeForOpening = Constants.findingOpenWhen(modelBusiness, dayValue)
                     if (!timeForOpening.isEmpty()) {
                         openAt.visibility = View.VISIBLE
-                        openAt.text = "Open at $timeForOpening"
+                        openAt.text = "Open $timeForOpening"
                     } else {
                         openAt.visibility = View.GONE
                     }
@@ -345,7 +345,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
                         val timeForOpening = Constants.findingOpenWhen(modelBusiness, dayValue)
                         if (!timeForOpening.isEmpty()) {
                             openAt.visibility = View.VISIBLE
-                            openAt.text = "Open at $timeForOpening"
+                            openAt.text = "Open $timeForOpening"
                         } else {
                             openAt.visibility = View.GONE
                         }
@@ -366,7 +366,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
                             val timeForOpening = Constants.findingOpenWhen(modelBusiness, dayValue)
                             if (!timeForOpening.isEmpty()) {
                                 openAt.visibility = View.VISIBLE
-                                openAt.text = "Open at $timeForOpening"
+                                openAt.text = "Open $timeForOpening"
                             } else {
                                 openAt.visibility = View.GONE
                             }
@@ -381,7 +381,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
 
     fun setOpenClosed(dayValue: Int, timing: TextView, modelBusiness: ModelBusiness,
                       currentTime: String, statusLay: LinearLayout, openAt: TextView) {
-        if (!modelBusiness.opening_time.isEmpty()) {
+        if (modelBusiness.opening_time!=null&&!modelBusiness.opening_time.isEmpty()&&modelBusiness.opening_time!="null") {
             val array = modelBusiness.opening_time
             val arr = JSONArray(array)
             if (dayValue == 0) {

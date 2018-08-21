@@ -16,7 +16,9 @@ import kotlinx.android.synthetic.main.inner_category_item.view.*
 
 class SubCategoryAdapter(var context: Context, var main: ArrayList<ModelCategoryData>,
                          var froms: String,
-                         var nameMain: String
+                         var nameMain: String,
+                         var townName: String,
+                         var savetownId: String
 ) : RecyclerView.Adapter<SubCategoryAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater.from(context).inflate(R.layout.inner_category_item, parent, false)
@@ -31,12 +33,12 @@ class SubCategoryAdapter(var context: Context, var main: ArrayList<ModelCategory
 
         holder.itemView.catName.text = main[position].name
 
-            Picasso.with(context)
-                    .load(main[position].image_url)
-                    .centerCrop()
-                    .placeholder(R.mipmap.placeholder)
-                    .resize(300, 200)
-                    .into(holder.itemView.catImage)
+        Picasso.with(context)
+                .load(main[position].image_url)
+                .centerCrop()
+                .placeholder(R.mipmap.placeholder)
+                .resize(300, 200)
+                .into(holder.itemView.catImage)
 
 //        Glide.with(context)
 //                .load(parentList[position].image_url)
@@ -45,47 +47,55 @@ class SubCategoryAdapter(var context: Context, var main: ArrayList<ModelCategory
         holder.itemView.setOnClickListener {
             val stringBuilder = StringBuilder("")
             var prefix = ""
-            for (i in 0 until main.size ){
-                if (i!=0) {
+            for (i in 0 until main.size) {
+                if (i != 0) {
                     stringBuilder.append(prefix)
                     prefix = ","
                     stringBuilder.append(main[i].id)
                 }
             }
             val maincat = String(stringBuilder)
-            val name= "All $nameMain"
-                if (froms == "cat") {
+            val name = "All $nameMain"
+            if (froms == "cat") {
 
 
-                    if (position==0&& main[position].name!="Taxis"){
+//                    if (position==0&& main[position].name!="Taxis"){
 
-                        Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, name).apply()
-                    }else {
-                        Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, main[position].id).apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, main[position].name).apply()
+                Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
+                Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
+                Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, name).apply()
+                Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, savetownId).apply()
+                Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townName).apply()
+//                    }else {
+//                        Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
+//                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, main[position].id).apply()
+//                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, main[position].name).apply()
+//                        Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, savetownId).apply()
+                // Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townName).apply()
+////
+//                    }
+                val intent = Intent(context, DashBoardActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+                (context as Activity).finish()
+            } else {
+//                    if (position==0&& main[position].name!="Taxis"){
+                Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
+                Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, name).apply()
+                Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
+                Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, savetownId).apply()
+                Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townName).apply()
+                (context as Activity).finish()
+//                    }else {
+//                        Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
+//                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, main[position].name).apply()
+//                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, main[position].id).apply()
+//                       Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, savetownId).apply()
+                //                   Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townName).apply()
+//                        (context as Activity).finish()
 //
-                    }
-                    val intent = Intent(context, DashBoardActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(intent)
-                    (context as Activity).finish()
-                } else {
-                    if (position==0&& main[position].name!="Taxis"){
-                        Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, name).apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
-                        (context as Activity).finish()
-                    }else {
-                        Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, main[position].name).apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, main[position].id).apply()
-                        (context as Activity).finish()
-
-                    }
-                }
+//                    }
+            }
 
         }
     }

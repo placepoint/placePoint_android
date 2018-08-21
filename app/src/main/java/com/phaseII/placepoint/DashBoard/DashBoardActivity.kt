@@ -29,6 +29,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
+import android.content.DialogInterface
+import android.support.v7.app.AlertDialog
+import com.phaseII.placepoint.AboutBusiness.BusinessDetails.DetailFragment.setTitle
+
+
 
 @Suppress("DEPRECATED_IDENTITY_EQUALS")
 class DashBoardActivity : AppCompatActivity() {
@@ -275,7 +280,26 @@ class DashBoardActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (Constants.getPrefs(this)!!.getString("backPress", "0") == "0") {
-            finish()
+            if(positon==0) {
+                askBeforeExit()
+                //finish()
+            }else{
+                positon=0
+                ft = supportFragmentManager.beginTransaction()
+                ft.replace(R.id.pager, HomeFragment())
+                ft.commit()
+                val menu = bottomNavigation.getMenu()
+                var i = 0
+                val size = menu.size()
+                our@ while (i < size) {
+                    val item = menu.getItem(i)
+                    if (item.itemId === R.id.nav_home) {
+                        item.isChecked = item.itemId === R.id.nav_home
+                        break@our
+                    }
+                    i++
+                }
+            }
         } else {
 
             Constants.getPrefs(this)!!.edit().remove("backPress").apply()
@@ -283,6 +307,17 @@ class DashBoardActivity : AppCompatActivity() {
             Constants.getBus().post(LiveListingBackEvent("TaxiToHome"))
         }
     }
+
+    private fun askBeforeExit() {
+
+        AlertDialog.Builder(this)
+                .setTitle("Closing application")
+                .setMessage("Are you sure you want to exit?")
+                .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
+                    finish()
+                }).setNegativeButton("No", null).show()
+    }
+
     @Subscribe
     fun getMessage(event: SetPagerToHome) {
 

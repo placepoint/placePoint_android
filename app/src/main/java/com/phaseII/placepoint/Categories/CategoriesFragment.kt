@@ -18,7 +18,6 @@ import com.phaseII.placepoint.MultichoiceCategories.CategoryHelper
 import com.phaseII.placepoint.MultichoiceCategories.CategoryPresenter
 import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
 import com.phaseII.placepoint.R
-import kotlinx.android.synthetic.main.business_item.view.*
 import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
@@ -107,20 +106,28 @@ class CategoriesFragment : Fragment(), CategoryHelper {
             show = 1
         }
         var listparent = ArrayList<ModelCategoryData>()
+        var mainList = ArrayList<ModelCategoryData>()
+        var copyList = list
         if (show == 0) {
 
             for (k in 0 until parentList.size) {
-                if (parentList[k].name != "Taxi") {
+                if (parentList[k].name != "Taxis") {
                     listparent.add(parentList[k])
                 }
             }
             parentList = listparent
+         for (k in 0 until copyList.size) {
+                if (copyList[k].name != "Taxis") {
+                    mainList.add(copyList[k])
+                }
+            }
+            copyList = mainList
         }
 
 
         val grid = GridLayoutManager(activity, 2)
         recyclerView.layoutManager = grid as RecyclerView.LayoutManager?
-        adapter = CategoriesAdapter(this.activity!!, list, parentList, "catfrag")
+        adapter = CategoriesAdapter(this.activity!!, copyList, parentList, "catfrag", Constants.getPrefs(activity!!)?.getString(Constants.TOWN_ID, "")!!, Constants.getPrefs(activity!!)?.getString(Constants.TOWN_NAME, "")!!)
         recyclerView.adapter = adapter
     }
 

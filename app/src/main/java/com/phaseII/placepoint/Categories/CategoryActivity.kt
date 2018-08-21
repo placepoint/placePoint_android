@@ -37,20 +37,28 @@ class CategoryActivity : AppCompatActivity() , CategoryHelper {
     private lateinit var childList: ArrayList<ModelCategoryData>
     lateinit var toolbar: Toolbar
     private lateinit var mTitle: TextView
+     var sentTownId: String=""
+     var townName: String=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.categories_fragment)
         setToolBar()
         initialize()
     }
+
+
+
+
     private fun setToolBar() {
 
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         mTitle = toolbar.findViewById(R.id.toolbar_title) as TextView
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
-        mTitle.text="Categories "+" (" +Constants.getPrefs(this)?.getString(Constants.TOWN_NAME, "")+")"
+        sentTownId=intent.getStringExtra("townId")
+        townName=intent.getStringExtra("townName")
+       // mTitle.text="Categories "+" (" +Constants.getPrefs(this)?.getString(Constants.TOWN_NAME, "")+")"
+        mTitle.text="Categories "+" (" +townName+")"
     }
 
     private fun initialize() {
@@ -102,9 +110,37 @@ class CategoryActivity : AppCompatActivity() , CategoryHelper {
         }
         Collections.sort(list, AlphabetiComparator())
         Collections.sort(parentList, AlphabetiComparator())
+
+        val taxiTownId = Constants.getPrefs(this)!!.getString(Constants.TAXI_TOWNID, "");
+        val choosenTownId = sentTownId
+        var idList = taxiTownId!!.split(",")
+        var show = 0
+        if (idList.contains(choosenTownId)) {
+            show = 1
+        }
+        var listparent = ArrayList<ModelCategoryData>()
+        var mainList = ArrayList<ModelCategoryData>()
+        var copyList=list
+        if (show == 0) {
+
+            for (k in 0 until parentList.size) {
+                if (parentList[k].name != "Taxis") {
+                    listparent.add(parentList[k])
+                }
+            }
+            parentList = listparent
+
+            for (k in 0 until copyList.size) {
+                if (copyList[k].name != "Taxis") {
+                    mainList.add(copyList[k])
+                }
+            }
+            copyList = mainList
+        }
+
         val grid = GridLayoutManager(this, 2)
         recyclerView.layoutManager = grid
-        adapter = CategoriesAdapter(this, list, parentList,"cat")
+        adapter = CategoriesAdapter(this, copyList, parentList,"cat",sentTownId,townName)
         recyclerView.adapter = adapter
     }
 
@@ -127,7 +163,7 @@ class CategoryActivity : AppCompatActivity() , CategoryHelper {
 
     override fun getTownId(): String? {
         try {
-            return Constants.getPrefs(this)?.getString(Constants.TOWN_ID, "")
+            return sentTownId
         } catch (e: Exception) {
             e.printStackTrace()
         }

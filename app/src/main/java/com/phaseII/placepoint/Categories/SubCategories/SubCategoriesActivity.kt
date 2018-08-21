@@ -10,7 +10,6 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.phaseII.placepoint.AlphabetiComparator
-import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
 import com.phaseII.placepoint.R
 import java.util.*
@@ -24,6 +23,8 @@ class SubCategoriesActivity : AppCompatActivity() {
     lateinit var adapter: SubCategoryAdapter
     lateinit var toolbar: Toolbar
     private lateinit var mTitle: TextView
+    var townName:String=""
+    var townId:String=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sub_categoryies)
@@ -39,7 +40,11 @@ class SubCategoriesActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        mTitle.text = intent.getStringExtra("name") + " (" + Constants.getPrefs(this)?.getString(Constants.TOWN_NAME, "") + ")"
+       // mTitle.text = intent.getStringExtra("name") + " (" + Constants.getPrefs(this)?.getString(Constants.TOWN_NAME, "") + ")"
+
+        townName=intent.getStringExtra("townName")
+       townId=intent.getStringExtra("townId")
+        mTitle.text = intent.getStringExtra("name") + " (" + townName + ")"
     }
 
     private fun setAdapter() {
@@ -67,7 +72,7 @@ class SubCategoriesActivity : AppCompatActivity() {
             val grid = GridLayoutManager(this, 2)
             recyclerView.layoutManager = grid as RecyclerView.LayoutManager?
             adapter = SubCategoryAdapter(this, childList1, intent.getStringExtra("froms")
-                    , intent.getStringExtra("name"))
+                    , intent.getStringExtra("name"),townName,townId)
             recyclerView.adapter = adapter
         } else {
             noData.visibility = View.VISIBLE

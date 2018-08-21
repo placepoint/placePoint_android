@@ -43,6 +43,11 @@ class HomeFragment : Fragment() {
         Constants.getPrefs(activity!!)!!.edit().putString(Constants.SHOW_ALL_POST, "yes").apply()
         Constants.getPrefs(activity!!)!!.edit().putString(Constants.FROMINTENT, "home").apply()
         Constants.getPrefs(activity!!)!!.edit().putString(Constants.STOPCLICK, "no").apply()
+        if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
+           // Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
+
+            taxiWorking()
+        }
     }
 
     private fun setToolBar(view: View) {
@@ -158,6 +163,10 @@ class HomeFragment : Fragment() {
 
     @Subscribe
     fun getEventValue(event: TAXI_EVENT) {
+        taxiWorking()
+    }
+
+    private fun taxiWorking() {
         Constants.getPrefs(activity!!)!!.edit().putString("backPress", "1").apply()
         Constants.getPrefs(activity!!)!!.edit().putString("Title", mText.text.toString()).apply()
         Constants.getBus().post(BusiniessListingTaxiEvent("taxi"))
@@ -166,7 +175,9 @@ class HomeFragment : Fragment() {
         mText.text = "Taxi" +
                 " in " + Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME, "")
 
+
     }
+
 
     @Subscribe
     fun getEventValue(event: SeTaxitTitleEvent) {

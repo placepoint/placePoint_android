@@ -109,7 +109,8 @@ lateinit var  mFusedLocationClient:FusedLocationProviderClient
             supportActionBar!!.setDisplayShowTitleEnabled(false)
             mPresenter.prepareDataForAdapter()
         }else{
-            setDataToAdapter(Constants.getPrefs(this@TownActivity)!!.getString(Constants.LOCATION_LIST, ""))
+            mPresenter.prepareDataForAdapter()
+           // setDataToAdapter(Constants.getPrefs(this@TownActivity)!!.getString(Constants.LOCATION_LIST, ""))
             supportActionBar!!.setDisplayShowTitleEnabled(true)
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         }
@@ -153,6 +154,7 @@ lateinit var  mFusedLocationClient:FusedLocationProviderClient
                Constants.getPrefs(this@TownActivity)!!.edit().putString(Constants.TAXI_TOWNID,list[i].town_id).apply()
             }
             if (list[i].name=="Taxis"&&list[i].parent_category!="0"){
+                Constants.getPrefs(this@TownActivity)!!.edit().putString(Constants.TAXI_TOWNID,list[i].town_id).apply()
                 Constants.getPrefs(this@TownActivity)!!.edit().putString(Constants.TAXI_SUB_ID,list[i].id).apply()
             }
         }

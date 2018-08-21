@@ -38,29 +38,22 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
     lateinit var from: String
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
-        amountToPayed=findViewById(R.id.amountToPayed)
-        mPresenter=PaymentPresenter(this)
+        amountToPayed = findViewById(R.id.amountToPayed)
+        mPresenter = PaymentPresenter(this)
         setToolBar()
 
-        from=intent.getStringExtra("from")
-        if (from=="payment"){
+        from = intent.getStringExtra("from")
+        if (from == "payment") {
             gettypeIntent = intent.getStringExtra("type")
-            amountToPayed.visibility=View.VISIBLE
-//            var packagename:String=""
-//            if(intent.getStringExtra("upgrade_type")=="1"){
-//                packagename="Premium Package"
-//            }else{
-//                packagename="Standard Package"
-//            }
-            amountToPayed.text="Amount to be paid €"+intent.getStringExtra("amount_payable")
-        }else {
-            amountToPayed.visibility=View.VISIBLE
+            amountToPayed.visibility = View.VISIBLE
+            amountToPayed.text = "Amount to be paid €" + intent.getStringExtra("amount_payable")
+        } else {
+            amountToPayed.visibility = View.VISIBLE
 
-            amountToPayed.text="Amount to be paid €"+intent.getStringExtra("amount_payable")
+            amountToPayed.text = "Amount to be paid €" + intent.getStringExtra("amount_payable")
             emailIntent = intent.getStringExtra("email")
             passIntent = intent.getStringExtra("pass")
             getBNameIntent = intent.getStringExtra("bName")
@@ -71,12 +64,12 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
         }
         auth_code = Constants.getPrefs(this@PaymentActivity)!!.getString(Constants.AUTH_CODE, "")
 
-        if (gettypeIntent=="1"){
-            layStandard.visibility=View.GONE
-            premiumText.visibility=View.VISIBLE
-        }else if (gettypeIntent=="2"){
-            layStandard.visibility=View.VISIBLE
-            premiumText.visibility=View.GONE
+        if (gettypeIntent == "1") {
+            layStandard.visibility = View.GONE
+            premiumText.visibility = View.VISIBLE
+        } else if (gettypeIntent == "2") {
+            layStandard.visibility = View.VISIBLE
+            premiumText.visibility = View.GONE
         }
         expiry.setOnClickListener {
             val pd = MonthYearPickerDialog()
@@ -86,30 +79,30 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
             })
             pd.show(fragmentManager, "MonthYearPickerDialog")
         }
-        buyNow.setOnClickListener{
-            Constants.hideKeyBoard(this,buyNow)
+        buyNow.setOnClickListener {
+            Constants.hideKeyBoard(this, buyNow)
 
-                var cardNumber = card_no.text.toString()
-                var name = name.text.toString()
-                var cvv = cvv.text.toString()
-                var expiry = expiry.text.toString()
-                if (cardNumber.isEmpty()) {
-                    Toast.makeText(this, "Enter Card Number", Toast.LENGTH_LONG).show()
-                    return@setOnClickListener
-                }
-                if (name.isEmpty()) {
-                    Toast.makeText(this, "Enter Name", Toast.LENGTH_LONG).show()
-                    return@setOnClickListener
-                }
-                if (expiry.isEmpty()) {
-                    Toast.makeText(this, "Select Expiry date", Toast.LENGTH_LONG).show()
-                    return@setOnClickListener
-                }
-                if (cvv.isEmpty()) {
-                    Toast.makeText(this, "Enter CVV", Toast.LENGTH_LONG).show()
-                    return@setOnClickListener
-                }
-                sendData(cardNumber, name, expiry, cvv)
+            val cardNumber = card_no.text.toString()
+            val name = name.text.toString()
+            val cvv = cvv.text.toString()
+            val expiry = expiry.text.toString()
+            if (cardNumber.isEmpty()) {
+                Toast.makeText(this, "Enter Card Number", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            if (name.isEmpty()) {
+                Toast.makeText(this, "Enter Name", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            if (expiry.isEmpty()) {
+                Toast.makeText(this, "Select Expiry date", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            if (cvv.isEmpty()) {
+                Toast.makeText(this, "Enter CVV", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            sendData(cardNumber, name, expiry, cvv)
 
         }
     }
@@ -117,13 +110,13 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
     private fun setToolBar() {
         toolbar = findViewById(R.id.toolbar)
         mTitle = toolbar.findViewById(R.id.toolbar_title)
-        mTitle.text="Payment"
+        mTitle.text = "Payment"
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item!!.itemId==android.R.id.home){
+        if (item!!.itemId == android.R.id.home) {
             finish()
         }
         return super.onOptionsItemSelected(item)
@@ -131,7 +124,7 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
 
     fun sendData(cardNumber: String, name: String, expiry: String, cvv: String) {
         val result: List<String> = expiry.split("/").map { it.trim() }
-progressBar.visibility=View.VISIBLE
+        progressBar.visibility = View.VISIBLE
         val stripe = Stripe(this, Constants.STRIPE_KEY)
         val card = Card(
                 card_no.text.toString(),
@@ -145,10 +138,10 @@ progressBar.visibility=View.VISIBLE
                 object : TokenCallback {
                     override fun onSuccess(token: Token) {
                         // Send token to your own web service
-                        progressBar.visibility=View.GONE
-                        if (from=="payment"){
-                            mPresenter.paymentService(auth_code,intent.getStringExtra("currenttype"),intent.getStringExtra("upgrade_type"),token.id.toString(),intent.getStringExtra("amount_payable"))
-                        }else {
+                        progressBar.visibility = View.GONE
+                        if (from == "payment") {
+                            mPresenter.paymentService(auth_code, intent.getStringExtra("currenttype"), intent.getStringExtra("upgrade_type"), token.id.toString(), intent.getStringExtra("amount_payable"))
+                        } else {
                             mPresenter.registerWebService(emailIntent, passIntent, getBNameIntent,
                                     getBLocIntent, getBCatIntent, auth_code, gettypeIntent, token.id.toString())
                         }
@@ -210,8 +203,8 @@ progressBar.visibility=View.VISIBLE
     }
 
     override fun showPaymentDone(upgrade_type: String) {
-        Toast.makeText(this@PaymentActivity,"Payment Successfull", Toast.LENGTH_SHORT).show()
-        Constants.getPrefs(this)!!.edit().putString(Constants.USERTYPE,upgrade_type).apply()
+        Toast.makeText(this@PaymentActivity, "Payment Successfull", Toast.LENGTH_SHORT).show()
+        Constants.getPrefs(this)!!.edit().putString(Constants.USERTYPE, upgrade_type).apply()
         val intent = Intent(this, DashBoardActivity::class.java)
         intent.putExtra("goto", "businessProfile")
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)

@@ -14,7 +14,9 @@ import kotlinx.android.synthetic.main.inner_category_item.view.*
 
 class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryData>,
                         var parentList: ArrayList<ModelCategoryData>,
-                        var froms: String): RecyclerView.Adapter<CategoriesAdapter.ViewHolder>() {
+                        var froms: String,
+                        var sentTownId: String,
+                        var townName: String): RecyclerView.Adapter<CategoriesAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view:View=LayoutInflater.from(context).inflate(R.layout.inner_category_item,parent,false)
         return ViewHolder(view)
@@ -45,6 +47,8 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
             intent.putExtra("name",parentList[position].name)
             intent.putExtra("List",main)
             intent.putExtra("froms",froms)
+            intent.putExtra("townId",sentTownId)
+            intent.putExtra("townName",townName)
             intent.putExtra("model",parentList[position].image_url)
             context.startActivity(intent)
         }

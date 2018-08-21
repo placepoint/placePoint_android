@@ -27,10 +27,14 @@ import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.business_listing_fragment.*
 import android.location.LocationManager
 import android.content.Context.LOCATION_SERVICE
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.phaseII.placepoint.ConstantClass.GpsTracker
@@ -69,7 +73,7 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
     var imglist: MutableList<String> = arrayListOf()
     var currentLatitude: Double = 0.toDouble()
     var currentLongitude: Double = 0.toDouble()
-
+    lateinit var phoneNumber: String
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater!!.inflate(R.layout.business_listing_fragment, container, false)
 
@@ -84,8 +88,13 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
             currentLatitude = tracker.getLatitude()
             currentLongitude = tracker.getLongitude()
         }
+        if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
+            Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
 
-        mPresenter.prepareBusinessData("catRelatedData")
+            mPresenter.prepareBusinessData("TaxiRelatedData")
+        }else{
+            mPresenter.prepareBusinessData("catRelatedData")
+        }
 
         return view
     }
@@ -110,59 +119,93 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
 
     override fun setDataToAdapter(data: String, cat: Int, parent_category_name: String, relatedTo: String) {
 
-        saveBusinessData(data)
-        val list1 = Constants.getbusinessData(data)
-        val list33 = arrayListOf<ModelBusiness>()
-        val list44 = arrayListOf<ModelBusiness>()
-        if (list1 != null) {
-            if (list1.size > 0) {
-                for (i in 0 until list1.size) {
-                    if (list1[i].business_user_id == "0") {
-                        list44.add(list1[i])
-                    } else {
-                        list33.add(list1[i])
-                    }
-                }
-                list1.clear()
-                for (i in 0 until list33.size) {
-                    list1.add(list33[i])
-                }
-                for (i in 0 until list44.size) {
-                    list1.add(list44[i])
-                }
-
-                if (relatedTo == "TaxiRelatedData") {
-                    noData.visibility = View.GONE
-                    taxiList.visibility = View.VISIBLE
-                    businessList.visibility = View.GONE
-                    Constants.getBus().register(this)
-                    var permission=Constants.getPrefs(activity!!)!!.getString("permission","")
-                    if (permission.isEmpty()||permission=="no"){
-                        if ( Build.VERSION.SDK_INT >= 23 &&
-                                ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(activity!!,  arrayOf(
-                                    android.Manifest.permission.ACCESS_FINE_LOCATION
-                            ), 10)
+        try {
+            saveBusinessData(data)
+            val list1 = Constants.getbusinessData(data)
+            val list33 = arrayListOf<ModelBusiness>()
+            val list44 = arrayListOf<ModelBusiness>()
+            if (list1 != null) {
+                if (list1.size > 0) {
+                    for (i in 0 until list1.size) {
+                        if (list1[i].business_user_id == "0") {
+                            list44.add(list1[i])
+                        } else {
+                            list33.add(list1[i])
                         }
                     }
-                    taxiList.layoutManager = LinearLayoutManager(this.activity!!) as RecyclerView.LayoutManager?
-                    taxiList.adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, currentLatitude, currentLongitude)
-                    var modell = TitleModel()
-
-                    if (cat == 1) {
-                        modell.name = "Taxis"
-                        modell.status = "1"
-                    } else {
-                        modell.name = "Taxis"
-                        modell.status = "0"
+                    list1.clear()
+                    for (i in 0 until list33.size) {
+                        list1.add(list33[i])
+                    }
+                    for (i in 0 until list44.size) {
+                        list1.add(list44[i])
                     }
 
-                    Constants.getBus().post(SeTaxitTitleEvent("Taxi"))
-                    // Constants.getPrefs(activity!!)!!.edit().putString("idtitle",parent_category_name+" in "+Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME,""))
+                    if (relatedTo == "TaxiRelatedData") {
+                        noData.visibility = View.GONE
+                        taxiList.visibility = View.VISIBLE
+                        businessList.visibility = View.GONE
+                        Constants.getBus().register(this)
+                        var permission = Constants.getPrefs(activity!!)!!.getString("permission", "")
+                        if (permission.isEmpty() || permission == "no") {
+                            if (Build.VERSION.SDK_INT >= 23 &&
+                                    ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(activity!!, arrayOf(
+                                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                                ), 10)
+                            }
+                        }
+                        taxiList.layoutManager = LinearLayoutManager(this.activity!!) as RecyclerView.LayoutManager?
+                        taxiList.adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, currentLatitude, currentLongitude)
+
+                        var modell = TitleModel()
+
+                        if (cat == 1) {
+                            modell.name = "Taxis"
+                            modell.status = "1"
+                        } else {
+                            modell.name = "Taxis"
+                            modell.status = "0"
+                        }
+
+                        Constants.getBus().post(SeTaxitTitleEvent("Taxi"))
+                        // Constants.getPrefs(activity!!)!!.edit().putString("idtitle",parent_category_name+" in "+Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME,""))
+
+                    } else {
+                        taxiList.visibility = View.GONE
+                        businessList.visibility = View.VISIBLE
+                        var modell = TitleModel()
+                        if (cat == 1) {
+                            modell.name = parent_category_name
+                            modell.status = "1"
+                        } else {
+                            modell.name = "All"
+                            modell.status = "0"
+                        }
+                        Constants.getBus().post(SetTitleEvent(modell))
+                        Constants.getPrefs(activity!!)!!.edit().putString("idtitle", "All " + parent_category_name + " in " + Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME, ""))
+                        var gps = GpsTracker(this.activity)
+                        noData.visibility = View.GONE
+
+                        Constants.getBus().register(this)
+                        var permission = Constants.getPrefs(activity!!)!!.getString("permission", "")
+                        if (permission.isEmpty() || permission == "no") {
+                            if (Build.VERSION.SDK_INT >= 23 &&
+                                    ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(activity!!, arrayOf(
+                                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                                ), 10)
+                            }
+                        }
+                        businessList.layoutManager = LinearLayoutManager(this.activity!!) as RecyclerView.LayoutManager?
+                        businessList.adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, gps.getLatitude(), gps.getLongitude())
+                    }
+//                if (list44.size>0){
+//                    freeList.layoutManager = LinearLayoutManager(this.activity!!) as RecyclerView.LayoutManager?
+//                    freeList.adapter = FreeListingAdapter(this.activity!!, list44)
+//                }
 
                 } else {
-                    taxiList.visibility = View.GONE
-                    businessList.visibility = View.VISIBLE
                     var modell = TitleModel()
                     if (cat == 1) {
                         modell.name = parent_category_name
@@ -173,43 +216,13 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
                     }
                     Constants.getBus().post(SetTitleEvent(modell))
                     Constants.getPrefs(activity!!)!!.edit().putString("idtitle", "All " + parent_category_name + " in " + Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME, ""))
-                    var gps=GpsTracker(this.activity)
-                    noData.visibility = View.GONE
-
-                    Constants.getBus().register(this)
-                    var permission=Constants.getPrefs(activity!!)!!.getString("permission","")
-                    if (permission.isEmpty()||permission=="no"){
-                        if ( Build.VERSION.SDK_INT >= 23 &&
-                                ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(activity!!,  arrayOf(
-                                    android.Manifest.permission.ACCESS_FINE_LOCATION
-                            ), 10)
-                        }
-                    }
-                    businessList.layoutManager = LinearLayoutManager(this.activity!!) as RecyclerView.LayoutManager?
-                    businessList.adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, gps.getLatitude(), gps.getLongitude())
+                    noData.visibility = View.VISIBLE
                 }
-//                if (list44.size>0){
-//                    freeList.layoutManager = LinearLayoutManager(this.activity!!) as RecyclerView.LayoutManager?
-//                    freeList.adapter = FreeListingAdapter(this.activity!!, list44)
-//                }
-
-            } else {
-                var modell = TitleModel()
-                if (cat == 1) {
-                    modell.name = parent_category_name
-                    modell.status = "1"
-                } else {
-                    modell.name = "All"
-                    modell.status = "0"
-                }
-                Constants.getBus().post(SetTitleEvent(modell))
-                Constants.getPrefs(activity!!)!!.edit().putString("idtitle", "All " + parent_category_name + " in " + Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME, ""))
-                noData.visibility = View.VISIBLE
             }
+
+        } catch (e:Exception){
+            e.printStackTrace()
         }
-
-
     }
 
     private fun saveBusinessData(data: String) {
@@ -255,16 +268,41 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
 
     override fun onResume() {
         super.onResume()
+        if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
+            Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
 
+            mPresenter.prepareBusinessData("TaxiRelatedData")
+        }
+
+        try {
+            Constants.getBus().register(this)
+        }catch (e:Exception){
+e.printStackTrace()
+        }
+        if (ActivityCompat.checkSelfPermission(activity!!,
+                        Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity!! as Activity, arrayOf(Manifest.permission.CALL_PHONE), 1)
+            return
+        }
     }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Constants.getPrefs(activity!!)!!.edit().putString("permission","yes").apply()
-            mPresenter.prepareBusinessData("catRelatedData")
-        }else{
-            Constants.getPrefs(activity!!)!!.edit().putString("permission","no").apply()
-        }
+
+//        if (requestCode==671){
+//            val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$phoneNumber"))
+//
+//            if (ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+//                startActivity(intent)
+//            }
+//        }else {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Constants.getPrefs(activity!!)!!.edit().putString("permission", "yes").apply()
+                mPresenter.prepareBusinessData("catRelatedData")
+            } else {
+                Constants.getPrefs(activity!!)!!.edit().putString("permission", "no").apply()
+            }
+//        }
     }
     override fun onPause() {
         super.onPause()
@@ -282,7 +320,41 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
         mPresenter.prepareBusinessData("TaxiRelatedData")
 
     }
+ @Subscribe
+    fun getEventValue(event: CALL_EVENT) {
+     showDialog(event.value)
+    }
 
+
+
+    private fun showDialog(phoneNo: String) {
+
+        phoneNumber=phoneNo
+        val dialog = AlertDialog.Builder(activity!!)
+        dialog.setCancelable(false)
+        dialog.setTitle("Make a call")
+        dialog.setMessage(phoneNo)
+        dialog.setPositiveButton("Call", DialogInterface.OnClickListener { dialog, id ->
+            //            val callIntent = Intent(Intent.ACTION_CALL)
+//            callIntent.data = Uri.parse(phoneNo)
+//            startActivity(callIntent)
+            val callIntent = Intent(Intent.ACTION_CALL)
+            callIntent.data = Uri.parse("tel:$phoneNo")
+            if (ActivityCompat.checkSelfPermission(activity!!,
+                            Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.CALL_PHONE), 671)
+                return@OnClickListener
+            }
+
+            activity!!.startActivity(callIntent)
+        })
+                .setNegativeButton("Cancel ", DialogInterface.OnClickListener { dialog, which ->
+                    //Action for "Cancel".
+                })
+
+        val alert = dialog.create()
+        alert.show()
+    }
     @Subscribe
     fun getEventValue(event: BusiniessListingBackEvent) {
         var model = TitleModel()

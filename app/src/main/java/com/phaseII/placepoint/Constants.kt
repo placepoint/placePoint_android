@@ -3,6 +3,7 @@ package com.phaseII.placepoint
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
+import android.location.Location
 import android.net.Uri
 import android.os.StrictMode
 import android.provider.Settings
@@ -51,8 +52,7 @@ class Constants {
         //Live----------------------------
 
         const val BASE_URL = "http://34.254.213.227/webservices/data_v1/"
-         const val STRIPE_KEY = "pk_live_kt0mTsSnlapCVN44Ilfy7snQ"
-
+        const val STRIPE_KEY = "pk_live_kt0mTsSnlapCVN44Ilfy7snQ"
 
 
         //=================================
@@ -60,8 +60,6 @@ class Constants {
         //Test---------------------------
 //       const val BASE_URL = "http://cloudart.com.au/projects/Placepoint/index.php/webservices/data_v1/"
 //       const val STRIPE_KEY = "pk_test_IWmxeaTtErjZDGj3Dcu2oJw0"
-
-
 
 
         const val TOKEN = "token"
@@ -363,7 +361,7 @@ class Constants {
             val dialog = AlertDialog.Builder(context)
             dialog.setCancelable(false)
             dialog.setTitle("Alert")
-            dialog.setMessage("Your are a free user and can only choose one category. Please upgrade your plan to choose more categories.")
+            dialog.setMessage("You are a free user and can only choose one category. Please upgrade your plan to choose more categories.")
             dialog.setPositiveButton("Upgrade", DialogInterface.OnClickListener { dialog, id ->
                 showUpgradePopup(context)
             })
@@ -481,8 +479,8 @@ class Constants {
         }
 
         fun findingOpenWhen(modelBusiness: ModelBusiness, dayValue: Int): String {
-
-
+            var weekDay=-1
+            var checkday=dayValue
             var opeiningDayTime = ArrayList<String>()
             val array = modelBusiness.opening_time
             val arr = JSONArray(array)
@@ -493,7 +491,29 @@ class Constants {
                     opeiningDayTime.add(startFrom)
                 }
             }
-            var checkday = dayValue + 1
+
+            try {
+                var currentTime = getCurrentTime()
+                var todayOpeningTime = arr.getJSONObject(dayValue)
+                var todayStartTime = todayOpeningTime.optString("startFrom")
+                if (todayStartTime.contains("AM")) {
+                    todayStartTime.replace("AM", "am")
+                } else if (todayStartTime.contains("PM")) {
+                    todayStartTime.replace("PM", "pm")
+                }
+                val sdf = SimpleDateFormat("hh:mm a")
+                val start = sdf.parse(currentTime)
+                val end = sdf.parse(todayStartTime)
+
+                if (start.after(end)) {
+                    checkday = dayValue + 1
+                } else {
+                    checkday = dayValue
+                }
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
+
             var openingtime = ""
             outer@ for (i in 0 until 7) {
                 if (checkday > 6) {
@@ -502,8 +522,32 @@ class Constants {
                 if (checkday <= 6) {
                     var jsonObject = arr.getJSONObject(checkday)
                     var startFrom = jsonObject.optString("startFrom")
-                    if (startFrom != "12:00 AM") {
-                        openingtime = startFrom
+                    var startTo = jsonObject.optString("startTo")
+                    if (startFrom == "12:00 AM"&&startTo == "12:00 AM") {
+                        openingtime = ""
+//                        break@outer
+                    }else{
+                        if (checkday==0){
+                            openingtime = "$startFrom Monday"
+                        }
+                        if (checkday==1){
+                            openingtime = "$startFrom Tuesday"
+                        }
+                        if (checkday==2){
+                            openingtime = "$startFrom Wednesday"
+                        }
+                        if (checkday==3){
+                            openingtime = "$startFrom Thursday"
+                        }
+                        if (checkday==4){
+                            openingtime = "$startFrom Friday"
+                        }
+                        if (checkday==5){
+                            openingtime = "$startFrom Saturday"
+                        }
+                        if (checkday==6){
+                            openingtime = "$startFrom Sunday"
+                        }
                         break@outer
                     }
                     checkday++
@@ -519,7 +563,15 @@ class Constants {
 
         }
 
+         fun getCurrentTime(): String {
+            val sdf = SimpleDateFormat("hh:mm a")
+            return sdf.format(Date())
+        }
+
         fun findingOpenWhen2(modelBusiness: SingleBusinessModel, dayValue1: Int): String {
+
+            var checkday=dayValue1
+            var weekDay=-1
             var opeiningDayTime = ArrayList<String>()
             val array = modelBusiness.opening_time
             val arr = JSONArray(array)
@@ -530,7 +582,27 @@ class Constants {
                     opeiningDayTime.add(startFrom)
                 }
             }
-            var checkday = dayValue1 + 1
+            try {
+                var currentTime = getCurrentTime()
+                var todayOpeningTime = arr.getJSONObject(dayValue1)
+                var todayStartTime = todayOpeningTime.optString("startFrom")
+                if (todayStartTime.contains("AM")) {
+                    todayStartTime.replace("AM", "am")
+                } else if (todayStartTime.contains("PM")) {
+                    todayStartTime.replace("PM", "pm")
+                }
+                val sdf = SimpleDateFormat("hh:mm a")
+                val start = sdf.parse(currentTime)
+                val end = sdf.parse(todayStartTime)
+
+                if (start.after(end)) {
+                    checkday = dayValue1 + 1
+                } else {
+                    checkday = dayValue1
+                }
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
             var openingtime = ""
             outer@ for (i in 0 until 7) {
                 if (checkday > 6) {
@@ -539,8 +611,33 @@ class Constants {
                 if (checkday <= 6) {
                     var jsonObject = arr.getJSONObject(checkday)
                     var startFrom = jsonObject.optString("startFrom")
-                    if (startFrom != "12:00 AM") {
-                        openingtime = startFrom
+                    var startTo = jsonObject.optString("startTo")
+                    if (startFrom == "12:00 AM"&&startTo == "12:00 AM") {
+                        openingtime = ""
+//                        break@outer
+                    }else{
+                        weekDay=checkday
+                        if (checkday==0){
+                            openingtime = "$startFrom Monday"
+                        }
+                       if (checkday==1){
+                            openingtime = "$startFrom Tuesday"
+                        }
+                       if (checkday==2){
+                            openingtime = "$startFrom Wednesday"
+                        }
+                       if (checkday==3){
+                            openingtime = "$startFrom Thursday"
+                        }
+                       if (checkday==4){
+                            openingtime = "$startFrom Friday"
+                        }
+                       if (checkday==5){
+                            openingtime = "$startFrom Saturday"
+                        }
+                       if (checkday==6){
+                            openingtime = "$startFrom Sunday"
+                        }
                         break@outer
                     }
                     checkday++
@@ -553,6 +650,25 @@ class Constants {
                 return openingtime
             }
             return ""
+        }
+
+        fun findDistanceFromCurrentPosition(currentLatitude: Double, currentLongitude: Double, toDouble: Double, toDouble1: Double): Double {
+
+           return  findDistance(currentLatitude, currentLongitude
+                        ,toDouble, toDouble1)
+        }
+
+        private fun findDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+            val loc1 = Location("")
+            loc1.latitude = lat1
+            loc1.longitude = lon1
+
+            val loc2 = Location("")
+            loc2.latitude = lat2
+            loc2.longitude = lon2
+
+            val distanceInMeters = loc1.distanceTo(loc2)
+            return (distanceInMeters.toDouble() / 1000)
         }
     }
 }

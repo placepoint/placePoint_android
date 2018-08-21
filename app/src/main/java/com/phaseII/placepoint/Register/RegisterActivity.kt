@@ -406,6 +406,7 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
                         var sortedList = loc_list.sortedWith(compareBy({ it.townname }))
 
                         town_id = sortedList[pos].id
+                        Constants.getPrefs(this)!!.edit().putString(Constants.TOWN_ID2,town_id).apply()
                         dialog.dismiss()
                     } catch (e: Exception) {
                         e.printStackTrace()
