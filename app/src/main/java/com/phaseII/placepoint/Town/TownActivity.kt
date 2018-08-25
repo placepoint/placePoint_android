@@ -27,10 +27,14 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.PendingResult
 import com.google.android.gms.common.api.ResultCallback
 import com.google.android.gms.location.*
+import com.google.android.gms.security.ProviderInstaller
+import com.google.android.gms.security.ProviderInstaller.*
 import com.phaseII.placepoint.ConstantClass.GpsTracker
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.R
 import org.json.JSONObject
+import java.security.NoSuchAlgorithmException
+import javax.net.ssl.SSLContext
 
 class TownActivity : AppCompatActivity(), TownHelper  {
     private var isRunning: Boolean = false
@@ -58,6 +62,8 @@ lateinit var  mFusedLocationClient:FusedLocationProviderClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_town)
+
+        Constants.getSSlCertificate(this)
         mPresenter = TownPresenter(this)
 
         try {
@@ -120,12 +126,14 @@ lateinit var  mFusedLocationClient:FusedLocationProviderClient
     override fun setDataToAdapter(data: String) {
 
         list = Constants.getTownData(data)
-        val sortedList = list!!.sortedWith(compareBy { it.townname })
-        saveTownListToPrefs(data)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = TownAdapter(this, sortedList, p,intent.getStringExtra("from"))
-        recyclerView.setHasFixedSize(true)
-        recyclerView.adapter = adapter
+        if(list!!.size>0) {
+            val sortedList = list!!.sortedWith(compareBy { it.townname })
+            saveTownListToPrefs(data)
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            adapter = TownAdapter(this, sortedList, p, intent.getStringExtra("from"))
+            recyclerView.setHasFixedSize(true)
+            recyclerView.adapter = adapter
+        }
     }
     private fun saveTownListToPrefs(data: String) {
         Constants.getPrefs(this@TownActivity)?.edit()?.putString(Constants.LOCATION_LIST, data)?.apply()

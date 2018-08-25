@@ -44,7 +44,7 @@ interface BusinessProfileHelper {
     fun getAuthCodeConstant(): String?
     fun getTownIdConstant(): String?
     fun getCatId(): String?
-    fun setBusinessPrefilledData(data: String, end_time: String, user_type: String)
+    fun setBusinessPrefilledData(data: String, end_time: String, user_type: String, bid: String)
     fun setSingleBusinessPrefilledData()
     fun getBusId(): String
     fun getPrefillTownId():String

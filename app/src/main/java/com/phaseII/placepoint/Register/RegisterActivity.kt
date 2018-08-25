@@ -35,6 +35,7 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+        Constants.getSSlCertificate(this)
         mPresenter = RegisterPresenter(this)
         Constants.getPrefs(this)!!.edit().remove(Constants.USERTYPE).apply()
         choosedPlan.text = "Premium  € 300/year"

@@ -35,6 +35,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.R
 import kotlinx.android.synthetic.main.profile_map_scroll.*
 import java.util.*
@@ -58,6 +59,7 @@ class ProfileMapActivity : AppCompatActivity(), OnMapReadyCallback, ProfileMapHe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_map)
+        Constants.getSSlCertificate(this)
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)

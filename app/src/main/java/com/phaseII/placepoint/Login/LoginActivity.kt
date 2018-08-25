@@ -18,7 +18,7 @@ class LoginActivity : AppCompatActivity(), LoginHelper {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
+        Constants.getSSlCertificate(this)
         mPresenter = LoginPresenter(this)
         email.error = null
         password.error = null
@@ -104,10 +104,10 @@ class LoginActivity : AppCompatActivity(), LoginHelper {
 //
         Constants.getPrefs(this)?.edit()?.putBoolean(Constants.LOGIN, true)?.apply()
         Constants.getPrefs(this)?.edit()?.putString("firstTime", "login")?.apply()
-
+        Constants.getPrefs(this)?.edit()?.putString("registers", "yes")?.apply()
         val intent = Intent(this, DashBoardActivity::class.java)
         intent.putExtra("goto", "businessProfile")
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
        // finish()
     }

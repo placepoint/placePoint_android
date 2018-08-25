@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.phaseII.placepoint.AlphabetiComparator
+import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
 import com.phaseII.placepoint.R
 import java.util.*
@@ -30,6 +31,7 @@ class SubCategoriesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_sub_categoryies)
         setToolBar()
         setAdapter()
+        Constants.getSSlCertificate(this)
     }
 
 

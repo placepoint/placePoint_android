@@ -27,10 +27,12 @@ class HomeFragment : Fragment() {
     private lateinit var toolbar: Toolbar
     private lateinit var mText: TextView
     private lateinit var dots: ImageView
+    private lateinit var back: ImageView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.activity_home, container, false)
         init(view)
+        Constants.getSSlCertificate(activity!!)
         setToolBar(view)
         setHasOptionsMenu(true)
         return view
@@ -54,6 +56,7 @@ class HomeFragment : Fragment() {
         toolbar = view.findViewById(R.id.toolbar)
         mText = toolbar.findViewById(R.id.toolbar_title)
         dots = toolbar.findViewById(R.id.dots)
+        back = toolbar.findViewById(R.id.back) as ImageView
         dots.visibility = View.GONE
         val cats = Constants.getPrefs(activity!!)!!.getString(Constants.CATEGORY_IDS, "")
         if (!cats.isEmpty()) {
@@ -64,6 +67,17 @@ class HomeFragment : Fragment() {
             val intent = Intent(activity, TownActivity::class.java)
             intent.putExtra("from", "true")
             startActivity(intent)
+        }
+        val showback=Constants.getPrefs(activity!!)!!.getString("showHomeBackButton", "no")
+        if (showback=="yes"){
+            back.visibility=View.VISIBLE
+        }else{
+            if(Constants.getPrefs(activity!!)!!.getString("showBackYesOrNo", "category")!="category"){
+                back.visibility=View.GONE
+            }
+        }
+        back.setOnClickListener{
+            Constants.getBus().post(DoBackActionInDashBoard("value"))
         }
 //        toolbar.inflateMenu(R.menu.my_home_menu)
 //        toolbar.setOnMenuItemClickListener(object : Toolbar.OnMenuItemClickListener {
@@ -119,7 +133,7 @@ class HomeFragment : Fragment() {
         val cat = Constants.getPrefs(activity!!)?.getString(Constants.CATEGORY_LIST, "")!!
         if (!cat.isEmpty()) {
             var cat_list: ArrayList<ModelCategoryData> = Constants.getCategoryData(cat)!!
-            val selectedId = Constants.getPrefs(this.activity!!)?.getString(Constants.CATEGORY_IDS, "")!!
+            val selectedId = Constants.getPrefs(this.activity!!)?.getString(Constants.CATEGORY_IDSUB, "")!!
             for (i in 0 until cat_list.size) {
                 if (selectedId == cat_list[i].id) {
                     showFeed = cat_list[i].show_on_live
@@ -164,9 +178,28 @@ class HomeFragment : Fragment() {
     @Subscribe
     fun getEventValue(event: TAXI_EVENT) {
         taxiWorking()
+        back.visibility=View.VISIBLE
+
+    }
+ @Subscribe
+    fun getEventValue(event: HideBackButton) {
+
+     if(Constants.getPrefs(activity!!)!!.getString("showBackYesOrNo", "category")!="category"){
+         back.visibility=View.GONE
+     }
+
     }
 
     private fun taxiWorking() {
+        back.setOnClickListener{
+
+            if(Constants.getPrefs(activity!!)!!.getString("showBackYesOrNo", "category")!="category"){
+                back.visibility=View.GONE
+            }
+            Constants.getBus().post(DoBackActionInDashBoard("value"))
+        }
+
+
         Constants.getPrefs(activity!!)!!.edit().putString("backPress", "1").apply()
         Constants.getPrefs(activity!!)!!.edit().putString("Title", mText.text.toString()).apply()
         Constants.getBus().post(BusiniessListingTaxiEvent("taxi"))

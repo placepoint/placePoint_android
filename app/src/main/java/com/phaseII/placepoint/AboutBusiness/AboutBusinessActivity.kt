@@ -63,6 +63,7 @@ class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about_business)
+        Constants.getSSlCertificate(this)
         try {
             //modelBusiness = intent.extras!!.getParcelable<ModelBusiness>("model")
             busId = intent.extras.getString("busId")
@@ -70,41 +71,42 @@ class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
             from = intent.extras.getString("from")
             busName = intent.extras.getString("busName")
 
-if(from=="businessListadapter"){
-    Constants.getPrefs(this)!!.edit().putString("distance",intent.getStringExtra("distance")).apply()
-    Constants.getPrefs(this)!!.edit().putString("mobNumber",intent.getStringExtra("mobNumber")).apply()
-    Constants.getPrefs(this)!!.edit().putString("lati",intent.getStringExtra("lati")).apply()
-    Constants.getPrefs(this)!!.edit().putString("longi",intent.getStringExtra("longi")).apply()
-}
-           // intent.putExtra("showallpost")
+            if (from == "businessListadapter") {
+                Constants.getPrefs(this)!!.edit().putString("distance", intent.getStringExtra("distance")).apply()
+                Constants.getPrefs(this)!!.edit().putString("mobNumber", intent.getStringExtra("mobNumber")).apply()
+                Constants.getPrefs(this)!!.edit().putString("lati", intent.getStringExtra("lati")).apply()
+                Constants.getPrefs(this)!!.edit().putString("longi", intent.getStringExtra("longi")).apply()
+            }
+            // intent.putExtra("showallpost")
             /* val modelBusiness = intent.extras!!.getParcelable<ModelBusiness>("model")
              if (modelBusiness != null) {
                  mPresenter.getBusinessData(modelBusiness)
              }*/
-            Constants.getPrefs(this)!!.edit().putString(Constants.BUSINESS_ID,busId).apply()
-            Constants.getPrefs(this)!!.edit().putString(Constants.SHOW_ALL_POST,showallpost).apply()
-            Constants.getPrefs(this)!!.edit().putString(Constants.FROMINTENT,from).apply()
-            Constants.getPrefs(this)!!.edit().putString(Constants.STOPCLICK,"yes").apply()
+            Constants.getPrefs(this)!!.edit().putString(Constants.BUSINESS_ID, busId).apply()
+            Constants.getPrefs(this)!!.edit().putString(Constants.SHOW_ALL_POST, showallpost).apply()
+            Constants.getPrefs(this)!!.edit().putString(Constants.FROMINTENT, from).apply()
+            Constants.getPrefs(this)!!.edit().putString(Constants.STOPCLICK, "yes").apply()
 
             Constants.getPrefs(this)!!.edit().remove("BusinessSubscriptionType").apply()
             subscriptionType = intent.extras.getString("subscriptionType")
-            Constants.getPrefs(this)!!.edit().putString("BusinessSubscriptionType",subscriptionType).apply()
+            Constants.getPrefs(this)!!.edit().putString("BusinessSubscriptionType", subscriptionType).apply()
         } catch (e: Exception) {
             e.printStackTrace()
         }
-setToolBar()
+        setToolBar()
         init()
 
-          }
+    }
+
     private fun setToolBar() {
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-       // title = ""
+        // title = ""
         //supportActionBar!!.setDisplayShowTitleEnabled(false)
         mText = toolbar.findViewById(R.id.toolbar_title) as TextView
         val mArrow = toolbar.findViewById(R.id.arrow_down) as ImageView
         mArrow.visibility = View.GONE
-       // mText.text = "Name"
+        // mText.text = "Name"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 
@@ -121,10 +123,11 @@ setToolBar()
         viewPager.adapter = DetailViewPagerAdapter(supportFragmentManager!!)
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.getTabAt(0)!!.text = "Business details"
-        tabLayout.getTabAt(1)!!.text = busName+"'s"+" Posts"
+        tabLayout.getTabAt(1)!!.text = busName + "'s" + " Posts"
         tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#34b0f2"))
         setCustomFont(tabLayout)
     }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item!!.itemId == android.R.id.home) {
             onBackPressed()
@@ -134,8 +137,9 @@ setToolBar()
 
     override fun setTitleBusiness(business_name: String) {
 
-        mText.text=business_name
+        mText.text = business_name
     }
+
     fun setCustomFont(tabLayout: TabLayout) {
         try {
             val vg = tabLayout.getChildAt(0) as ViewGroup

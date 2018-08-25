@@ -44,7 +44,7 @@ class MyTimelineAdapter(private val context: Context, private val list: ArrayLis
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val modelData = list[position]
-        val name = Constants.getPrefs(context)?.getString(Constants.BUSINESS_NAME, "")!!
+        val name = Constants.getPrefs(context)?.getString(Constants.MY_BUSINESS_NAME, "")!!
         val inFormat1 = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
         val inFormat = SimpleDateFormat("MMM, dd yyyy hh:mm aa")
         val newDate = inFormat1.parse(modelData.created_at)

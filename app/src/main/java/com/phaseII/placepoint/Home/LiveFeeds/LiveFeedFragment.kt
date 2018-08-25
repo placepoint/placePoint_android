@@ -30,6 +30,7 @@ class LiveFeedFragment : Fragment(), HomeHelper {
                               savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_home, container, false)
         mPresenter = HomePresenter(this)
+        Constants.getSSlCertificate(activity!!)
         noPosts = v.findViewById(R.id.noPosts)
         recyclerView = v.findViewById(R.id.recyclerView)
         progressBar = v.findViewById(R.id.progressBar)

@@ -9,15 +9,20 @@ import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.phaseII.placepoint.AlphabetiComparator
+import com.phaseII.placepoint.BusEvents.DoBackActionInDashBoard
+import com.phaseII.placepoint.BusEvents.ShowHomeButton
+import com.phaseII.placepoint.BusEvents.SwitchToMainCategory
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.MultichoiceCategories.CategoryHelper
 import com.phaseII.placepoint.MultichoiceCategories.CategoryPresenter
 import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
 import com.phaseII.placepoint.R
+import com.squareup.otto.Subscribe
 import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
@@ -33,25 +38,60 @@ class CategoriesFragment : Fragment(), CategoryHelper {
     private lateinit var childList: ArrayList<ModelCategoryData>
     lateinit var toolbar: Toolbar
     private lateinit var mTitle: TextView
+    private lateinit var back: ImageView
     private var isRunning: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.categories_fragment, container, false)
         setToolBar(view)
         initialize(view)
+        Constants.getSSlCertificate(activity!!)
         return view
     }
 
     override fun onResume() {
         super.onResume()
+        try {
+            Constants.getBus().register(this)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
+        // Constants.getPrefs(activity!!)!!.edit().putString("subcategory", "0").apply()
+        val show = Constants.getPrefs(this.activity!!)?.getString("showBack", "no")
+        if (show == "yes") {
+            mTitle.text = Constants.getPrefs(activity!!)!!.getString("MainCatName", "") + " " + " (" + Constants.getPrefs(activity!!)?.getString(Constants.TOWN_NAME, "") + ")"
+            back.visibility = View.VISIBLE
+        } else {
+            var inSubCategory = Constants.getPrefs(activity!!)!!.getString("subcategory", "0");
+            if (inSubCategory == "0") {
+                mTitle.text = "Categories " + " (" + Constants.getPrefs(activity!!)?.getString(Constants.TOWN_NAME, "") + ")"
+                back.visibility = View.GONE
+            }else{
+                mTitle.text = Constants.getPrefs(activity!!)!!.getString("MainCatName", "") + " " + " (" + Constants.getPrefs(activity!!)?.getString(Constants.TOWN_NAME, "") + ")"
+                back.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        try {
+            Constants.getBus().unregister(this)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun setToolBar(view: View) {
 
         toolbar = view.findViewById(R.id.toolbar)
         mTitle = toolbar.findViewById(R.id.toolbar_title) as TextView
+        back = toolbar.findViewById(R.id.back) as ImageView
         mTitle.text = "Categories " + " (" + Constants.getPrefs(activity!!)?.getString(Constants.TOWN_NAME, "") + ")"
+        back.setOnClickListener {
+            Constants.getBus().post(DoBackActionInDashBoard("value"))
+        }
     }
 
     private fun initialize(view: View) {
@@ -59,8 +99,15 @@ class CategoriesFragment : Fragment(), CategoryHelper {
         recyclerView = view.findViewById(R.id.recyclerView)
         progressBar = view.findViewById(R.id.progressBar)
         noData = view.findViewById(R.id.noData)
+
         //mPresenter.setDataFromPrefs()
-        // mPresenter.runAppService()
+
+        var inSubCategory = Constants.getPrefs(activity!!)!!.getString("subcategory", "0");
+        if (inSubCategory == "0") {
+            mPresenter.runAppService()
+        } else {
+            mPresenter.setDataFromPrefs()
+        }
 //        if (Constants.getPrefs(activity!!)!!.getString("getAuthCode", "") == "yes") {
 //            if (!isRunning) {
 //                isRunning = true
@@ -68,7 +115,7 @@ class CategoriesFragment : Fragment(), CategoryHelper {
 //            }
 //
 //        } else {
-        mPresenter.setDataFromPrefs()
+        // mPresenter.setDataFromPrefs()
 //        }
     }
 
@@ -116,12 +163,41 @@ class CategoriesFragment : Fragment(), CategoryHelper {
                 }
             }
             parentList = listparent
-         for (k in 0 until copyList.size) {
+            for (k in 0 until copyList.size) {
                 if (copyList[k].name != "Taxis") {
                     mainList.add(copyList[k])
                 }
             }
             copyList = mainList
+        }
+
+        var inSubCategory = Constants.getPrefs(activity!!)!!.getString("subcategory", "0");
+        var position = Constants.getPrefs(activity!!)!!.getString("position", "0").toInt()
+        if (inSubCategory == "1") {
+
+            var childList1: java.util.ArrayList<ModelCategoryData> = arrayListOf()
+            for (i in 0 until copyList.size) {
+                if (parentList[position].id == copyList[i].parent_category) {
+                    childList1.add(copyList[i])
+                }
+            }
+            if (childList1.size > 0) {
+                // noData.visibility = View.GONE
+                Collections.sort(childList1, AlphabetiComparator())
+                if (parentList[position].name != "Taxi") {
+                    var model = ModelCategoryData()
+                    model.name = "All"
+                    model.image_url = parentList[position].image_url
+                    childList1.add(0, model)
+                }
+                parentList = childList1
+
+            }
+            Constants.getPrefs(activity!!)!!.edit().putString("showHomeBackButton", "yes").apply()
+//            Constants.getBus().post(ShowHomeButton("value"))
+        } else if (inSubCategory == "2") {
+            Constants.getPrefs(activity!!)!!.edit().putString("showHomeBackButton", "yes").apply()
+            Constants.getBus().post(SwitchToMainCategory("value"))
         }
 
 
@@ -218,15 +294,25 @@ class CategoriesFragment : Fragment(), CategoryHelper {
     override fun saveTowns(towns: String) {
         try {
             Constants.getPrefs(activity!!)?.edit()?.putString(Constants.LOCATION_LIST, towns)?.apply()
-            mPresenter.setDataFromPrefs()
-        } catch (e: Exception) {
-            mPresenter.setDataFromPrefs()
-        }
 
+        } catch (e: Exception) {
+        }
+        mPresenter.setDataFromPrefs()
     }
 
     override fun getSelectedList(): String {
 
         return ""
     }
+
+    @Subscribe
+    fun getMessage(event: ShowHomeButton) {
+        back.visibility = View.VISIBLE
+        mTitle.text = Constants.getPrefs(activity!!)!!.getString("MainCatName", "") + " " + " (" + Constants.getPrefs(activity!!)?.getString(Constants.TOWN_NAME, "") + ")"
+
+        back.setOnClickListener {
+            Constants.getBus().post(DoBackActionInDashBoard("value"))
+        }
+    }
+
 }

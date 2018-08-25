@@ -224,7 +224,7 @@
             android:id="@+id/premiumText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="*   No Restrictions with in the app"
+            android:text="*   No Restrictions"
             android:textColor="@color/white" />
 
 

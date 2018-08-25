@@ -11,6 +11,7 @@ import com.phaseII.placepoint.R
 import kotlinx.android.synthetic.main.schdule_item.view.*
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.BusEvents.EditScheduleEvent
+import com.squareup.picasso.Picasso
 
 
 class ScheduleAdapter(var context:Context,var list:List<ModelSchdule>) : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
@@ -25,6 +26,11 @@ class ScheduleAdapter(var context:Context,var list:List<ModelSchdule>) : Recycle
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         var model=list[position]
+        try{
+            Picasso.with(context).load(model.image_url).into(holder.itemView.imageItem)
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
         if (model.type=="1"){var day=""
             if (model.day=="1"){
                day="Monday"

@@ -42,7 +42,7 @@ class MultipleCategories : AppCompatActivity(), CategoryHelper,MultiChoiceRadioA
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_multiple_categories)
-
+        Constants.getSSlCertificate(this)
         ini()
         setToolBar()
     }

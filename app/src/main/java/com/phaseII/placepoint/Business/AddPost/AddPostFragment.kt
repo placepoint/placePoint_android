@@ -128,9 +128,11 @@ class AddPostFragment : Fragment(), AddNewHelper
     private lateinit var editTime: String
     private lateinit var editDay: String
     private lateinit var editType: String
+    private lateinit var imagePath: String
     //  lateinit var updater:setToMyPost
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.activity_add_new, container, false)
+        Constants.getSSlCertificate(activity!!)
         mPresenter = AddNewPresenter(this)
         seText = view.findViewById(R.id.seText)
         nowCheck = view.findViewById(R.id.nowCheck)
@@ -173,7 +175,7 @@ class AddPostFragment : Fragment(), AddNewHelper
         editText.setRawInputType(InputType.TYPE_CLASS_TEXT)
         editText.addTextChangedListener(mTextEditorWatcher)
         // setToolBar(view)
-        croppedImage.visibility = View.GONE
+       // croppedImage.visibility = View.GONE
         saveForDialog()
         clearPrefs()
         Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_CATEGORY).apply()
@@ -346,6 +348,10 @@ class AddPostFragment : Fragment(), AddNewHelper
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_NOW_STATUS).apply()
 
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.CATEGORY_NAMES_ADDPOST).apply()
+
+            croppedImage.visibility=View.GONE
+            cancel.visibility=View.GONE
+            //Picasso.with(activity!!).load("cc").into(croppedImage)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -1061,8 +1067,9 @@ class AddPostFragment : Fragment(), AddNewHelper
             return ur
         } catch (e: Exception) {
             e.printStackTrace()
+
         }
-        return "null"
+        return ""
     }
 
     override fun showLoader() {
@@ -1248,7 +1255,13 @@ class AddPostFragment : Fragment(), AddNewHelper
         selectCategory.text = main
         if (!event.value.image_url.isEmpty()) {
             croppedImage.visibility = View.VISIBLE
+            cancel.visibility=View.VISIBLE
             Picasso.with(activity).load(event.value.image_url).into(croppedImage)
+            imagePath=event.value.image_url
+        }else{
+            imagePath=""
+            croppedImage.visibility = View.GONE
+            cancel.visibility=View.GONE
         }
         if (event.value.video_link.isEmpty()) {
             youtubeField.setText(event.value.video_link)

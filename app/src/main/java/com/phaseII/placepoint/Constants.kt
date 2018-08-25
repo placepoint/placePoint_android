@@ -18,6 +18,7 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.RadioGroup
 import android.widget.Toast
+import com.google.android.gms.security.ProviderInstaller
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.phaseII.placepoint.AboutBusiness.SingleBusinessModel
@@ -45,16 +46,18 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.SSLContext
 
 class Constants {
 
     companion object {
         //Live----------------------------
 
-        const val BASE_URL = "http://34.254.213.227/webservices/data_v1/"
+       // const val BASE_URL = "http://34.254.213.227/webservices/data_v1/"
+        const val BASE_URL = "https://www.placepoint.ie/webservices/data_v1/"
         const val STRIPE_KEY = "pk_live_kt0mTsSnlapCVN44Ilfy7snQ"
 
-
+        //"https://www.placepoint.ie/webservices/data_v1/"
         //=================================
 
         //Test---------------------------
@@ -67,7 +70,7 @@ class Constants {
         val closedList: ArrayList<Boolean> = arrayListOf()
 
 
-        const val PRIVACY_URL = "http://www.placepoint.ie/privacypolicy.html"
+        const val PRIVACY_URL = "https://www.placepoint.ie/privacypolicy"
 
         const val OPEN_TOWN: String = "open_town"
         const val OPEN_CAT: String = "open_cat"
@@ -117,6 +120,9 @@ class Constants {
         const val TAXI_TOWNID: String = "taxiTownId"
         const val TAXI_SUB_ID: String = "taxisubId"
         const val USERTYPE: String = "usertype"
+        const val CATEGORY_IDSUB: String = "busListCat"
+        const val MYBUSINESS_ID: String = "mybusId"
+
 
 
         fun getBus(): Bus {
@@ -669,6 +675,17 @@ class Constants {
 
             val distanceInMeters = loc1.distanceTo(loc2)
             return (distanceInMeters.toDouble() / 1000)
+        }
+
+        fun getSSlCertificate(context: Context) {
+            try {
+                ProviderInstaller.installIfNeeded(context)
+                var sslContext: SSLContext = SSLContext.getInstance("TLSv1.2")
+                sslContext.init(null, null, null)
+                sslContext.createSSLEngine()
+            } catch (e:Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

@@ -74,6 +74,8 @@ class HomePresenter(val view: HomeHelper) {
                             if (!msg.isNullOrEmpty()) {
                                 view.showMsg(msg)
                             }
+                            val category = `object`.optJSONArray("category")
+                            view.setDataToAdapter("", category.toString())
                         }
 
                     } catch (e: IOException) {

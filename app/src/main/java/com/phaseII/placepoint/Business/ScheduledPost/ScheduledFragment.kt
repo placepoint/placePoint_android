@@ -49,6 +49,7 @@ class ScheduledFragment : Fragment(), ScheduleContract {
 
     override fun onResume() {
         super.onResume()
+        Constants.getSSlCertificate(activity!!)
         Constants.getBus().register(this)
         mPresenter = SchedulePresenter(this)
 

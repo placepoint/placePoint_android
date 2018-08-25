@@ -59,7 +59,7 @@ class AddNewPresenter(val view: AddNewHelper) {
         val category = view.getCategory()
 
 
-        if (image.equals("null")) {
+        if (image.isEmpty()) {
             image_status = "false"
         } else {
             image_status = "true"
@@ -92,7 +92,7 @@ class AddNewPresenter(val view: AddNewHelper) {
                                serviceRunning: Boolean, type1: String, day: String,
                                time: String, now_status2: String, category: String) {
         view.showLoader()
-        if (img != "null") {
+        if (!img.isEmpty()) {
             file = File(img)
             if (file != null) {
                 requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file)
@@ -174,7 +174,11 @@ class AddNewPresenter(val view: AddNewHelper) {
         val day1 = view.getEditDay()
         val time1 = view.getEditTime()
         val category1 = view.getCategory()
-
+        if (image.isEmpty()) {
+            image_status = "false"
+        } else {
+            image_status = "true"
+        }
         val auth_code1 = RequestBody.create(MediaType.parse("text/plain"), auth_code)
         val title1 = RequestBody.create(MediaType.parse("text/plain"), title)
         val desc1 = RequestBody.create(MediaType.parse("text/plain"), desc)
@@ -188,7 +192,7 @@ class AddNewPresenter(val view: AddNewHelper) {
         val time = RequestBody.create(MediaType.parse("text/plain"), time1)
         val category = RequestBody.create(MediaType.parse("text/plain"), category1)
         view.showLoader()
-        if (image != "null") {
+        if (!image.isEmpty()) {
             file = File(image)
             if (file != null) {
                 requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file)

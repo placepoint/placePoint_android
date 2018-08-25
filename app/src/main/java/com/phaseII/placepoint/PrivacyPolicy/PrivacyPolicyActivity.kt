@@ -24,7 +24,7 @@ class PrivacyPolicyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_privacy_policy)
-
+        Constants.getSSlCertificate(this)
        setToolBar()
         //title="Privacy Policy"
     }

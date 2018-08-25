@@ -255,7 +255,7 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
     }
 
     override fun getCatId(): String {
-        return Constants.getPrefs(activity!!)?.getString(Constants.CATEGORY_IDS, "")!!
+        return Constants.getPrefs(activity!!)?.getString(Constants.CATEGORY_IDSUB, "")!!
     }
 
     override fun showNodata() {
@@ -268,6 +268,7 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
 
     override fun onResume() {
         super.onResume()
+        Constants.getSSlCertificate(activity!!)
         if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
             Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
 

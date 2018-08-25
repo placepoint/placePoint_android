@@ -20,6 +20,7 @@ import java.io.FileOutputStream
 import java.util.*
 import com.phaseII.placepoint.R
 import android.provider.MediaStore.Images
+import com.phaseII.placepoint.Constants
 import java.io.ByteArrayOutputStream
 
 
@@ -39,6 +40,7 @@ class CropperActivity : BaseActivity(), CropperHelper, ImageAdapter.sendDataList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cropper)
+        Constants.getSSlCertificate(this)
         mPresenter = CropperPresenter(this@CropperActivity)
         image_profile = findViewById(R.id.image_profile)
         //imageView = findViewById(R.id.imageView)

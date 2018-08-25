@@ -387,7 +387,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/bold"
             android:text="Open at 9 AM"
-            android:textAllCaps="true"
+            android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="8sp"
             android:visibility="gone" />
@@ -420,6 +420,7 @@
         app:layout_constraintTop_toBottomOf="@+id/subscriptionHeading">
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/subscriptionLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

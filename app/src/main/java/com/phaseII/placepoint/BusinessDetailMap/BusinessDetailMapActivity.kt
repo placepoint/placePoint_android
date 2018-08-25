@@ -25,6 +25,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.R
 
 class BusinessDetailMapActivity : AppCompatActivity(), OnMapReadyCallback, BusinessDetailMapHelper, GoogleApiClient.ConnectionCallbacks {
@@ -45,6 +46,7 @@ class BusinessDetailMapActivity : AppCompatActivity(), OnMapReadyCallback, Busin
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_business_detail_map)
         setToolBar()
+        Constants.getSSlCertificate(this)
         mPresenter = BusinessDetailMapPresenter(this)
         mPresenter.setMapConfiguration()
       //  mPresenter.getIntentData(intent)

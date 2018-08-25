@@ -22,10 +22,20 @@ import java.util.*
 class CategoryActivity : AppCompatActivity() , CategoryHelper {
 
     override fun saveCategories(categories: String) {
-
+        try {
+            Constants.getPrefs(this)?.edit()?.putString(Constants.CATEGORY_LIST, categories)?.apply()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun saveTowns(towns: String) {
+        try {
+            Constants.getPrefs(this)?.edit()?.putString(Constants.LOCATION_LIST, towns)?.apply()
+
+        } catch (e: Exception) {
+        }
+        mPresenter.setDataFromPrefs()
     }
 
     private lateinit var mPresenter: CategoryPresenter
@@ -42,6 +52,7 @@ class CategoryActivity : AppCompatActivity() , CategoryHelper {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.categories_fragment)
+        Constants.getSSlCertificate(this)
         setToolBar()
         initialize()
     }
@@ -78,7 +89,9 @@ class CategoryActivity : AppCompatActivity() , CategoryHelper {
     override fun onResume() {
         super.onResume()
         //if (intent.getStringExtra("from1")=="true"){
-            getCategories()
+           // getCategories()
+        Constants.getSSlCertificate(this)
+        mPresenter.runAppService()
 //        }else{
 //            mPresenter.runAppAuthService()
 //        }

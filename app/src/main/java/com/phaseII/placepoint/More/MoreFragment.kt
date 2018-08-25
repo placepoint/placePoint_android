@@ -26,7 +26,8 @@ class MoreFragment : Fragment(){
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.fragment_more, container, false)
-        init(view)
+    Constants.getSSlCertificate(activity!!)
+    init(view)
         setAdApter()
         setToolBar(view)
         return view

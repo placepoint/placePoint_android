@@ -34,7 +34,7 @@ class BusinessFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.fragment_business, container, false)
-
+        Constants.getSSlCertificate(activity!!)
         init(view)
         setToolBar(view)
 

@@ -177,6 +177,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                               savedInstanceState: Bundle?): View? {
 
         val v = inflater.inflate(R.layout.fragment_business_profile, container, false)
+        Constants.getSSlCertificate(activity!!)
         header = v.findViewById(R.id.header)
         coverTitle = v.findViewById(R.id.coverTitle)
         add_label = v.findViewById(R.id.add_label)
@@ -2213,6 +2214,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
     override fun saveBusId(busId: String?) {
         Constants.getPrefs(activity!!)?.edit()?.putString(Constants.BUSINESS_ID, busId)?.apply()
+
     }
 
     override fun setTownError(s: String) {
@@ -2257,7 +2259,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         return ""
     }
 
-    override fun setBusinessPrefilledData(data: String, end_time: String, user_type: String) {
+    override fun setBusinessPrefilledData(data: String, end_time: String, user_type: String, bid: String) {
         if (activity != null && isAdded) {
             if (end_time != "N/A") {
 
@@ -2278,6 +2280,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
             }
             Constants.getPrefs(activity!!)?.edit()?.putString(Constants.SINGLE_BUSINESS_LIST, data)?.apply()
             Constants.getPrefs(activity!!)?.edit()?.putString(Constants.USERTYPE, user_type)?.apply()
+            Constants.getPrefs(activity!!)?.edit()?.putString(Constants.MYBUSINESS_ID, bid)?.apply()
             mPresenter.setSingleBusinessPrefilledData()
         }
     }

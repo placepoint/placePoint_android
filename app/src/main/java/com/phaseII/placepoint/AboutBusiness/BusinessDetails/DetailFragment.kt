@@ -80,6 +80,8 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     private lateinit var title: TextView
     private lateinit var description: TextView
     private lateinit var distance: TextView
+    private lateinit var subscriptionHeading: TextView
+    private lateinit var subscripLay: RelativeLayout
     private lateinit var navigationImage: ImageView
     private lateinit var taxiImage: ImageView
     private lateinit var callImage: ImageView
@@ -233,11 +235,14 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
         progressBar = view.findViewById(R.id.progressBar)
         categoryText = view.findViewById(R.id.categoryText)
         constraintLayout2 = view.findViewById(R.id.constraintLayout2)
+        subscriptionHeading = view.findViewById(R.id.subscriptionHeading)
+        subscripLay = view.findViewById(R.id.subscripLay)
 
     }
 
     override fun onResume() {
         super.onResume()
+        Constants.getSSlCertificate(activity!!)
         try{
 
             Constants.getBus().register(this)
@@ -895,7 +900,14 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
                     daysListView.layoutManager = LinearLayoutManager(activity)
                     daysListView.adapter = TimeAdapter(activity!!, existdays)
                     logicForOpenCloseButton(model)
-
+val myid=Constants.getPrefs(activity!!)!!.getString(Constants.MYBUSINESS_ID,"-128")
+                    if (business_user_id==myid){
+                        subscripLay.visibility=View.VISIBLE
+                        subscriptionHeading.visibility=View.VISIBLE
+                    }else{
+                        subscripLay.visibility=View.GONE
+                        subscriptionHeading.visibility=View.GONE
+                    }
 
                     /* fun getDayTimeModel(time: String) : DayModel{
                          var model = DayModel()

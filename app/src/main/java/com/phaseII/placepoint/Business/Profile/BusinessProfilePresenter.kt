@@ -680,7 +680,12 @@ class BusinessProfilePresenter(var view: BusinessProfileHelper) {
                             data = `object`.optJSONArray("data")
                             val end_time = `object`.optString("end_time")
                             val user_type = `object`.optString("user_type")
-                            view.setBusinessPrefilledData(data.toString(), end_time, user_type)
+                            var business_id=""
+                            for(i in 0 until data!!.length()){
+                                var objcd=data!!.optJSONObject(i)
+                                 business_id = objcd.optString("business_user_id")
+                            }
+                            view.setBusinessPrefilledData(data.toString(), end_time, user_type,business_id)
                         } else if (status == "false") {
 
                             if (res.contains("action")) {

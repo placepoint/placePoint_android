@@ -1,5 +1,6 @@
 package com.phaseII.placepoint.Payment
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Color
@@ -41,6 +42,7 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
+        Constants.getSSlCertificate(this)
         amountToPayed = findViewById(R.id.amountToPayed)
         mPresenter = PaymentPresenter(this)
         setToolBar()
@@ -107,6 +109,7 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setToolBar() {
         toolbar = findViewById(R.id.toolbar)
         mTitle = toolbar.findViewById(R.id.toolbar_title)
@@ -122,7 +125,7 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
         return super.onOptionsItemSelected(item)
     }
 
-    fun sendData(cardNumber: String, name: String, expiry: String, cvv: String) {
+    private fun sendData(cardNumber: String, name: String, expiry: String, cvv: String) {
         val result: List<String> = expiry.split("/").map { it.trim() }
         progressBar.visibility = View.VISIBLE
         val stripe = Stripe(this, Constants.STRIPE_KEY)
@@ -179,7 +182,7 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
         Constants.getPrefs(this@PaymentActivity)?.edit()?.putBoolean(Constants.LOGGED, true)?.apply()
         Constants.getPrefs(this@PaymentActivity)?.edit()?.putString(Constants.LOGGED_IN, "true")?.apply()
         Toast.makeText(this@PaymentActivity, "Registration Successful", Toast.LENGTH_SHORT).show()
-        Constants.getPrefs(this@PaymentActivity)?.edit()!!.putString(Constants.MAIN_CATEGORY, category).apply()
+        Constants.getPrefs(this@PaymentActivity)?.edit()?.putString(Constants.MAIN_CATEGORY, category)?.apply()
 
 
         Constants.getPrefs(this)?.edit()?.putString("firstTime", "login")?.apply()

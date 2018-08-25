@@ -15,6 +15,7 @@ class ForgotPasswordActivity : AppCompatActivity(), ForgotPasswordView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_password)
+        Constants.getSSlCertificate(this)
         mPresenter=ForgotPasswordPresenter(this)
         submitButton.setOnClickListener{
             val authcode= Constants.getPrefs(this)!!.getString(Constants.AUTH_CODE,"")

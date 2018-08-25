@@ -16,7 +16,7 @@ class SplashActivity : Activity() {
         var i: Intent
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-
+        Constants.getSSlCertificate(this)
         Handler().postDelayed({
             val loggedIn = Constants.getPrefs(this@SplashActivity)?.getBoolean(Constants.LOGGED, false)
             if (loggedIn!!) {

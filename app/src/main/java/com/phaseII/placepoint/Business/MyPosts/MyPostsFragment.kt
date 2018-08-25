@@ -37,6 +37,7 @@ class MyPostsFragment : Fragment(), MyTimelineHelper {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_my_timeline, container, false)
+        Constants.getSSlCertificate(activity!!)
         mPresenter = MyTimelinePresenter(this)
         upgrade = v.findViewById(R.id.upgrade)
         noPosts = v.findViewById(R.id.noPosts)
