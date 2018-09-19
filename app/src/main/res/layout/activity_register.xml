@@ -46,399 +46,445 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/label" />
 
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/registerL"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/register"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
-
-
-        <ImageView
-            android:id="@+id/iv_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_email"
-            app:layout_constraintBottom_toBottomOf="@+id/email_layout"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/email_layout" />
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/email_layout"
-            android:layout_width="0dp"
-            android:layout_height="49dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
-            app:layout_constraintBottom_toTopOf="@+id/password_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/iv_email"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <EditText
-                android:id="@+id/emailId"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:backgroundTint="@color/view_light"
-                android:hint="@string/prompt_email"
-                android:imeOptions="actionNext"
-                android:inputType="textEmailAddress"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-
-        </android.support.design.widget.TextInputLayout>
-
-        <ImageView
-            android:id="@+id/iv_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_password"
-            app:layout_constraintBottom_toBottomOf="@+id/password_layout"
-            app:layout_constraintEnd_toStartOf="@+id/password_layout"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/password_layout" />
-
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/password_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
-            app:layout_constraintEnd_toEndOf="@+id/email_layout"
-            app:layout_constraintStart_toStartOf="@+id/email_layout"
-            app:layout_constraintTop_toBottomOf="@+id/email_layout">
-
-            <EditText
-                android:id="@+id/pass"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:backgroundTint="@color/view_light"
-                android:hint="@string/prompt_password"
-                android:imeOptions="actionNext"
-                android:inputType="textPassword"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-
-        </android.support.design.widget.TextInputLayout>
-
-
-        <ImageView
-            android:id="@+id/iv_bname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_business_card"
-            app:layout_constraintBottom_toBottomOf="@+id/bname_layout"
-            app:layout_constraintEnd_toStartOf="@+id/bname_layout"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/bname_layout" />
-
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/bname_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
-            app:layout_constraintEnd_toEndOf="@+id/password_layout"
-            app:layout_constraintStart_toStartOf="@+id/password_layout"
-            app:layout_constraintTop_toBottomOf="@+id/password_layout">
-
-            <EditText
-                android:id="@+id/bus_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:backgroundTint="@color/view_light"
-                android:hint="@string/bus_name"
-                android:imeOptions="actionDone"
-                android:inputType="text"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-
-        </android.support.design.widget.TextInputLayout>
-
-        <ImageView
-            android:id="@+id/iv_bloaction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:src="@drawable/ic_location_white"
-            app:layout_constraintBottom_toBottomOf="@+id/bus_loc"
-            app:layout_constraintEnd_toStartOf="@+id/loc_label"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/loc_label" />
-
-        <TextView
-            android:id="@+id/loc_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:fontFamily="@font/bold"
-            android:padding="4dp"
-            android:text="@string/bus_location"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/bname_layout"
-            app:layout_constraintStart_toStartOf="@+id/bname_layout"
-            app:layout_constraintTop_toBottomOf="@+id/bname_layout" />
-
-        <TextView
-            android:id="@+id/bus_loc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:drawableEnd="@drawable/ic_arrow_down"
-            android:drawableRight="@drawable/ic_arrow_down"
-            android:fontFamily="@font/bold"
-            android:padding="4dp"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/bname_layout"
-            app:layout_constraintStart_toStartOf="@+id/loc_label"
-            app:layout_constraintTop_toBottomOf="@+id/loc_label" />
-
-        <View
-            android:id="@+id/view4"
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:layout_marginStart="32dp"
-            android:background="@color/view_light"
-            app:layout_constraintEnd_toEndOf="@+id/bname_layout"
-            app:layout_constraintStart_toStartOf="@+id/bname_layout"
-            app:layout_constraintTop_toBottomOf="@+id/bus_loc" />
-
-        <ImageView
-            android:id="@+id/iv_bcat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:src="@drawable/ic_bus_cat"
-            app:layout_constraintBottom_toBottomOf="@+id/bus_cat"
-            app:layout_constraintEnd_toStartOf="@+id/cat_label"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/cat_label" />
-
-        <TextView
-            android:id="@+id/cat_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/bold"
-            android:padding="4dp"
-            android:text="@string/business_category"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/bus_loc"
-            app:layout_constraintStart_toStartOf="@+id/bus_loc"
-            app:layout_constraintTop_toBottomOf="@+id/bus_loc" />
-
-
-        <TextView
-            android:id="@+id/bus_cat"
-            android:layout_width="0dp"
-            android:layout_height="28dp"
-            android:drawableEnd="@drawable/ic_arrow_down"
-            android:drawableRight="@drawable/ic_arrow_down"
-            android:fontFamily="@font/bold"
-            android:imeOptions="actionDone"
-            android:inputType="text"
-            android:padding="4dp"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/cat_label"
-            app:layout_constraintStart_toStartOf="@+id/cat_label"
-            app:layout_constraintTop_toBottomOf="@+id/cat_label" />
-
-
-        <View
-            android:id="@+id/view5"
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:layout_marginStart="32dp"
-            android:background="@color/view_light"
-            app:layout_constraintEnd_toEndOf="@+id/bname_layout"
-            app:layout_constraintStart_toStartOf="@+id/bname_layout"
-            app:layout_constraintTop_toBottomOf="@+id/bus_cat" />
-
-        <TextView
-android:visibility="gone"
-            android:id="@+id/overLay"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/blur"
-            android:clickable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-    </android.support.constraint.ConstraintLayout>
-
-    <Button
-        android:id="@+id/register"
-        style="?android:textAppearanceSmall"
-        android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginStart="24dp"
-        android:background="@drawable/btn_theme_shape"
-        android:text="@string/register"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:visibility="gone"
-        android:id="@+id/NoAccount"
-        android:layout_width="wrap_content"
-        android:layout_height="18dp"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/bold"
-        android:text="Already Member ?"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/loginBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:visibility="gone"
-        android:id="@+id/loginBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/bold"
-        android:text="@string/action_sign_in"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/register"
-        app:layout_constraintVertical_bias="0.72" />
-
-    <LinearLayout
-
-        android:gravity="center"
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/registerL"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/label">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/bold"
-            android:drawableRight="@drawable/ic_arrow_down"
-            android:text="Select Subscription Plan*"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-
-      <TextView
-          android:id="@+id/choosedPlan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/bold"
-            android:text=""
-            android:textColor="@color/white"
-            android:textSize="16sp" />
-
-        <RadioGroup
-            android:id="@+id/radioGroup"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/layInside"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:layout_height="match_parent">
 
-            <RadioButton
-                android:id="@+id/free"
+
+            <LinearLayout
+
+                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:buttonTint="@color/white"
-                android:text="Free"
-                android:textColor="@color/white" />
+                android:layout_height="wrap_content"
 
-            <RadioButton
-                android:id="@+id/standard"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:drawableRight="@drawable/ic_arrow_down"
+                    android:fontFamily="@font/bold"
+                    android:text="Select Subscription Plan*"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/choosedPlan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/bold"
+                    android:text=""
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <RadioButton
+                        android:id="@+id/free"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:buttonTint="@color/white"
+                        android:text="Free"
+                        android:textColor="@color/white" />
+
+                    <RadioButton
+                        android:id="@+id/standard"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:buttonTint="@color/white"
+                        android:text="Standard 100/month"
+                        android:textColor="@color/white" />
+
+                    <RadioButton
+                        android:id="@+id/premium"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:buttonTint="@color/white"
+                        android:text="Premium 150/month"
+                        android:textColor="@color/white" />
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <android.support.design.widget.TextInputLayout
+
+                android:id="@+id/coupon_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+                app:layout_constraintEnd_toEndOf="@+id/linearLayout"
+                app:layout_constraintStart_toStartOf="@+id/linearLayout"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+                <EditText
+                    android:id="@+id/couponId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/view_light"
+                    android:gravity="center"
+                    android:hint="@string/prompt_coupon"
+                    android:imeOptions="actionDone"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/registerL"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:buttonTint="@color/white"
-                android:text="Standard 100/month"
-                android:textColor="@color/white" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/register"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/coupon_layout">
 
-            <RadioButton
-                android:id="@+id/premium"
+
+                <ImageView
+                    android:id="@+id/iv_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_email"
+                    app:layout_constraintBottom_toBottomOf="@+id/email_layout"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/email_layout" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/email_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+                    app:layout_constraintBottom_toTopOf="@+id/password_layout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/iv_email"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <EditText
+                        android:id="@+id/emailId"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginStart="8dp"
+                        android:backgroundTint="@color/view_light"
+                        android:hint="@string/prompt_email"
+                        android:imeOptions="actionNext"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <ImageView
+                    android:id="@+id/iv_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_password"
+                    app:layout_constraintBottom_toBottomOf="@+id/password_layout"
+                    app:layout_constraintEnd_toStartOf="@+id/password_layout"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/password_layout" />
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/password_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+                    app:layout_constraintEnd_toEndOf="@+id/email_layout"
+                    app:layout_constraintStart_toStartOf="@+id/email_layout"
+                    app:layout_constraintTop_toBottomOf="@+id/email_layout">
+
+                    <EditText
+                        android:id="@+id/pass"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginStart="8dp"
+                        android:backgroundTint="@color/view_light"
+                        android:hint="@string/prompt_password"
+                        android:imeOptions="actionNext"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+
+                <ImageView
+                    android:id="@+id/iv_bname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_business_card"
+                    app:layout_constraintBottom_toBottomOf="@+id/bname_layout"
+                    app:layout_constraintEnd_toStartOf="@+id/bname_layout"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/bname_layout" />
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/bname_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+                    app:layout_constraintEnd_toEndOf="@+id/password_layout"
+                    app:layout_constraintStart_toStartOf="@+id/password_layout"
+                    app:layout_constraintTop_toBottomOf="@+id/password_layout">
+
+                    <EditText
+                        android:id="@+id/bus_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginStart="8dp"
+                        android:backgroundTint="@color/view_light"
+                        android:hint="@string/bus_name"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <ImageView
+                    android:id="@+id/iv_bloaction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/ic_location_white"
+                    app:layout_constraintBottom_toBottomOf="@+id/bus_loc"
+                    app:layout_constraintEnd_toStartOf="@+id/loc_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/loc_label" />
+
+                <TextView
+                    android:id="@+id/loc_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/bold"
+                    android:padding="4dp"
+                    android:text="@string/bus_location"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="@+id/bname_layout"
+                    app:layout_constraintStart_toStartOf="@+id/bname_layout"
+                    app:layout_constraintTop_toBottomOf="@+id/bname_layout" />
+
+                <TextView
+                    android:id="@+id/bus_loc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_arrow_down"
+                    android:drawableRight="@drawable/ic_arrow_down"
+                    android:fontFamily="@font/bold"
+                    android:padding="4dp"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="@+id/bname_layout"
+                    app:layout_constraintStart_toStartOf="@+id/loc_label"
+                    app:layout_constraintTop_toBottomOf="@+id/loc_label" />
+
+                <View
+                    android:id="@+id/view4"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    android:layout_marginStart="32dp"
+                    android:background="@color/view_light"
+                    app:layout_constraintEnd_toEndOf="@+id/bname_layout"
+                    app:layout_constraintStart_toStartOf="@+id/bname_layout"
+                    app:layout_constraintTop_toBottomOf="@+id/bus_loc" />
+
+                <ImageView
+                    android:id="@+id/iv_bcat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/ic_bus_cat"
+                    app:layout_constraintBottom_toBottomOf="@+id/bus_cat"
+                    app:layout_constraintEnd_toStartOf="@+id/cat_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/cat_label" />
+
+                <TextView
+                    android:id="@+id/cat_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/bold"
+                    android:padding="4dp"
+                    android:text="@string/business_category"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="@+id/bus_loc"
+                    app:layout_constraintStart_toStartOf="@+id/bus_loc"
+                    app:layout_constraintTop_toBottomOf="@+id/bus_loc" />
+
+
+                <TextView
+                    android:id="@+id/bus_cat"
+                    android:layout_width="0dp"
+                    android:layout_height="28dp"
+                    android:drawableEnd="@drawable/ic_arrow_down"
+                    android:drawableRight="@drawable/ic_arrow_down"
+                    android:fontFamily="@font/bold"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:padding="4dp"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/cat_label"
+                    app:layout_constraintStart_toStartOf="@+id/cat_label"
+                    app:layout_constraintTop_toBottomOf="@+id/cat_label" />
+
+
+                <View
+                    android:id="@+id/view5"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    android:layout_marginStart="32dp"
+                    android:background="@color/view_light"
+                    app:layout_constraintEnd_toEndOf="@+id/bname_layout"
+                    app:layout_constraintStart_toStartOf="@+id/bname_layout"
+                    app:layout_constraintTop_toBottomOf="@+id/bus_cat" />
+
+                <TextView
+                    android:id="@+id/overLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/blur"
+                    android:clickable="true"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+            <Button
+                android:id="@+id/register"
+                style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:buttonTint="@color/white"
-                android:text="Premium 150/month"
-                android:textColor="@color/white" />
-        </RadioGroup>
+                android:layout_height="38dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginStart="24dp"
+                android:background="@drawable/btn_theme_shape"
+                android:text="@string/register"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/NoAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/bold"
+                android:text="Already Member ?"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/loginBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/loginBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/bold"
+                android:text="@string/action_sign_in"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/register"
+                app:layout_constraintVertical_bias="0.72" />
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

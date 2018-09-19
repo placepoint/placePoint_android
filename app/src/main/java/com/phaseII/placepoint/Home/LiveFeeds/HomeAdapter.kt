@@ -23,6 +23,8 @@ import com.phaseII.placepoint.Home.ModelHome
 import com.phaseII.placepoint.R
 import kotlinx.android.synthetic.main.main_item.view.*
 import android.support.v7.app.AlertDialog
+import android.webkit.URLUtil
+import java.util.regex.Pattern
 
 
 class HomeAdapter(private val context: Context, private val list: ArrayList<ModelHome>) : RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
@@ -45,7 +47,7 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
         holder.itemView.postText.text = modelData.description
         holder.itemView.dateTime.text = Constants.getDate(modelData.updated_at)
         if (!list[position].video_link.trim().isEmpty()){
-            holder.itemView.videoUrl.visibility=View.VISIBLE
+            holder.itemView.videoUrl.visibility=View.GONE
             holder.itemView.videoUrl.text=Html.fromHtml("<u>"+list[position].video_link+"</u>")
 
         }else{
@@ -102,11 +104,50 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
                         .into(holder.postImage)
             }
 
+            if (modelData.video_link.equals("")) {
+                holder.itemView.videoLayout.visibility = View.GONE
+            } else {
+                holder.itemView.videoLayout.visibility = View.VISIBLE
+                var videoId = extractYoutubeVideoId(modelData.video_link)
+                Glide.with(context)
+                        .load("https://img.youtube.com/vi/" + videoId + "/0.jpg")
+                        .apply(RequestOptions()
+
+                                .placeholder(R.mipmap.placeholder))
+                        .into(holder.videoImage)
+            }
+            holder.itemView.videoLayout.setOnClickListener {
+                var text = holder.itemView.videoUrl.text.toString()
+                if (URLUtil.isValidUrl(text)) {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(modelData.video_link)))
+                    // startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=cxLG2wtE7TM")))
+                }
+
+//            val intent = Intent(context, VideoLinkPlayerActivity::class.java)
+//            intent.putExtra("link",modelData.video_link)
+//            context.startActivity(intent)
+            }
+
         }
    }
+    fun extractYoutubeVideoId(ytUrl: String): String {
 
+        var vId: String = ""
+
+        // var pattern: String = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*"
+        var pattern: String = "(?<=watch\\?v=|/videos/|embed\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|embed%\u200C\u200B2F|youtu.be%2F|%2Fv%2F)[^#\\&\\?\\n]*"
+
+        var compiledPattern = Pattern.compile( pattern)
+        var matcher = compiledPattern.matcher(ytUrl)
+
+        if (matcher.find()) {
+            vId = matcher.group()
+        }
+        return vId
+    }
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
        val postImage=itemView.findViewById<ImageView>(R.id.postImage)
+       val videoImage=itemView.findViewById<ImageView>(R.id.videoImage)
     }
 
     private fun setClipboard(context: Context, text: String, modelData: ModelHome) {

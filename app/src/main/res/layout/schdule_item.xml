@@ -30,6 +30,7 @@
         android:layout_marginStart="8dp"
         android:padding="8dp"
         android:text="TextView"
+        android:textColor="@color/colorText"
         app:layout_constraintBottom_toBottomOf="@+id/imageItem"
         app:layout_constraintEnd_toStartOf="@+id/imageView3"
         app:layout_constraintStart_toEndOf="@+id/imageItem"

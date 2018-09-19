@@ -27,7 +27,7 @@ class ScheduleAdapter(var context:Context,var list:List<ModelSchdule>) : Recycle
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         var model=list[position]
         try{
-            Picasso.with(context).load(model.image_url).into(holder.itemView.imageItem)
+            Picasso.with(context).load(model.image_url).fit().into(holder.itemView.imageItem)
         }catch (e:Exception){
             e.printStackTrace()
         }

@@ -101,12 +101,13 @@ class LoginActivity : AppCompatActivity(), LoginHelper {
 //        val resultIntent = Intent()
 //      //  resultIntent.putExtra("some_key", "String data")
 //        setResult(Activity.RESULT_OK, resultIntent)
-//
+        Constants.getPrefs(this)!!.edit().putString("showHomeBackButton", "no").apply()
         Constants.getPrefs(this)?.edit()?.putBoolean(Constants.LOGIN, true)?.apply()
         Constants.getPrefs(this)?.edit()?.putString("firstTime", "login")?.apply()
         Constants.getPrefs(this)?.edit()?.putString("registers", "yes")?.apply()
         val intent = Intent(this, DashBoardActivity::class.java)
         intent.putExtra("goto", "businessProfile")
+
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
        // finish()

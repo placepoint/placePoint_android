@@ -88,13 +88,10 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
             currentLatitude = tracker.getLatitude()
             currentLongitude = tracker.getLongitude()
         }
-        if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
-            Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
+       Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
 
-            mPresenter.prepareBusinessData("TaxiRelatedData")
-        }else{
             mPresenter.prepareBusinessData("catRelatedData")
-        }
+
 
         return view
     }
@@ -118,7 +115,7 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
     }
 
     override fun setDataToAdapter(data: String, cat: Int, parent_category_name: String, relatedTo: String) {
-
+        Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
         try {
             saveBusinessData(data)
             val list1 = Constants.getbusinessData(data)
@@ -171,7 +168,8 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
                         Constants.getBus().post(SeTaxitTitleEvent("Taxi"))
                         // Constants.getPrefs(activity!!)!!.edit().putString("idtitle",parent_category_name+" in "+Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME,""))
 
-                    } else {
+                    }
+                    else {
                         taxiList.visibility = View.GONE
                         businessList.visibility = View.VISIBLE
                         var modell = TitleModel()
@@ -205,18 +203,53 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
 //                    freeList.adapter = FreeListingAdapter(this.activity!!, list44)
 //                }
 
-                } else {
-                    var modell = TitleModel()
-                    if (cat == 1) {
-                        modell.name = parent_category_name
-                        modell.status = "1"
-                    } else {
-                        modell.name = "All"
-                        modell.status = "0"
+                }
+                else {
+
+                    if (relatedTo == "TaxiRelatedData") {
+                        noData.visibility = View.VISIBLE
+                        taxiList.visibility = View.VISIBLE
+                        businessList.visibility = View.GONE
+                        Constants.getBus().register(this)
+                        var permission = Constants.getPrefs(activity!!)!!.getString("permission", "")
+                        if (permission.isEmpty() || permission == "no") {
+                            if (Build.VERSION.SDK_INT >= 23 &&
+                                    ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(activity!!, arrayOf(
+                                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                                ), 10)
+                            }
+                        }
+//                        taxiList.layoutManager = LinearLayoutManager(this.activity!!) as RecyclerView.LayoutManager?
+//                        taxiList.adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, currentLatitude, currentLongitude)
+
+                        var modell = TitleModel()
+
+                        if (cat == 1) {
+                            modell.name = "Taxis"
+                            modell.status = "1"
+                        } else {
+                            modell.name = "Taxis"
+                            modell.status = "0"
+                        }
+
+                        Constants.getBus().post(SeTaxitTitleEvent("Taxi"))
+                        // Constants.getPrefs(activity!!)!!.edit().putString("idtitle",parent_category_name+" in "+Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME,""))
+
+                    }else {
+
+                        var modell = TitleModel()
+                        if (cat == 1) {
+                            modell.name = parent_category_name
+                            modell.status = "1"
+                        } else {
+                            modell.name = "All"
+                            modell.status = "0"
+                        }
+                        Constants.getBus().post(SetTitleEvent(modell))
+                        Constants.getPrefs(activity!!)!!.edit().putString("idtitle", "All " + parent_category_name + " in " + Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME, ""))
+                        noData.visibility = View.VISIBLE
                     }
-                    Constants.getBus().post(SetTitleEvent(modell))
-                    Constants.getPrefs(activity!!)!!.edit().putString("idtitle", "All " + parent_category_name + " in " + Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME, ""))
-                    noData.visibility = View.VISIBLE
                 }
             }
 
@@ -270,15 +303,20 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
         super.onResume()
         Constants.getSSlCertificate(activity!!)
         if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
-            Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
+          //  Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
 
             mPresenter.prepareBusinessData("TaxiRelatedData")
         }
+//        if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
+//            Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
+//
+//            mPresenter.prepareBusinessData("TaxiRelatedData")
+//        }
 
         try {
             Constants.getBus().register(this)
         }catch (e:Exception){
-e.printStackTrace()
+            e.printStackTrace()
         }
         if (ActivityCompat.checkSelfPermission(activity!!,
                         Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -299,7 +337,13 @@ e.printStackTrace()
 //        }else {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Constants.getPrefs(activity!!)!!.edit().putString("permission", "yes").apply()
-                mPresenter.prepareBusinessData("catRelatedData")
+//                if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
+//                     Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
+//
+//                    mPresenter.prepareBusinessData("TaxiRelatedData")
+//                }else{
+//                    mPresenter.prepareBusinessData("catRelatedData")
+//                }
             } else {
                 Constants.getPrefs(activity!!)!!.edit().putString("permission", "no").apply()
             }

@@ -174,11 +174,28 @@ class AddNewPresenter(val view: AddNewHelper) {
         val day1 = view.getEditDay()
         val time1 = view.getEditTime()
         val category1 = view.getCategory()
+        val imageStatus:String=view.getImageChanged()
         if (image.isEmpty()) {
             image_status = "false"
         } else {
             image_status = "true"
         }
+        if (imageStatus=="true"){
+            image_status="true"
+        }
+        if (!type1.isEmpty()) {
+            if (day1.isEmpty()) {
+                view.showError("You cannot left scheduling option empty")
+                return
+
+            }else{
+                if (time1.isEmpty()) {
+                    view.showError("You cannot left scheduling time empty")
+                    return
+                }
+            }
+        }
+
         val auth_code1 = RequestBody.create(MediaType.parse("text/plain"), auth_code)
         val title1 = RequestBody.create(MediaType.parse("text/plain"), title)
         val desc1 = RequestBody.create(MediaType.parse("text/plain"), desc)

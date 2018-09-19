@@ -124,6 +124,7 @@ class AddPostFragment : Fragment(), AddNewHelper
     var checkedItem1 = -1
     var checkedItem2 = -1
     private var postID: String = "0"
+    private var imagestatus: String = "false"
 
     private lateinit var editTime: String
     private lateinit var editDay: String
@@ -190,6 +191,7 @@ class AddPostFragment : Fragment(), AddNewHelper
             mPresenter.openGallery()
         }
         cancel.setOnClickListener {
+            imagestatus="true"
             if (listFromCropper != null && listFromCropper!!.size > 0) {
                 for (i in listFromCropper!!) {
                     listFromCropper!!.remove(i)
@@ -205,6 +207,10 @@ class AddPostFragment : Fragment(), AddNewHelper
         if (s != null) {
             profileText.text = s
         }
+        editText.setOnClickListener{
+            editText.isFocusableInTouchMode = true
+            editText.isFocusable = true
+        }
 
         selectCategory.setOnClickListener {
             val intent = Intent(activity!!, MultipleCategories::class.java)
@@ -215,6 +221,8 @@ class AddPostFragment : Fragment(), AddNewHelper
             editDay = ""
             editType = ""
             editTime = ""
+            editText.isFocusableInTouchMode = false
+            editText.isFocusable = false
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_DAY).apply()
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_TIME).apply()
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_NOW_STATUS).apply()
@@ -341,14 +349,15 @@ class AddPostFragment : Fragment(), AddNewHelper
             editTime = ""
             editDay = ""
             editType = ""
-
+          //
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_TYPE).apply()
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_DAY).apply()
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_TIME).apply()
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_NOW_STATUS).apply()
 
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.CATEGORY_NAMES_ADDPOST).apply()
-
+            youtubeField.setText("")
+            youtubeField.visibility=View.GONE
             croppedImage.visibility=View.GONE
             cancel.visibility=View.GONE
             //Picasso.with(activity!!).load("cc").into(croppedImage)
@@ -970,6 +979,7 @@ class AddPostFragment : Fragment(), AddNewHelper
                     listFromCropper!!.add(Uri.parse(url))
                     croppedImage.visibility = View.VISIBLE
                     cancel.visibility = View.VISIBLE
+
                     Glide.with(activity!!)
                             .load(url)
                             .into(croppedImage)
@@ -984,6 +994,7 @@ class AddPostFragment : Fragment(), AddNewHelper
                                     .into(croppedImage)
                         }
                     }
+                imagestatus="true"
                 var h = croppedImage.height
                 var w = croppedImage.width
 //                if (h>200){
@@ -1067,7 +1078,6 @@ class AddPostFragment : Fragment(), AddNewHelper
             return ur
         } catch (e: Exception) {
             e.printStackTrace()
-
         }
         return ""
     }
@@ -1085,7 +1095,13 @@ class AddPostFragment : Fragment(), AddNewHelper
     }
 
     override fun showNetworkError(resId: Int) {
-        Toast.makeText(activity!!, getString(resId), Toast.LENGTH_SHORT).show()
+        if(activity!=null) {
+            try {
+                Toast.makeText(activity!!, getString(resId), Toast.LENGTH_SHORT).show()
+            }catch (e:Exception){
+
+            }
+        }
     }
 
     override fun showMessage(msg: String?) {
@@ -1264,7 +1280,12 @@ class AddPostFragment : Fragment(), AddNewHelper
             cancel.visibility=View.GONE
         }
         if (event.value.video_link.isEmpty()) {
+            youtubeField.setText("")
+            youtubeField.visibility=View.GONE
+        }else{
+            youtubeField.visibility=View.VISIBLE
             youtubeField.setText(event.value.video_link)
+
         }
 
         // if (!event.value.type.isEmpty()) {
@@ -1376,6 +1397,10 @@ class AddPostFragment : Fragment(), AddNewHelper
 
     override fun getEditType(): String {
         return editType
+    }
+
+    override fun getImageChanged(): String {
+        return imagestatus
     }
 }
 

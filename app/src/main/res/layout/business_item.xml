@@ -122,22 +122,22 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:src="@drawable/ic_navigation"
-                app:layout_constraintBottom_toBottomOf="@+id/taxiImage"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/taxiImage" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
 
                 android:id="@+id/taxiImage"
                 android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_height="39dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_toLeftOf="@+id/navigationImage"
                 android:src="@drawable/ic_taxi"
-                app:layout_constraintBottom_toBottomOf="@+id/callImage"
+                app:layout_constraintBottom_toBottomOf="@+id/navigationImage"
                 app:layout_constraintEnd_toStartOf="@+id/navigationImage"
-                app:layout_constraintTop_toTopOf="@+id/callImage" />
+                app:layout_constraintTop_toTopOf="@+id/navigationImage" />
 
             <ImageView
 
@@ -148,9 +148,9 @@
                 android:layout_marginRight="16dp"
                 android:layout_toLeftOf="@+id/taxiImage"
                 android:src="@drawable/ic_call"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/taxiImage"
                 app:layout_constraintEnd_toStartOf="@+id/taxiImage"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/taxiImage" />
 
             <TextView
                 android:id="@+id/distance"
@@ -194,14 +194,68 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/roundcorners"
-
+            android:background="@drawable/roundlight"
             android:orientation="vertical"
             android:padding="1dp">
 
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout4"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:background="@color/white"
+                app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+
+                    android:id="@+id/freeTaxi"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_toLeftOf="@+id/navigationImage"
+                    android:src="@drawable/ic_taxi"
+                    app:layout_constraintBottom_toBottomOf="@+id/freenavigationImage"
+                    app:layout_constraintEnd_toStartOf="@+id/freenavigationImage"
+                    app:layout_constraintTop_toTopOf="@+id/freenavigationImage"
+                    tools:ignore="NotSibling" />
+
+                <ImageView
+                    android:background="@drawable/fullround"
+                    android:id="@+id/freenavigationImage"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_navigation"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/freeCall"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/ic_call"
+                    app:layout_constraintBottom_toBottomOf="@+id/freeTaxi"
+                    app:layout_constraintEnd_toStartOf="@+id/freeTaxi"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/freeTaxi" />
+
+            </android.support.constraint.ConstraintLayout>
+
             <TextView
                 android:id="@+id/title1"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:drawableLeft="@drawable/ic_location_listing"
@@ -211,7 +265,7 @@
                 android:text="title"
                 android:textAllCaps="true"
                 android:textColor="@color/colorPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/constraintLayout4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -273,43 +327,27 @@
             </LinearLayout>
 
             <android.support.constraint.ConstraintLayout
-                android:layout_width="0dp"
+                android:id="@+id/constraintLayout3"
 
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/title1"
-                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/title1"
                 app:layout_constraintTop_toBottomOf="@+id/title1">
-
-                <ImageView
-                    android:id="@+id/freeCall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    android:src="@drawable/ic_call"
-                    app:layout_constraintBottom_toBottomOf="@+id/phoneNo"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/phoneNo" />
 
                 <TextView
                     android:id="@+id/phoneNo"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/address"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
                     android:fontFamily="@font/regular"
                     android:text="+90909090"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/freeCall"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/address"
+                    app:layout_constraintStart_toStartOf="@+id/address"
                     app:layout_constraintTop_toBottomOf="@+id/address" />
 
                 <TextView
@@ -327,8 +365,49 @@
                     android:text="address"
                     android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/freeImage"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <com.phaseII.placepoint.RoundedCornerImageView
+                    android:id="@+id/freeImage"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/roundlight"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/placeholder"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+
+                <!--<ImageView-->
+                <!---->
+                <!--android:id="@+id/freeImage"-->
+                <!--android:layout_height="60dp"-->
+                <!--android:layout_width="60dp"-->
+                <!--android:src="@mipmap/placeholder"-->
+                <!--android:scaleType="centerCrop"-->
+                <!--android:layout_margin="8dp"-->
+                <!---->
+                <!--app:srcCompat="@mipmap/placeholder" />-->
+                <!--<ImageView-->
+                <!--android:background="@drawable/roundcorners"-->
+                <!--android:id="@+id/freeImage"-->
+                <!--android:layout_width="60dp"-->
+                <!--android:layout_height="60dp"-->
+                <!--android:layout_marginBottom="16dp"-->
+                <!--android:layout_marginLeft="16dp"-->
+                <!--android:layout_marginStart="16dp"-->
+                <!--android:layout_marginTop="16dp"-->
+                <!--app:layout_constraintBottom_toBottomOf="parent"-->
+                <!--app:layout_constraintStart_toStartOf="parent"-->
+                <!--app:layout_constraintTop_toTopOf="parent"-->
+                <!--app:srcCompat="@android:drawable/btn_star_big_on" />-->
             </android.support.constraint.ConstraintLayout>
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>

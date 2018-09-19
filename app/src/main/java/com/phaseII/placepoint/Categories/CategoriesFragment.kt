@@ -66,7 +66,12 @@ class CategoriesFragment : Fragment(), CategoryHelper {
             var inSubCategory = Constants.getPrefs(activity!!)!!.getString("subcategory", "0");
             if (inSubCategory == "0") {
                 mTitle.text = "Categories " + " (" + Constants.getPrefs(activity!!)?.getString(Constants.TOWN_NAME, "") + ")"
-                back.visibility = View.GONE
+//                val catListingPage = Constants.getPrefs(this.activity!!)?.getString("catListingPage", "no")
+//                if(catListingPage=="yes"){
+//                    back.visibility = View.VISIBLE
+//                }else{
+                    back.visibility = View.GONE
+//                }
             }else{
                 mTitle.text = Constants.getPrefs(activity!!)!!.getString("MainCatName", "") + " " + " (" + Constants.getPrefs(activity!!)?.getString(Constants.TOWN_NAME, "") + ")"
                 back.visibility = View.VISIBLE
@@ -103,11 +108,11 @@ class CategoriesFragment : Fragment(), CategoryHelper {
         //mPresenter.setDataFromPrefs()
 
         var inSubCategory = Constants.getPrefs(activity!!)!!.getString("subcategory", "0");
-        if (inSubCategory == "0") {
+        //if (inSubCategory == "0") {
             mPresenter.runAppService()
-        } else {
+//        } else {
             mPresenter.setDataFromPrefs()
-        }
+//        }
 //        if (Constants.getPrefs(activity!!)!!.getString("getAuthCode", "") == "yes") {
 //            if (!isRunning) {
 //                isRunning = true
@@ -297,7 +302,7 @@ class CategoriesFragment : Fragment(), CategoryHelper {
 
         } catch (e: Exception) {
         }
-        mPresenter.setDataFromPrefs()
+
     }
 
     override fun getSelectedList(): String {

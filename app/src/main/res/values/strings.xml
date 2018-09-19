@@ -78,4 +78,5 @@
     <string name="standardText">    Standard   \u20ac 100/year</string>
     <string name="premiumText">    Premium   \u20ac 150/year</string>
     <string name="freePlan">Free   \u20ac 0/year</string>
+    <string name="prompt_coupon">Enter Coupon</string>
 </resources>

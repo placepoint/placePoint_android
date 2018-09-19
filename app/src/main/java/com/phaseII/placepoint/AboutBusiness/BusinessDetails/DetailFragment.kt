@@ -45,7 +45,6 @@ import com.phaseII.placepoint.R
 import com.phaseII.placepoint.Town.ModelTown
 import kotlinx.android.synthetic.main.about_business_scroll.*
 import kotlinx.android.synthetic.main.business_description.*
-import kotlinx.android.synthetic.main.business_item.view.*
 import kotlinx.android.synthetic.main.day_layout.*
 import kotlinx.android.synthetic.main.location_text_layout.*
 import org.json.JSONArray
@@ -79,12 +78,16 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     private lateinit var emailText: TextView
     private lateinit var title: TextView
     private lateinit var description: TextView
+    private lateinit var noTime: TextView
     private lateinit var distance: TextView
     private lateinit var subscriptionHeading: TextView
     private lateinit var subscripLay: RelativeLayout
     private lateinit var navigationImage: ImageView
     private lateinit var taxiImage: ImageView
     private lateinit var callImage: ImageView
+    private lateinit var descLayout: RelativeLayout
+    private lateinit var label1: TextView
+    private lateinit var label33: TextView
     private lateinit var constraintLayout2: ConstraintLayout
     private lateinit var model1: ModelBusiness
     //  var busId: String = ""
@@ -95,6 +98,7 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     //List for Days concatenation logic
     private val mainList = ArrayList<ModelMain>()
     private val resultList = ArrayList<ResultModel>()
+    lateinit var showHide: String
 
     @SuppressLint("ValidFragment")
     constructor(parcel: Parcel) : this() {
@@ -106,121 +110,38 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
         modelBusiness = parcel.readParcelable(ModelBusiness::class.java.classLoader)
     }
 
-//    constructor(parcel: Parcel) : this() {
-//        selected = parcel.readString()
-//        lat = parcel.readString()
-//        long = parcel.readString()
-//        mLocationRequest = parcel.readParcelable(LocationRequest::class.java.classLoader)
-//        busId = parcel.readString()
-//    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.fragment_detail, container, false)
         mPresenter = AboutBusinessPresenter(this)
-        // Pager = findViewById(R.id.pager)
-        //view_pager_indicator = findViewById(R.id.view_pager_indicator)
-        initialise(view)
+        showHide = Constants.getPrefs(activity!!)!!.getString("HideContents", "no")
+        initialise(view, showHide)
 
-//        try {
-//            //modelBusiness = intent.extras!!.getParcelable<ModelBusiness>("model")
-//            busId = intent.extras.getString("busId")
-//
-//            /* val modelBusiness = intent.extras!!.getParcelable<ModelBusiness>("model")
-//             if (modelBusiness != null) {
-//                 mPresenter.getBusinessData(modelBusiness)
-//             }*/
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
-//        setToolBar(view)
         setClickHandler(view)
         client = GoogleApiClient.Builder(activity!!).addApi(LocationServices.API).build()
 
         mPresenter.BusinessDetailService(Constants.getPrefs(activity!!)!!.getString(Constants.BUSINESS_ID, ""))
         val email = Constants.getPrefs(activity!!)!!.getString(Constants.EMAIL, "")
 
-
-//        // ****************Setting selected Town by user**************************
-//        var model: SingleBusinessModel = SingleBusinessModel()
-//        var list: java.util.ArrayList<SingleBusinessModel>? = arrayListOf()
-//        val data = Constants.getPrefs(this)?.getString(Constants.SINGLE_BUSINESS_LIST, "")!!
-//        list = Constants.getSingleBusinessData(data)
-//        val loc = Constants.getPrefs(this)?.getString(Constants.LOCATION_LIST, "")!!
-//        var loc_list: ArrayList<ModelTown> = arrayListOf()
-//        loc_list = Constants.getTownData(loc)!!
-//        val hashSet2 = HashSet<ModelTown>()
-//        hashSet2.addAll(loc_list)
-//        loc_list.clear()
-//        loc_list.addAll(hashSet2)
-////        if (list != null) {
-////            for(i in 0 until list.size){
-////                model=list[i]
-////                val townid=model.town_id
-////                for (i2 in 0 until loc_list.size) {
-////                    if (loc_list[i2].id == townid) {
-////                        towns.text = loc_list[i2].townname
-////                    }
-////                }
-////
-////            }
-////
-////
-////            val townName = ConstantVal.getPrefs(this)!!.getString(ConstantVal.TOWN_NAME, "")
-////
-////        }
-//        val townid = Constants.getPrefs(this)?.getString(Constants.TOWN_ID2, "")
-//        for (i2 in 0 until loc_list.size) {
-//            if (loc_list[i2].id == townid) {
-//                towns.text = loc_list[i2].townname
-//            }
-//        }
-//        // ********************Setting selected Categories by user****************
-//
-//        val mainCatValue = Constants.getPrefs(this)!!.getString(Constants.MAIN_CATEGORY, "")
-//        val mainCat = mainCatValue.split(",")
-//        val cat = Constants.getPrefs(this)?.getString(Constants.CATEGORY_LIST, "")!!
-//        cat_list = Constants.getCategoryData(cat)!!
-//        val arrayname = arrayListOf<String>()
-//        if (!mainCatValue.isEmpty()) {
-//            val mainCat = mainCatValue.split(",")
-//
-//            out@ for (p in 0 until mainCat.size) {
-//                inn@ for (q in 0 until cat_list.size) {
-//                    if (mainCat[p] == cat_list[q].id) {
-//                        arrayname.add(cat_list[q].name)
-//                        ///select_category.text = cat_list[q].name
-//                        break@inn
-//                        break@out
-//                    }
-//                }
-//            }
-//        }
-//        selected = ""
-//        for (a in 0 until arrayname.size) {
-//            selected = if (selected.isEmpty()) {
-//                arrayname[a]
-//            } else {
-//                selected + "," + arrayname[a]
-//            }
-//        }
-//        categoryText.text = selected
-
         //--------------------------------------------------------------------------
         var usertye = Constants.getPrefs(activity!!)!!.getString("BusinessSubscriptionType", "")
         var utype = ""
         if (usertye == "1") {
             utype = "Premium Package"
-        } else if(usertye=="4"){
+        } else if (usertye == "4") {
             utype = "Admin"
-        }else{
+        } else {
             utype = "Standard Package"
         }
         subscriptionType.text = utype
         return view
     }
 
-    private fun initialise(view: View) {
+    private fun initialise(view: View, showHide: String) {
+        label1 = view.findViewById(R.id.label1)
+        noTime = view.findViewById(R.id.noTime)
+        descLayout = view.findViewById(R.id.descLayout)
+        label33 = view.findViewById(R.id.label33)
         horz_recycler = view.findViewById(R.id.horz_recycler)
         title = view.findViewById(R.id.title)
         description = view.findViewById(R.id.description)
@@ -238,50 +159,75 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
         subscriptionHeading = view.findViewById(R.id.subscriptionHeading)
         subscripLay = view.findViewById(R.id.subscripLay)
 
+        if (showHide == "yes") {
+            label1.visibility = View.GONE
+            descLayout.visibility = View.GONE
+            label33.visibility = View.GONE
+            horz_recycler.visibility = View.GONE
+            subscriptionHeading.visibility = View.GONE
+            subscripLay.visibility = View.GONE
+
+        } else {
+            label1.visibility = View.VISIBLE
+            descLayout.visibility = View.VISIBLE
+            label33.visibility = View.VISIBLE
+            horz_recycler.visibility = View.VISIBLE
+            subscriptionHeading.visibility = View.VISIBLE
+            subscripLay.visibility = View.VISIBLE
+        }
+
+        var catTaxi = Constants.getPrefs(activity!!)!!.getString("nameCat", "vv")
+        if (catTaxi.equals("TaxiRelatedData") || catTaxi.equals("Taxi")) {
+            taxiImage.visibility=View.GONE
+            navigationImage.visibility=View.GONE
+        }else{
+            taxiImage.visibility=View.VISIBLE
+            navigationImage.visibility=View.VISIBLE
+        }
     }
 
     override fun onResume() {
         super.onResume()
         Constants.getSSlCertificate(activity!!)
-        try{
+        try {
 
             Constants.getBus().register(this)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
-        try{
+        try {
             if (ActivityCompat.checkSelfPermission(activity!!,
                             Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(activity!! as Activity, arrayOf(Manifest.permission.CALL_PHONE), 1)
                 return
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
     override fun onPause() {
         super.onPause()
-        try{
+        try {
 
             Constants.getBus().unregister(this)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
+
     private fun setClickHandler(view: View) {
 
-        callImage.setOnClickListener{
-            showDialog(Constants.getPrefs(activity!!)!!.getString("mobNumber",""))
+        callImage.setOnClickListener {
+            showDialog(Constants.getPrefs(activity!!)!!.getString("mobNumber", ""))
         }
-         taxiImage.setOnClickListener{
-//             Constants.getBus().post(TAXI_EVENT("taxi"))
-             Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome","yes").apply()
-             activity!!.finish()
+        taxiImage.setOnClickListener {
+            //Constants.getBus().post(TAXI_EVENT("taxi"))
+            Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "yes").apply()
+            activity!!.finish()
         }
-        navigationImage.setOnClickListener{
-            var gmmIntentUri = Uri.parse("google.navigation:q=${Constants.getPrefs(activity!!)!!.getString("lati","")},${Constants.getPrefs(activity!!)!!.getString("longi","")}")
-//            var  gmmIntentUri = Uri.parse("google.navigation:q=30.7398,76.7827")
+        navigationImage.setOnClickListener {
+            var gmmIntentUri = Uri.parse("google.navigation:q=${Constants.getPrefs(activity!!)!!.getString("lati", "")},${Constants.getPrefs(activity!!)!!.getString("longi", "")}")
             var mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
             mapIntent.setPackage("com.google.android.apps.maps")
             activity!!.startActivity(mapIntent)
@@ -308,9 +254,7 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
         dialog.setTitle("Make a call")
         dialog.setMessage(phoneNo)
         dialog.setPositiveButton("Call", DialogInterface.OnClickListener { dialog, id ->
-            //            val callIntent = Intent(Intent.ACTION_CALL)
-//            callIntent.data = Uri.parse(phoneNo)
-//            startActivity(callIntent)
+
             val callIntent = Intent(Intent.ACTION_CALL)
             callIntent.data = Uri.parse("tel:$phoneNo")
             if (ActivityCompat.checkSelfPermission(activity!!,
@@ -328,18 +272,6 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
         val alert = dialog.create()
         alert.show()
     }
-
-//    private fun setToolBar(view: View) {
-//        toolbar = view.findViewById(R.id.toolbar)
-//        //setSupportActionBar(toolbar)
-//       // title = ""
-//        //supportActionBar!!.setDisplayShowTitleEnabled(false)
-//        mTitle = toolbar.findViewById(R.id.toolbar_title) as TextView
-//        val mArrow = toolbar.findViewById(R.id.arrow_down) as ImageView
-//        mArrow.visibility = View.GONE
-//        mTitle.text = "Name"
-//        //supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-//    }
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -447,27 +379,26 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     override fun setSingleBusinessData() {
         val data = Constants.getPrefs(activity!!)?.getString(Constants.SINGLE_BUSINESS_LIST, "")!!
         val list = Constants.getSingleBusinessData(data)
-//      if (Constants.getPrefs())
-//        subscriptionType.text=
+
         try {
 
             if (list != null) {
                 for (i in 0 until list.size) {
                     model = list[i]
-                    constraintLayout2.visibility=View.VISIBLE
+                    constraintLayout2.visibility = View.VISIBLE
 
-                    Constants.getPrefs(activity!!)!!.edit().putString("mobNumber",model.contact_no).apply()
-                    Constants.getPrefs(activity!!)!!.edit().putString("lati",model.lat).apply()
-                    Constants.getPrefs(activity!!)!!.edit().putString("longi",model.long).apply()
-                  try {
-                      var gps = GpsTracker(this.activity)
-                      var distance2 = Constants.findDistanceFromCurrentPosition(gps.getLatitude(), gps.getLongitude()
-                              , model.lat.toDouble(), model.long.toDouble())
-                      var roundDis = String.format("%.2f", distance2)
-                      title.text = "" + roundDis.toString() + " Km away"
-                  }catch (e:Exception){
-                      e.printStackTrace()
-                  }
+                    Constants.getPrefs(activity!!)!!.edit().putString("mobNumber", model.contact_no).apply()
+                    Constants.getPrefs(activity!!)!!.edit().putString("lati", model.lat).apply()
+                    Constants.getPrefs(activity!!)!!.edit().putString("longi", model.long).apply()
+                    try {
+                        var gps = GpsTracker(this.activity)
+                        var distance2 = Constants.findDistanceFromCurrentPosition(gps.getLatitude(), gps.getLongitude()
+                                , model.lat.toDouble(), model.long.toDouble())
+                        var roundDis = String.format("%.2f", distance2)
+                        title.text = "" + roundDis.toString() + " Km away"
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                     setPager(model)
                     if (!model.email.isEmpty()) {
                         emailText.visibility = View.VISIBLE
@@ -501,11 +432,19 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
                             var idList = taxiTownId!!.split(",")
 
                             if (idList.contains(choosenTownId)) {
+
                                 taxiImage.visibility = View.VISIBLE
+                                var catTaxi = Constants.getPrefs(activity!!)!!.getString("nameCat", "vv")
+                                if (catTaxi == "TaxiRelatedData" || catTaxi == "Taxi") {
+                                    taxiImage.visibility=View.GONE
+                                    navigationImage.visibility=View.GONE
+                                }
                             } else {
                                 taxiImage.visibility = View.GONE
                             }
-                        }catch (e:Exception){
+
+
+                        } catch (e: Exception) {
                             e.printStackTrace()
                         }
                         // ********************Setting selected Categories by user****************
@@ -573,146 +512,13 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
                     }
 
 
-
-
                     val array = model.opening_time
+                    if (array.isEmpty()) {
+                        noTime.visibility = View.VISIBLE
+                    } else {
+                        noTime.visibility = View.GONE
+                    }
                     val arr = JSONArray(array)
-//                    val objMon = arr.getJSONObject(0)
-//                    if (objMon!!.optString("startFrom").equals("closed")) {
-//                        monday.text = "closed"
-//                        monclose.text = "closed"
-//                    } else {
-//
-//                        if (objMon!!.optString("startFrom").equals("12:00 AM") && objMon!!.optString("startTo").equals("12:00 AM")) {
-//                            // monclose.text = objMon.optString("closeFrom") + " to " + objMon.optString("closeTo")
-//                            monday.text = "closed"
-//                            monclose.text = "closed"
-////
-//                        } else if (objMon!!.optString("closeFrom").equals("12:00 AM") && objMon!!.optString("closeTo").equals("12:00 AM")) {
-//                            monday.text = objMon.optString("startFrom") + " to " + objMon.optString("startTo")
-//                            monclose.text = "closed"
-//                        } else {
-//
-//                            monday.text = objMon.optString("startFrom") + " to " + objMon.optString("startTo")
-//                            monclose.text = objMon.optString("closeFrom") + " to " + objMon.optString("closeTo")
-//                        }
-//                    }
-//
-//                    val objTue = arr.getJSONObject(1)
-//                    if (objTue!!.optString("startFrom").equals("closed")) {
-//                        tues.text = "closed"
-//                        tuesclose.text = "closed"
-//                    } else {
-//
-//                        if (objTue!!.optString("startFrom").equals("12:00 AM") && objTue!!.optString("startTo").equals("12:00 AM")) {
-//                            //tuesclose.text = objTue.optString("closeFrom") + " to " + objTue.optString("closeTo")
-//                            tues.text = "closed"
-//                            tuesclose.text = "closed"
-//                        } else if (objTue!!.optString("closeFrom").equals("12:00 AM") && objTue!!.optString("closeTo").equals("12:00 AM")) {
-//                            tues.text = objTue.optString("startFrom") + " to " + objTue.optString("startTo")
-//                            tuesclose.text = "closed"
-//                        } else {
-//                            tues.text = objTue.optString("startFrom") + " to " + objTue.optString("startTo")
-//                            tuesclose.text = objTue.optString("closeFrom") + " to " + objTue.optString("closeTo")
-//                        }
-//                    }
-//
-//
-//                    val objWed = arr.getJSONObject(2)
-//                    if (objWed!!.optString("startFrom").equals("closed")) {
-//                        wed.text = "closed"
-//                        wedclose.text = "closed"
-//                    } else {
-//
-//                        if (objWed!!.optString("startFrom").equals("12:00 AM") && objWed!!.optString("startTo").equals("12:00 AM")) {
-//                            // wedclose.text = objWed.optString("closeFrom") + " to " + objWed.optString("closeTo")
-//                            wed.text = "closed"
-//                            wedclose.text = "closed"
-//                        } else if (objWed!!.optString("closeFrom").equals("12:00 AM") && objWed!!.optString("closeTo").equals("12:00 AM")) {
-//                            wed.text = objWed.optString("startFrom") + " to " + objWed.optString("startTo")
-//                            wedclose.text = "closed"
-//                        } else {
-//                            wed.text = objWed.optString("startFrom") + " to " + objWed.optString("startTo")
-//                            wedclose.text = objWed.optString("closeFrom") + " to " + objWed.optString("closeTo")
-//                        }
-//                    }
-//
-//
-//                    val objThu = arr.getJSONObject(3)
-//                    if (objThu!!.optString("startFrom").equals("closed")) {
-//                        thu.text = "closed"
-//                        thuclose.text = "closed"
-//                    } else {
-//                        if (objThu!!.optString("startFrom").equals("12:00 AM") && objThu!!.optString("startTo").equals("12:00 AM")) {
-//                            // thuclose.text = objThu.optString("closeFrom") + " to " + objThu.optString("closeTo")
-//                            thu.text = "closed"
-//                            thuclose.text = "closed"
-//                        } else if (objThu!!.optString("closeFrom").equals("12:00 AM") && objThu!!.optString("closeTo").equals("12:00 AM")) {
-//                            thu.text = objThu.optString("startFrom") + " to " + objThu.optString("startTo")
-//                            thuclose.text = "closed"
-//                        } else {
-//                            thu.text = objThu.optString("startFrom") + " to " + objThu.optString("startTo")
-//                            thuclose.text = objThu.optString("closeFrom") + " to " + objThu.optString("closeTo")
-//                        }
-//                    }
-//
-//
-//                    val objFri = arr.getJSONObject(4)
-//                    if (objFri!!.optString("startFrom").equals("closed")) {
-//                        fri.text = "closed"
-//                        friclose.text = "closed"
-//                    } else {
-//
-//                        if (objFri!!.optString("startFrom").equals("12:00 AM") && objFri!!.optString("startTo").equals("12:00 AM")) {
-//                            // friclose.text = objFri.optString("closeFrom") + " to " + objFri.optString("closeTo")
-//                            fri.text = "closed"
-//                            friclose.text = "closed"
-//                        } else if (objFri!!.optString("closeFrom").equals("12:00 AM") && objFri!!.optString("closeTo").equals("12:00 AM")) {
-//                            fri.text = objFri.optString("startFrom") + " to " + objFri.optString("startTo")
-//                            friclose.text = "closed"
-//                        } else {
-//                            fri.text = objFri.optString("startFrom") + " to " + objFri.optString("startTo")
-//                            friclose.text = objFri.optString("closeFrom") + " to " + objFri.optString("closeTo")
-//                        }
-//                    }
-//
-//
-//                    val objSat = arr.getJSONObject(5)
-//                    if (objSat!!.optString("startFrom").equals("closed")) {
-//                        sat.text = "closed"
-//                        satclose.text = "closed"
-//                    } else {
-//                        if (objSat!!.optString("startFrom").equals("12:00 AM") && objSat!!.optString("startTo").equals("12:00 AM")) {
-//                            // satclose.text = objSat.optString("closeFrom") + " to " + objSat.optString("closeTo")
-//                            sat.text = "closed"
-//                            satclose.text = "closed"
-//                        } else if (objSat!!.optString("closeFrom").equals("12:00 AM") && objSat!!.optString("closeTo").equals("12:00 AM")) {
-//                            sat.text = objSat.optString("startFrom") + " to " + objSat.optString("startTo")
-//                            satclose.text = "closed"
-//                        } else {
-//                            sat.text = objSat.optString("startFrom") + " to " + objSat.optString("startTo")
-//                            satclose.text = objSat.optString("closeFrom") + " to " + objSat.optString("closeTo")
-//                        }
-//                    }
-//
-//                    val objSun = arr.getJSONObject(6)
-//                    if (objSun!!.optString("startFrom").equals("closed")) {
-//                        sun.text = "closed"
-//                        sunclose.text = "closed"
-//                    } else {
-//                        if (objSun!!.optString("startFrom").equals("12:00 AM") && objSun!!.optString("startTo").equals("12:00 AM")) {
-//                            //sunclose.text = objSun.optString("closeFrom") + " to " + objSun.optString("closeTo")
-//                            sun.text = "closed"
-//                            sunclose.text = "closed"
-//                        } else if (objSun!!.optString("closeFrom").equals("12:00 AM") && objSun!!.optString("closeTo").equals("12:00 AM")) {
-//                            sun.text = objSun.optString("startFrom") + " to " + objSun.optString("startTo")
-//                            sunclose.text = "closed"
-//                        } else {
-//                            sun.text = objSun.optString("startFrom") + " to " + objSun.optString("startTo")
-//                            sunclose.text = objSun.optString("closeFrom") + " to " + objSun.optString("closeTo")
-//                        }
-//                    }
-
 
                     /**
                      * Weekday concatenation logic
@@ -768,180 +574,17 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
                     modelDummy.day = "Days"
                     existdays.add(0, modelDummy)
 
-//                    var daysList = ArrayList<DayModel>()
-//                    var existdays = ArrayList<String>()
-//
-//                    try {
-//                        var lastAppendedDay = "Mon"
-//                        var pos = 0;
-//                        var lastIndex = -1
-//                        for (f in 0 until array2.size) {
-//                            var finalDays: String = ""
-//
-//
-//                            var lastTime = ""
-//                            var exist = 0
-//                            if (lastIndex != -1) {
-//                                for (h in 0 until existdays.size) {
-//                                    if (existdays[h] == f.toString()) {
-//                                        exist = 1
-//                                    }
-//                                }
-//                            }
-//                            if (exist == 0) {
-//                                var lastp = f
-//                                for (i in f until array2.size) {
-//                                    val modelDay = array2[i]
-//                                if (array2[f].time==modelDay.time){
-//                                    if (i==lastp){
-//                                        if (finalDays.isEmpty()){
-//                                            finalDays=array2[f].dayName
-//
-//                                        }else{
-//                                            finalDays=finalDays+"-${modelDay.dayName}"
-//                                        }
-//
-//                                    }else{
-//                                        if (!finalDays.isEmpty()) {
-//                                            finalDays = finalDays + ",${modelDay.dayName}"
-//                                        }else{
-//                                            finalDays = "${modelDay.dayName}"
-//                                        }
-//                                    }
-//                                    existdays.add(i.toString())
-//                                    lastp=i+1
-//                                }else{
-//                                    if (array2[f].time==modelDay.time){
-//                                        finalDays=finalDays+",${modelDay.dayName}"
-//                                        existdays.add(i.toString())
-//                                    }
-//                                }
-//
-//                                    lastIndex = i
-//                                }
-//
-//                                if (!finalDays.isEmpty()) {
-//                                    val finalDayModel = DayModel()
-//                                    finalDayModel.dayName = finalDays
-//                                    finalDayModel.time = array2[f].time
-//
-//                                    daysList.add(finalDayModel)
-//                                    finalDays = ""
-//                                }
-//
-//                                /* val finalDayModel = DayModel()
-//                                                         finalDayModel.dayName = finalDays
-//                                                         finalDayModel.time = time.time
-//
-//                                                         daysList.add(finalDayModel)*/
-//                                pos++
-//                            }
-//                        }
-//                    } catch (e: Exception) {
-//                        e.printStackTrace()
-//                    }
-//
-////                    try {
-////                        var lastAppendedDay = "Mon"
-////                        for (time in array2) {
-////                            var finalDays: String = ""
-////                            var lastIndex = -1
-////                            var lastTime = ""
-////
-////                            if (lastAppendedDay == time.dayName) {
-////
-////                                for (i in array2.indices) {
-////                                    val modelDay = array2[i]
-////
-////
-////                                    if (lastIndex != -1 && i - lastIndex == 1 && modelDay.time == lastTime) {
-////                                        finalDays = "${time.dayName}-${modelDay.dayName}"
-////                                        lastAppendedDay = modelDay.dayName
-////                                    } else {
-////                                        if (modelDay.time == lastTime) {
-////                                            finalDays = "$finalDays, ${modelDay.dayName}"
-////                                            //lastAppendedDay = modelDay.dayName
-////                                        }
-////                                        if (lastIndex == -1) {
-////                                            finalDays = "$finalDays, ${modelDay.dayName}"
-////                                           // lastAppendedDay = modelDay.dayName
-////                                        }
-////
-////                                    }
-////
-////
-////
-////
-////                                    lastIndex = i
-////                                    lastTime = modelDay.time
-////
-////                                    // }
-////
-////                                }
-////
-////                                val finalDayModel = DayModel()
-////                                finalDayModel.dayName = finalDays
-////                                finalDayModel.time = time.time
-////
-////                                daysList.add(finalDayModel)
-////                            }
-////                            finalDays = ""
-////                           /* val finalDayModel = DayModel()
-////                            finalDayModel.dayName = finalDays
-////                            finalDayModel.time = time.time
-////
-////                            daysList.add(finalDayModel)*/
-////
-////                        }
-////                    } catch (e: Exception) {
-////                        e.printStackTrace()
-////                    }
-
                     daysListView.layoutManager = LinearLayoutManager(activity)
                     daysListView.adapter = TimeAdapter(activity!!, existdays)
                     logicForOpenCloseButton(model)
-val myid=Constants.getPrefs(activity!!)!!.getString(Constants.MYBUSINESS_ID,"-128")
-                    if (business_user_id==myid){
-                        subscripLay.visibility=View.VISIBLE
-                        subscriptionHeading.visibility=View.VISIBLE
-                    }else{
-                        subscripLay.visibility=View.GONE
-                        subscriptionHeading.visibility=View.GONE
+                    val myid = Constants.getPrefs(activity!!)!!.getString(Constants.MYBUSINESS_ID, "-128")
+                    if (business_user_id == myid) {
+                        subscripLay.visibility = View.VISIBLE
+                        subscriptionHeading.visibility = View.VISIBLE
+                    } else {
+                        subscripLay.visibility = View.GONE
+                        subscriptionHeading.visibility = View.GONE
                     }
-
-                    /* fun getDayTimeModel(time: String) : DayModel{
-                         var model = DayModel()
-
-                         for ()
-
-                         return model
-                     }*/
-
-                    //------------------------------------------------------------------------
-                    //------------------------------------------------------------------------
-
-
-//        if (list != null) {
-//            for(i in 0 until list.size){
-//                model=list[i]
-//                val townid=model.town_id
-//                for (i2 in 0 until loc_list.size) {
-//                    if (loc_list[i2].id == townid) {
-//                        towns.text = loc_list[i2].townname
-//                    }
-//                }
-//
-//            }
-//
-//
-//            val townName = ConstantVal.getPrefs(this)!!.getString(ConstantVal.TOWN_NAME, "")
-//
-//        }
-
-
-                    //------------------------------------------------------------------------
-                    //------------------------------------------------------------------------
-
 
                 }
             }
@@ -1016,10 +659,7 @@ val myid=Constants.getPrefs(activity!!)!!.getString(Constants.MYBUSINESS_ID,"-12
                     checkInTodayTiming(dayValue1, timing, modelBusiness, currentTime)
                 }
             }
-//            else if (start==end)
-//            {
-//
-//            }
+
             else {
                 checkInTodayTiming(dayValue1, timing, modelBusiness, currentTime)
             }
@@ -1043,7 +683,6 @@ val myid=Constants.getPrefs(activity!!)!!.getString(Constants.MYBUSINESS_ID,"-12
             } else {
                 openStatusAt.visibility = View.GONE
             }
-            //openStatusAt.text = "Open at 9 AM"
             openCloseLay.visibility = View.VISIBLE
             openCloseLay.setBackgroundResource(R.drawable.background_timing_red)
         } else {
@@ -1067,11 +706,7 @@ val myid=Constants.getPrefs(activity!!)!!.getString(Constants.MYBUSINESS_ID,"-12
                     timing.text = "OPEN NOW"
                     openCloseLay.visibility = View.VISIBLE
                     openCloseLay.setBackgroundResource(R.drawable.background_timing_green)
-//                    if (objMon.optString("closeFrom") != objMon.optString("closeTo"))
-//                        if (existInClosedTimings) {
-//                            timing.text = "CLOSED NOW"
-//                        }
-                } else {
+              } else {
                     timing.text = "CLOSED"
 
                     openCloseLay.visibility = View.VISIBLE
@@ -1113,21 +748,6 @@ val myid=Constants.getPrefs(activity!!)!!.getString(Constants.MYBUSINESS_ID,"-12
 
     private fun checkIfCurrentTimeLiesInGivenInterVal(currentTime: String, start: String, end: String, from: String): Boolean {
 
-//        if (start.contains("AM") && end.contains("AM")||
-//                (start.contains("AM") && end.contains("PM"))||
-//                start.contains("PM") && end.contains("PM")) {
-//            val startTime= checkStartTimings(currentTime,start,"start")
-//            if (startTime){
-//            if (checkStartTimings(currentTime,end,"end")) {
-//                return true
-//            }
-//                return  false
-//        }
-//        }
-
-        // if (start.contains("PM") && end.contains("AM")) {
-        val startTime = checkStartTimings(currentTime, start, "start")
-        ///  if (startTime){
         if (end.contains("AM")) {
             if (checkStartTimings(currentTime, "23:59:59 PM", "end")) {
                 return true
@@ -1136,32 +756,6 @@ val myid=Constants.getPrefs(activity!!)!!.getString(Constants.MYBUSINESS_ID,"-12
         if (checkStartTimings(currentTime, end, "end")) {
             return true
         }
-        // }
-//                if (checkStartTimings(currentTime,end,"end")) {
-//                    return true
-//                }
-        return false
-        //  }
-        // }
-//        if (start.contains("PM") && end.contains("PM")) {
-//
-//        }
-
-//       val startTime= checkStartTimings(currentTime,start,"start")
-//        if (startTime){
-////            if ((start.contains("AM")&&end.contains("AM"))||
-////                    (start.contains("PM")&&end.contains("PM"))) {
-//                if (checkStartTimings(currentTime, "23:59:59 PM", "end")) {
-//                    return true
-//                }
-////            }
-//            if (checkStartTimings(currentTime,end,"end")) {
-//                return true
-//            }
-//
-//                return  false
-//
-//        }
         return false
 
     }
@@ -1223,19 +817,7 @@ val myid=Constants.getPrefs(activity!!)!!.getString(Constants.MYBUSINESS_ID,"-12
 
     }
 
-    private fun checkIfCurrentTimeLiesInGivenInterVal2(currentTime: String, start: String, end: String): Boolean {
-        val startTime = checkStartTimings(currentTime, start, "start")
-        if (startTime) {
-            if (checkStartTimings(currentTime, end, "end")) {
-                return true
-            } else {
-                return false
-            }
-        }
 
-        return false
-
-    }
 
     private fun checkStartTimings(time: String, endtime: String, from: String): Boolean {
 
@@ -1248,11 +830,7 @@ val myid=Constants.getPrefs(activity!!)!!.getString(Constants.MYBUSINESS_ID,"-12
             if (from == "start") {
                 return date1.after(date2)
             } else if (from == "end") {
-                if (date1.before(date2)) {
-                    return true
-                } else {
-                    return false
-                }
+                return date1.before(date2)
             }
         } catch (e: ParseException) {
             e.printStackTrace()
@@ -1273,27 +851,12 @@ val myid=Constants.getPrefs(activity!!)!!.getString(Constants.MYBUSINESS_ID,"-12
 
     }
 
-//    override fun writeToParcel(parcel: Parcel, flags: Int) {
-//        parcel.writeString(selected)
-//        parcel.writeString(lat)
-//        parcel.writeString(long)
-//        parcel.writeParcelable(mLocationRequest, flags)
-//        parcel.writeString(busId)
-//    }
 
     override fun describeContents(): Int {
         return 0
     }
 
-    //    companion object CREATOR : Parcelable.Creator<AboutBusinessActivity> {
-//        override fun createFromParcel(parcel: Parcel): AboutBusinessActivity {
-//            return AboutBusinessActivity(parcel)
-//        }
-//
-//        override fun newArray(size: Int): Array<AboutBusinessActivity?> {
-//            return arrayOfNulls(size)
-//        }
-//    }
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(selected)
         parcel.writeString(lat)

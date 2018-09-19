@@ -1,53 +1,20 @@
 package com.phaseII.placepoint.AboutBusiness
 
-import android.Manifest
-import android.content.Intent
-import android.content.IntentSender
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
 import android.support.design.widget.TabLayout
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.github.vivchar.viewpagerindicator.ViewPagerIndicator
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.common.api.PendingResult
-import com.google.android.gms.location.*
 import com.phaseII.placepoint.AboutBusiness.BusinessDetails.DetailFragment
-import com.phaseII.placepoint.BusinessDetailMap.BusinessDetailMapActivity
-import com.phaseII.placepoint.ConstantClass.GpsTracker
-import com.phaseII.placepoint.ConstantClass.Utils
 import com.phaseII.placepoint.Constants
-import com.phaseII.placepoint.Home.BusinessListing.ModelBusiness
-import com.phaseII.placepoint.Home.ViewPagerAdapter
-import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
 import com.phaseII.placepoint.R
-import com.phaseII.placepoint.Town.ModelTown
-import kotlinx.android.synthetic.main.about_business_scroll.*
-import kotlinx.android.synthetic.main.activity_about_business.*
-import kotlinx.android.synthetic.main.business_description.*
-import kotlinx.android.synthetic.main.day_layout.*
-import kotlinx.android.synthetic.main.location_text_layout.*
-import org.json.JSONArray
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
@@ -60,6 +27,7 @@ class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
     private lateinit var viewPager: ViewPager
     private lateinit var toolbar: Toolbar
     private lateinit var mText: TextView
+    var fromFreeListing="no"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about_business)
@@ -76,6 +44,14 @@ class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
                 Constants.getPrefs(this)!!.edit().putString("mobNumber", intent.getStringExtra("mobNumber")).apply()
                 Constants.getPrefs(this)!!.edit().putString("lati", intent.getStringExtra("lati")).apply()
                 Constants.getPrefs(this)!!.edit().putString("longi", intent.getStringExtra("longi")).apply()
+                Constants.getPrefs(this)!!.edit().putString("freeListing", intent.getStringExtra("freeListing")).apply()
+                Constants.getPrefs(this)!!.edit().putString("nameCat", intent.getStringExtra("nameCat")).apply()
+               fromFreeListing=intent.getStringExtra("freeListing")
+                if ( intent.getStringExtra("freeListing")=="yes"){
+                    Constants.getPrefs(this)!!.edit().putString("HideContents", "yes").apply()
+                }else{
+                    Constants.getPrefs(this)!!.edit().putString("HideContents", "no").apply()
+                }
             }
             // intent.putExtra("showallpost")
             /* val modelBusiness = intent.extras!!.getParcelable<ModelBusiness>("model")
@@ -120,10 +96,15 @@ class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
 
     private fun setupViewPager(viewPager: ViewPager) {
 
-        viewPager.adapter = DetailViewPagerAdapter(supportFragmentManager!!)
+        viewPager.adapter = DetailViewPagerAdapter(supportFragmentManager!!,fromFreeListing)
         tabLayout.setupWithViewPager(viewPager)
-        tabLayout.getTabAt(0)!!.text = "Business details"
-        tabLayout.getTabAt(1)!!.text = busName + "'s" + " Posts"
+        if (fromFreeListing.equals("yes")){
+            tabLayout.getTabAt(0)!!.text = "Business details"
+        }else{
+            tabLayout.getTabAt(0)!!.text = "Business details"
+            tabLayout.getTabAt(1)!!.text = busName + "'s" + " Posts"
+        }
+
         tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#34b0f2"))
         setCustomFont(tabLayout)
     }

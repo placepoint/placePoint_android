@@ -18,7 +18,7 @@ interface RegisterHelper {
     fun setBLocError()
     fun setBCatError()
     fun showLoginScreen()
-    fun getAuthCode(): String?
+    fun getAuthCode(): String
     fun showLoader()
     fun hideLoader()
     fun showNetworkError(resId: Int)
@@ -27,5 +27,7 @@ interface RegisterHelper {
     fun showMessage(msg: String?)
     fun saveEmail(email: String)
     fun getUserType(): String
-    fun openPayment(email: String, pass: String, bName: String, bLoc: String, bCat: String, auth_code: String, type: String)
+    fun openPayment(email: String, pass: String, bName: String, bLoc: String, bCat: String, auth_code: String, type: String, coupon: String)
+    fun hitRegisterApi(from: String, pass: String, bName: String, bCat: String, bLoc: String, type: String, from1: String, amount: String, auth_code: String)
+    fun showInvalidMessage(from: String, pass: String, bName: String, bCat: String, bLoc: String, type: String, from1: String, amount: String, auth_code: String)
 }

@@ -134,8 +134,7 @@ class CategoryPresenter(val view: CategoryHelper) {
     }
 
     private fun appDataService(device_id: String, town_id: String?, device_type: String) {
-        view.showLoader()
-        view.showLoader()
+       // view.showLoader()
         val retrofit = Constants.getWebClient()
         val service = retrofit!!.create(Service::class.java)
         val call: Call<ResponseBody> = service.getAppData()
@@ -165,7 +164,7 @@ class CategoryPresenter(val view: CategoryHelper) {
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 view.hideLoader()
-                view.showNetworkError(R.string.network_error)
+               // view.showNetworkError(R.string.network_error)
             }
         })
     }

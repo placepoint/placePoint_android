@@ -115,6 +115,7 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
 
                 } else {
                      Constants.getPrefs(context)!!.edit().putString("subcategory", "2").apply()
+                   //  Constants.getPrefs(context)!!.edit().putString("catListingPage", "yes").apply()
                     val stringBuilder = StringBuilder("")
                     var prefix = ""
                     for (i in 0 until parentList.size) {

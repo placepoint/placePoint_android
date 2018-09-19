@@ -39,7 +39,7 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
         mPresenter = RegisterPresenter(this)
         Constants.getPrefs(this)!!.edit().remove(Constants.USERTYPE).apply()
         choosedPlan.text = "Premium  € 300/year"
-        Constants.getPrefs(this)!!.edit().putString(Constants.USERTYPE,"1").apply()
+        Constants.getPrefs(this)!!.edit().putString(Constants.USERTYPE, "1").apply()
     }
 
     override fun onResume() {
@@ -88,8 +88,12 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
                 return@setOnClickListener
             }
 
+//            if (!couponId.text.trim().isEmpty()) {
+//                mPresenter.CheckCouponValidity(couponId.text.trim().toString(), userType, "0")
+//            } else {
+                mPresenter.getRegisterData(userType, couponId.text.trim().toString())
+//            }
 
-            mPresenter.getRegisterData(userType)
 
         }
         back_arrow.setOnClickListener {
@@ -115,12 +119,15 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
             showPopup()
         }
 
-        if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE,"")=="3"){
+        if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "3") {
             choosedPlan.text = "Free  € 0/year"
-        }else if(Constants.getPrefs(this)!!.getString(Constants.USERTYPE,"")=="2"){
+        } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "2") {
             choosedPlan.text = "Standard  € 150/year"
-        }else if(Constants.getPrefs(this)!!.getString(Constants.USERTYPE,"")=="1"){
+        } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "1") {
             choosedPlan.text = "Premium  € 300/year"
+        }
+else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
+            choosedPlan.text = "Admin"
         }
 
     }
@@ -136,50 +143,57 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
         dialogBuilder.setCancelable(false)
         var value = 0
         val radioGroup = dialogView.findViewById(R.id.radioGroup) as RadioGroup
-        val checkedIdIs=Constants.getPrefs(this)!!.getString(Constants.USERTYPE,"1")
+        val checkedIdIs = Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "1")
         if (checkedIdIs == "3") {
             radioGroup.check(R.id.free)
         } else if (checkedIdIs == "2") {
             radioGroup.check(R.id.standard)
-        } else if(checkedIdIs=="4") {
+        } else if (checkedIdIs == "4") {
             radioGroup.check(R.id.admin)
-        }else{
+        } else {
             radioGroup.check(R.id.premium)
         }
 
 
         radioGroup.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
             overLay.visibility = View.GONE
-            bus_cat.text=""
+            bus_cat.text = ""
             Constants.getPrefs(this)!!.edit().remove(Constants.MAIN_CATEGORY).apply()
             Constants.getPrefs(this)?.edit()?.remove(Constants.USERTYPE)?.apply()
             if (checkedId == R.id.free) {
                 value = 3
             } else if (checkedId == R.id.standard) {
                 value = 2
-            }else if(checkedId==R.id.admin){
+            } else if (checkedId == R.id.admin) {
                 value = 4
-            } else
-             {
+            } else {
                 value = 1
             }
 
             Constants.getPrefs(this)!!.edit().putString(Constants.USERTYPE, value.toString()).apply()
         })
         dialogBuilder.setPositiveButton("Ok", DialogInterface.OnClickListener { dialog, which ->
-            if (value==0){
+            if (value == 0) {
                 Constants.getPrefs(this)!!.edit().putString(Constants.USERTYPE, "1").apply()
                 choosedPlan.text = "Premium  € 300/year"
                 overLay.visibility = View.GONE
             }
-            if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE,"")=="3"){
+            if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "3") {
                 choosedPlan.text = "Free  € 0/year"
-            }else if(Constants.getPrefs(this)!!.getString(Constants.USERTYPE,"")=="2"){
+                couponId.setText("")
+                coupon_layout.visibility=View.GONE
+            } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "2") {
                 choosedPlan.text = "Standard  € 150/year"
-            }else if(Constants.getPrefs(this)!!.getString(Constants.USERTYPE,"")=="1"){
+                couponId.setText("")
+                coupon_layout.visibility=View.VISIBLE
+            } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "1") {
                 choosedPlan.text = "Premium  € 300/year"
-            }else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE,"")=="4"){
+                couponId.setText("")
+                coupon_layout.visibility=View.VISIBLE
+            } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
                 choosedPlan.text = "Admin"
+                couponId.setText("")
+                coupon_layout.visibility=View.GONE
             }
             dialog.dismiss()
         })
@@ -407,7 +421,7 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
                         var sortedList = loc_list.sortedWith(compareBy({ it.townname }))
 
                         town_id = sortedList[pos].id
-                        Constants.getPrefs(this)!!.edit().putString(Constants.TOWN_ID2,town_id).apply()
+                        Constants.getPrefs(this)!!.edit().putString(Constants.TOWN_ID2, town_id).apply()
                         dialog.dismiss()
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -420,8 +434,8 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
         builder.show()
     }
 
-    override fun getAuthCode(): String? {
-        return Constants.getPrefs(this@RegisterActivity)?.getString(Constants.AUTH_CODE, "")
+    override fun getAuthCode(): String {
+        return Constants.getPrefs(this@RegisterActivity)!!.getString(Constants.AUTH_CODE, "")
     }
 
     override fun showLoader() {
@@ -472,31 +486,114 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
         return Constants.getPrefs(this@RegisterActivity)!!.getString(Constants.USERTYPE, "")
     }
 
-    override fun openPayment(email: String, pass: String, bName: String, bLoc: String, bCat: String, auth_code: String, type: String) {
-        if(pass.length>4){
-            var amount="300"
-            if(Constants.getPrefs(this)!!.getString(Constants.USERTYPE,"1")=="1"){
-                amount="300"
-            }else{
-                amount="150"
-            }
-            var intent = Intent(this, PaymentActivity::class.java)
-            intent.putExtra("email", email)
-            intent.putExtra("pass", pass)
-            intent.putExtra("bName", bName)
-            intent.putExtra("bLoc", bLoc)
-            intent.putExtra("bCat", bCat)
-            intent.putExtra("auth_code", auth_code)
-            intent.putExtra("type", type)
-            intent.putExtra("catId", cat_id)
-            intent.putExtra("from", "Register")
-            intent.putExtra("amount_payable", amount)
-            startActivity(intent)
+    override fun openPayment(email: String, pass: String, bName: String, bLoc: String, bCat: String, auth_code: String, type: String, coupon: String) {
+        if (type == "3"||type=="4") {
+            val userType = Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "")
+            mPresenter.getRegisterService(userType, couponId.text.trim().toString())
         }else{
+            if (coupon.isEmpty()){
+                if (pass.length > 4) {
+                var amount = "300"
+                if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "1") == "1") {
+                    amount = "300"
+                } else {
+                    amount = "150"
+                }
+                    var intent = Intent(this, PaymentActivity::class.java)
+                    intent.putExtra("email", email)
+                    intent.putExtra("pass", pass)
+                    intent.putExtra("bName", bName)
+                    intent.putExtra("bLoc", bLoc)
+                    intent.putExtra("bCat", bCat)
+                    intent.putExtra("auth_code", auth_code)
+                    intent.putExtra("type", type)
+                    intent.putExtra("catId", cat_id)
+                    intent.putExtra("from", "Register")
+                    intent.putExtra("amount_payable", amount)
+                    intent.putExtra("coupon", couponId.text.toString().trim())
+                    startActivity(intent)
+                } else {
 
-            Toast.makeText(this,R.string.error_invalid_password,Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, R.string.error_invalid_password, Toast.LENGTH_LONG).show()
+                }
+            }else{
+                val userType = Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "")
+                mPresenter.CheckCouponValidity(couponId.text.trim().toString(), userType, "1")
+
+            }
         }
 
+
+    }
+
+    override fun hitRegisterApi(email: String, pass: String, bName: String, bCat: String, bLoc: String, type: String, from: String, amount: String, auth_code: String) {
+
+            if (pass.length > 4) {
+//                var amount = "300"
+//                if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "1") == "1") {
+//                    amount = "300"
+//                } else {
+//                    amount = "150"
+//                }
+                var intent = Intent(this, PaymentActivity::class.java)
+                intent.putExtra("email", email)
+                intent.putExtra("pass", pass)
+                intent.putExtra("bName", bName)
+                intent.putExtra("bLoc", bLoc)
+                intent.putExtra("bCat", bCat)
+                intent.putExtra("auth_code", auth_code)
+                intent.putExtra("type", type)
+                intent.putExtra("catId", cat_id)
+                intent.putExtra("from", "Register")
+                intent.putExtra("amount_payable", amount)
+                intent.putExtra("coupon", couponId.text.toString().trim())
+                startActivity(intent)
+            } else {
+
+                Toast.makeText(this, R.string.error_invalid_password, Toast.LENGTH_LONG).show()
+            }
+
+    }
+
+    override fun showInvalidMessage(email: String, pass: String, bName: String, bCat: String, bLoc: String, type: String, from: String, amount: String, auth_code: String) {
+        showInvalidCoupon(email, pass, bName, bCat, bLoc, type, from, amount, auth_code)
+    }
+
+    private fun showInvalidCoupon(email: String, pass: String, bName: String, bCat: String, bLoc: String, type: String, from: String, amount: String, auth_code: String) {
+
+        AlertDialog.Builder(this)
+                .setTitle("Alert!")
+                .setMessage("The Coupon you have entered is Invalid. Do you want to proceed without applying coupon?")
+                .setPositiveButton("Yes") { dialog, which ->
+                    dialog.dismiss()
+                    val userType = Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "")
+
+                        if (pass.length > 4) {
+//                var amount = "300"
+//                if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "1") == "1") {
+//                    amount = "300"
+//                } else {
+//                    amount = "150"
+//                }
+                            var intent = Intent(this, PaymentActivity::class.java)
+                            intent.putExtra("email", email)
+                            intent.putExtra("pass", pass)
+                            intent.putExtra("bName", bName)
+                            intent.putExtra("bLoc", bLoc)
+                            intent.putExtra("bCat", bCat)
+                            intent.putExtra("auth_code", auth_code)
+                            intent.putExtra("type", type)
+                            intent.putExtra("catId", cat_id)
+                            intent.putExtra("from", "Register")
+                            intent.putExtra("amount_payable", amount)
+                            intent.putExtra("coupon", couponId.text.toString().trim())
+                            startActivity(intent)
+                        } else {
+
+                            Toast.makeText(this, R.string.error_invalid_password, Toast.LENGTH_LONG).show()
+                        }
+
+                }.setNegativeButton("No", null).show()
     }
 
     override fun showMessage(msg: String?) {

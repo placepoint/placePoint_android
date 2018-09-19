@@ -18,6 +18,7 @@ import com.phaseII.placepoint.BusEvents.*
 import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
 import com.phaseII.placepoint.Town.TownActivity
 import com.squareup.otto.Subscribe
+import kotlinx.android.synthetic.main.activity_home.*
 import java.util.ArrayList
 
 
@@ -31,22 +32,28 @@ class HomeFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.activity_home, container, false)
+
         init(view)
         Constants.getSSlCertificate(activity!!)
         setToolBar(view)
         setHasOptionsMenu(true)
+        setupViewPager(viewPager)
+        setCustomFont(tabLayout)
         return view
     }
 
 
     override fun onResume() {
         super.onResume()
+
+
+
         Constants.getBus().register(this)
         Constants.getPrefs(activity!!)!!.edit().putString(Constants.SHOW_ALL_POST, "yes").apply()
         Constants.getPrefs(activity!!)!!.edit().putString(Constants.FROMINTENT, "home").apply()
         Constants.getPrefs(activity!!)!!.edit().putString(Constants.STOPCLICK, "no").apply()
         if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
-           // Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
+            // Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
 
             taxiWorking()
         }
@@ -68,15 +75,15 @@ class HomeFragment : Fragment() {
             intent.putExtra("from", "true")
             startActivity(intent)
         }
-        val showback=Constants.getPrefs(activity!!)!!.getString("showHomeBackButton", "no")
-        if (showback=="yes"){
-            back.visibility=View.VISIBLE
-        }else{
-            if(Constants.getPrefs(activity!!)!!.getString("showBackYesOrNo", "category")!="category"){
-                back.visibility=View.GONE
+        val showback = Constants.getPrefs(activity!!)!!.getString("showHomeBackButton", "no")
+        if (showback == "yes") {
+            back.visibility = View.VISIBLE
+        } else {
+            if (Constants.getPrefs(activity!!)!!.getString("showBackYesOrNo", "category") != "category") {
+                back.visibility = View.GONE
             }
         }
-        back.setOnClickListener{
+        back.setOnClickListener {
             Constants.getBus().post(DoBackActionInDashBoard("value"))
         }
 //        toolbar.inflateMenu(R.menu.my_home_menu)
@@ -95,9 +102,6 @@ class HomeFragment : Fragment() {
     private fun init(view: View) {
         viewPager = view.findViewById(R.id.viewpager)
         tabLayout = view.findViewById(R.id.tabs) as TabLayout
-
-        setupViewPager(viewPager)
-        setCustomFont(tabLayout)
     }
 
     fun setCustomFont(tabLayout: TabLayout) {
@@ -133,28 +137,34 @@ class HomeFragment : Fragment() {
         val cat = Constants.getPrefs(activity!!)?.getString(Constants.CATEGORY_LIST, "")!!
         if (!cat.isEmpty()) {
             var cat_list: ArrayList<ModelCategoryData> = Constants.getCategoryData(cat)!!
-            val selectedId = Constants.getPrefs(this.activity!!)?.getString(Constants.CATEGORY_IDSUB, "")!!
+            val selectedId = Constants.getPrefs(activity!!)?.getString(Constants.CATEGORY_IDSUB, "")!!
             for (i in 0 until cat_list.size) {
                 if (selectedId == cat_list[i].id) {
                     showFeed = cat_list[i].show_on_live
                 }
             }
-            if (showFeed == "0") {
+            var freeListing = Constants.getPrefs(activity!!)!!.getString("freeListing", "no")
+            if (showFeed == "0" ) {
+            //if (showFeed == "0" || freeListing.equals("yes")) {
                 counter = 1
-                viewPager.adapter = ViewPagerAdapter(this.fragmentManager!!, counter)
+                viewPager.adapter = ViewPagerAdapter(fragmentManager!!, counter)
                 tabLayout.setupWithViewPager(viewPager)
                 tabLayout.getTabAt(0)!!.text = "Business listings"
                 // tabLayout.getTabAt(1)!!.text = "Live feed"
                 tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#4F5D81"))
             } else {
-                viewPager.adapter = ViewPagerAdapter(this.fragmentManager!!, counter)
-                tabLayout.setupWithViewPager(viewPager)
-                tabLayout.getTabAt(0)!!.text = "Business listings"
-                tabLayout.getTabAt(1)!!.text = "Live feed"
-                tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#34b0f2"))
+
+    viewPager.adapter = ViewPagerAdapter(fragmentManager!!, counter)
+    tabLayout.setupWithViewPager(viewPager)
+    tabLayout.getTabAt(0)!!.text = "Business listings"
+    tabLayout.getTabAt(1)!!.text = "Live feed"
+    tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#34b0f2"))
+
+
+
             }
         } else {
-            viewPager.adapter = ViewPagerAdapter(this.fragmentManager!!, counter)
+            viewPager.adapter = ViewPagerAdapter(fragmentManager!!, counter)
             tabLayout.setupWithViewPager(viewPager)
             tabLayout.getTabAt(0)!!.text = "Business listings"
             tabLayout.getTabAt(1)!!.text = "Live feed"
@@ -170,6 +180,7 @@ class HomeFragment : Fragment() {
 
     }
 
+
     override fun onPause() {
         super.onPause()
         Constants.getBus().unregister(this)
@@ -178,28 +189,29 @@ class HomeFragment : Fragment() {
     @Subscribe
     fun getEventValue(event: TAXI_EVENT) {
         taxiWorking()
-        back.visibility=View.VISIBLE
+        back.visibility = View.VISIBLE
 
     }
- @Subscribe
+
+    @Subscribe
     fun getEventValue(event: HideBackButton) {
 
-     if(Constants.getPrefs(activity!!)!!.getString("showBackYesOrNo", "category")!="category"){
-         back.visibility=View.GONE
-     }
+        if (Constants.getPrefs(activity!!)!!.getString("showBackYesOrNo", "category") != "category") {
+            back.visibility = View.GONE
+        }
 
     }
 
     private fun taxiWorking() {
-        back.setOnClickListener{
+        back.setOnClickListener {
 
-            if(Constants.getPrefs(activity!!)!!.getString("showBackYesOrNo", "category")!="category"){
-                back.visibility=View.GONE
+            if (Constants.getPrefs(activity!!)!!.getString("showBackYesOrNo", "category") != "category") {
+                back.visibility = View.GONE
             }
             Constants.getBus().post(DoBackActionInDashBoard("value"))
         }
 
-
+        back.visibility = View.VISIBLE
         Constants.getPrefs(activity!!)!!.edit().putString("backPress", "1").apply()
         Constants.getPrefs(activity!!)!!.edit().putString("Title", mText.text.toString()).apply()
         Constants.getBus().post(BusiniessListingTaxiEvent("taxi"))
@@ -217,6 +229,12 @@ class HomeFragment : Fragment() {
 
         mText.text = "Taxi" +
                 " in " + Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME, "")
+        back.visibility = View.VISIBLE
+        Constants.getPrefs(activity!!)!!.edit().putString("backPress", "1").apply()
+        Constants.getPrefs(activity!!)!!.edit().putString("Title", mText.text.toString()).apply()
+//        if()
+//        Constants.getBus().post(BusiniessListingTaxiEvent("taxi"))
+//        Constants.getBus().post(LiveFeedTaxiEvent("LiveTaxi"))
 
     }
 

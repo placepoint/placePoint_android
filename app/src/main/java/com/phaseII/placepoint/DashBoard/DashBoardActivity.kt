@@ -1,6 +1,7 @@
 package com.phaseII.placepoint.DashBoard
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
 import android.support.v7.app.AppCompatActivity
@@ -41,6 +42,7 @@ class DashBoardActivity : AppCompatActivity() {
     //private lateinit var viewPager: ViewPagerUsedInXml
     lateinit var ft: FragmentTransaction
     var positon = -1
+    var firstexe = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
@@ -54,6 +56,7 @@ class DashBoardActivity : AppCompatActivity() {
     }
 
     private fun addHomeFragment() {
+        firstexe = 1
         positon = 0
         ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.pager, HomeFragment())
@@ -81,7 +84,21 @@ class DashBoardActivity : AppCompatActivity() {
         }
 //        var inSubCategory = Constants.getPrefs(this)!!.getString("subcategory", "0");
 //        if (inSubCategory == "0") {
-        addFragment()
+        val showback = Constants.getPrefs(this)!!.getString("showHomeBackButton", "no")
+        if (showback == "no") {
+            firstexe = 0
+        }
+        if (firstexe == 0) {
+            if (showback == "no") {
+                addFragment()
+            }
+        } else {
+            firstexe = 0
+        }
+//        var freeListing = Constants.getPrefs(this)!!.getString("freeListing", "no")
+//        if ( freeListing.equals("yes")) {
+//            addHomeFragment()
+//        }
 //        }
 
     }
@@ -147,22 +164,26 @@ class DashBoardActivity : AppCompatActivity() {
             }
         }
         if (firstTime == "sub") {
-            Constants.getPrefs(this)!!.edit().putString("showHomeBackButton", "no").apply()
-            positon = 0
-            Constants.getPrefs(this)?.edit()?.putString("firstTime", "no")?.apply()
-            ft = supportFragmentManager.beginTransaction()
-            ft.replace(R.id.pager, HomeFragment())
-            ft.commit()
-            val menu = bottomNavigation.getMenu()
-            var i = 0
-            val size = menu.size()
-            our@ while (i < size) {
-                val item = menu.getItem(i)
-                if (item.itemId === R.id.nav_home) {
-                    item.isChecked = item.itemId === R.id.nav_home
-                    break@our
+            try {
+                Constants.getPrefs(this)!!.edit().putString("showHomeBackButton", "no").apply()
+                positon = 0
+                Constants.getPrefs(this)?.edit()?.putString("firstTime", "no")?.apply()
+                ft = supportFragmentManager.beginTransaction()
+                ft.replace(R.id.pager, HomeFragment())
+                ft.commit()
+                val menu = bottomNavigation.getMenu()
+                var i = 0
+                val size = menu.size()
+                our@ while (i < size) {
+                    val item = menu.getItem(i)
+                    if (item.itemId === R.id.nav_home) {
+                        item.isChecked = item.itemId === R.id.nav_home
+                        break@our
+                    }
+                    i++
                 }
-                i++
+            }catch (e:Exception){
+                e.printStackTrace()
             }
         }
 //            else if(firstTime=="no") {
@@ -247,18 +268,24 @@ class DashBoardActivity : AppCompatActivity() {
                     }
                 }
                 R.id.nav_category -> {
-
-                    if (positon != 1) {
+                    Constants.getPrefs(this)!!.edit().putString("showTaxiAtHome", "no").apply()
+                   // if (positon != 1) {
                         positon = 1
+                        var inSubCategory = Constants.getPrefs(this)!!.getString("subcategory", "0")
+
+                        Constants.getPrefs(this)!!.edit().putString("showBack", "no").apply()
+                        Constants.getPrefs(this)!!.edit().putString("subcategory", "0").apply()
+                        Constants.getPrefs(this)!!.edit().putString("showHomeBackButton", "no").apply()
                         Constants.getPrefs(this)!!.edit().putString("showBackYesOrNo", "category").apply()
 
                         // viewPager.currentItem = 1
                         ft = supportFragmentManager.beginTransaction()
                         ft.replace(R.id.pager, CategoriesFragment())
                         ft.commit()
-                    }
+                   // }
                 }
                 R.id.nav_business -> {
+                    Constants.getPrefs(this)!!.edit().putString("showTaxiAtHome", "no").apply()
                     // viewPager.currentItem = 2
                     val loggedIn = Constants.getPrefs(this@DashBoardActivity)!!.getBoolean(Constants.LOGGED, false)
                     if (loggedIn) {
@@ -269,12 +296,14 @@ class DashBoardActivity : AppCompatActivity() {
                             ft.commit()
                         }
                     } else {
+
                         Constants.getPrefs(this)?.edit()?.putString("firstTime", "Town")?.apply()
                         val intent = Intent(this, LoginActivity::class.java)
                         startActivity(intent)
                     }
                 }
                 R.id.nav_more -> {
+                    Constants.getPrefs(this)!!.edit().putString("showTaxiAtHome", "no").apply()
                     if (positon != 3) {
                         positon = 3
                         //viewPager.currentItem = 3
@@ -299,10 +328,17 @@ class DashBoardActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("CommitTransaction")
     override fun onBackPressed() {
         if (Constants.getPrefs(this)!!.getString("backPress", "0") == "0") {
             if (positon == 0) {
-                askBeforeExit()
+                val showback = Constants.getPrefs(this)!!.getString("showHomeBackButton", "no")
+                if (showback == "no") {
+                    askBeforeExit()
+                } else {
+                    finish()
+                }
+
                 //finish()
             } else {
                 var inSubCategory = Constants.getPrefs(this)!!.getString("subcategory", "0");
@@ -313,7 +349,7 @@ class DashBoardActivity : AppCompatActivity() {
                         ft = supportFragmentManager.beginTransaction()
                         ft.replace(R.id.pager, HomeFragment())
                         ft.commit()
-                        val menu = bottomNavigation.getMenu()
+                        val menu = bottomNavigation.menu
                         var i = 0
                         val size = menu.size()
                         our@ while (i < size) {
@@ -331,7 +367,7 @@ class DashBoardActivity : AppCompatActivity() {
                         ft = supportFragmentManager.beginTransaction()
                         ft.replace(R.id.pager, CategoriesFragment())
                         ft.commit()
-                        val menu = bottomNavigation.getMenu()
+                        val menu = bottomNavigation.menu
                         var i = 0
                         val size = menu.size()
                         our@ while (i < size) {
@@ -349,7 +385,7 @@ class DashBoardActivity : AppCompatActivity() {
                         ft = supportFragmentManager.beginTransaction()
                         ft.replace(R.id.pager, CategoriesFragment())
                         ft.commit()
-                        val menu = bottomNavigation.getMenu()
+                        val menu = bottomNavigation.menu
                         var i = 0
                         val size = menu.size()
                         our@ while (i < size) {
@@ -366,7 +402,7 @@ class DashBoardActivity : AppCompatActivity() {
                     ft = supportFragmentManager.beginTransaction()
                     ft.replace(R.id.pager, HomeFragment())
                     ft.commit()
-                    val menu = bottomNavigation.getMenu()
+                    val menu = bottomNavigation.menu
                     var i = 0
                     val size = menu.size()
                     our@ while (i < size) {
@@ -385,6 +421,7 @@ class DashBoardActivity : AppCompatActivity() {
             Constants.getPrefs(this)!!.edit().remove("backPress").apply()
             Constants.getBus().post(BusiniessListingBackEvent("TaxiToHome"))
             Constants.getBus().post(LiveListingBackEvent("TaxiToHome"))
+            Constants.getPrefs(this)!!.edit().putString("freeListing", "no").apply()
         }
     }
 
@@ -394,13 +431,12 @@ class DashBoardActivity : AppCompatActivity() {
                 .setTitle("Closing application")
                 .setMessage("Are you sure you want to exit?")
                 .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
-                    finish()
+                    finishAffinity()
                 }).setNegativeButton("No", null).show()
     }
 
     @Subscribe
     fun getMessage(event: SetPagerToHome) {
-
         positon = 0
         ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.pager, HomeFragment())

@@ -1,5 +1,6 @@
 package com.phaseII.placepoint
 
+import android.app.Service
 import android.net.Uri
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -34,7 +35,8 @@ interface Service {
                          @Field("category") bCat: String,
                          @Field("auth_code") auth_code: String,
                          @Field("type") type: String,
-                         @Field("token") token: String): Call<ResponseBody>
+                         @Field("token") token: String,
+                         @Field("coupon") coupon: String): Call<ResponseBody>
 
     @FormUrlEncoded
     @POST("login")
@@ -135,25 +137,25 @@ interface Service {
                            @Part("business_email") business_email: RequestBody,
                            @Part coverImage: MultipartBody.Part?): Call<ResponseBody>
 
- @Multipart
+    @Multipart
     @POST("updateBusinessPage")
     fun updateBusinessPage2(@Part("business_name") business_name: RequestBody,
-                           @Part("auth_code") auth_code: RequestBody,
-                           @Part("town_id") town_id: RequestBody,
-                           @Part("email") email: RequestBody,
-                           @Part("category_id") category_id: RequestBody,
-                           @Part surveyImage: ArrayList<MultipartBody.Part>,
-                           @Part("image_status") image_status: RequestBody,
-                           @Part("video_link") video_link: RequestBody,
-                           @Part("opening_hours") opening_hours: RequestBody,
-                           @Part("image_count") image_count: RequestBody,
-                           @Part("address") address: RequestBody,
-                           @Part("contact_no") contact_no: RequestBody,
-                           @Part("lat") lat: RequestBody,
-                           @Part("long") long: RequestBody,
+                            @Part("auth_code") auth_code: RequestBody,
+                            @Part("town_id") town_id: RequestBody,
+                            @Part("email") email: RequestBody,
+                            @Part("category_id") category_id: RequestBody,
+                            @Part surveyImage: ArrayList<MultipartBody.Part>,
+                            @Part("image_status") image_status: RequestBody,
+                            @Part("video_link") video_link: RequestBody,
+                            @Part("opening_hours") opening_hours: RequestBody,
+                            @Part("image_count") image_count: RequestBody,
+                            @Part("address") address: RequestBody,
+                            @Part("contact_no") contact_no: RequestBody,
+                            @Part("lat") lat: RequestBody,
+                            @Part("long") long: RequestBody,
                             @Part("description") bus_desc: RequestBody,
-                           @Part("oldimages") oldimages: RequestBody,
-                           @Part("business_email") business_email: RequestBody): Call<ResponseBody>
+                            @Part("oldimages") oldimages: RequestBody,
+                            @Part("business_email") business_email: RequestBody): Call<ResponseBody>
 
 
     @Multipart
@@ -177,26 +179,24 @@ interface Service {
                             @Part coverImage: MultipartBody.Part?): Call<ResponseBody>
 
 
-
     @FormUrlEncoded
     @POST("updateBusinessPage")
     fun updateBusinessPage33(@Field("business_name") bus_name: String,
-                            @Field("auth_code") auth_code: String,
-                            @Field("town_id") town_id: String,
-                            @Field("email") email: String,
-                            @Field("category_id") category_id: String,
-                            @Field("image_status") image_status: String,
-                            @Field("video_link") video_link: String,
-                            @Field("opening_hours") opening_hours: String,
-                            @Field("image_count") image_count: String,
-                            @Field("address") address: String,
-                            @Field("contact_no") contact_no: String,
-                            @Field("lat") lat: String,
-                            @Field("long") long: String,
-                            @Field("description") bus_desc: String,
-                            @Field("oldimages") oldimages: String,
-                            @Field("business_email") business_email: String): Call<ResponseBody>
-
+                             @Field("auth_code") auth_code: String,
+                             @Field("town_id") town_id: String,
+                             @Field("email") email: String,
+                             @Field("category_id") category_id: String,
+                             @Field("image_status") image_status: String,
+                             @Field("video_link") video_link: String,
+                             @Field("opening_hours") opening_hours: String,
+                             @Field("image_count") image_count: String,
+                             @Field("address") address: String,
+                             @Field("contact_no") contact_no: String,
+                             @Field("lat") lat: String,
+                             @Field("long") long: String,
+                             @Field("description") bus_desc: String,
+                             @Field("oldimages") oldimages: String,
+                             @Field("business_email") business_email: String): Call<ResponseBody>
 
 
     @FormUrlEncoded
@@ -212,7 +212,8 @@ interface Service {
     fun getSingleBusiness(@Field("auth_code") auth_code: String,
                           @Field("business_id") business_id: String,
                           @Field("mydetail") mydetail: String): Call<ResponseBody>
- @FormUrlEncoded
+
+    @FormUrlEncoded
     @POST("forgotPassword")
     fun forgotPassword(@Field("auth_code") auth_code: String,
                        @Field("email") business_id: String): Call<ResponseBody>
@@ -247,6 +248,17 @@ interface Service {
                 @Field("upgrade_type") upgrade_type: String,
                 @Field("token") token: String,
                 @Field("amount") amount: String): Call<ResponseBody>
+
+
+    @FormUrlEncoded
+    @POST("logout")
+    fun logoutApp(@Field("auth_code") auth_code: String): Call<ResponseBody>
+
+    @FormUrlEncoded
+    @POST("apply_coupon")
+    fun CheckCouponValidity(@Field("auth_code") auth_code: String,
+                            @Field("coupon") couponID: String,
+                            @Field("type") userType: String): Call<ResponseBody>
 
 
 }

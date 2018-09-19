@@ -37,6 +37,7 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
     lateinit var catIdIntent: String
     lateinit var auth_code: String
     lateinit var from: String
+    lateinit var coupon: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +64,8 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
             getBCatIntent = intent.getStringExtra("bCat")
             gettypeIntent = intent.getStringExtra("type")
             catIdIntent = intent.getStringExtra("catId")
+            coupon = intent.getStringExtra("coupon")
+
         }
         auth_code = Constants.getPrefs(this@PaymentActivity)!!.getString(Constants.AUTH_CODE, "")
 
@@ -146,7 +149,7 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
                             mPresenter.paymentService(auth_code, intent.getStringExtra("currenttype"), intent.getStringExtra("upgrade_type"), token.id.toString(), intent.getStringExtra("amount_payable"))
                         } else {
                             mPresenter.registerWebService(emailIntent, passIntent, getBNameIntent,
-                                    getBLocIntent, getBCatIntent, auth_code, gettypeIntent, token.id.toString())
+                                    getBLocIntent, getBCatIntent, auth_code, gettypeIntent, token.id.toString(),coupon)
                         }
                     }
 

@@ -28,6 +28,7 @@ import android.support.v4.app.ActivityCompat
 import com.phaseII.placepoint.BusEvents.CALL_EVENT
 import com.phaseII.placepoint.BusEvents.TAXI_EVENT
 import com.phaseII.placepoint.Constants
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.business_item.view.*
 import kotlin.collections.ArrayList
 
@@ -56,14 +57,31 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
 
         val modelBusiness = list.get(position)
 
-        if (modelBusiness.user_type==null){
-            modelBusiness.user_type=""
+        if (modelBusiness.user_type == null) {
+            modelBusiness.user_type = ""
         }
         if (modelBusiness.business_user_id == "0" || modelBusiness.user_type == "3") {
+            val taxiTownId = Constants.getPrefs(context)!!.getString(Constants.TAXI_TOWNID, "");
+            val choosenTownId = Constants.getPrefs(context)!!.getString(Constants.TOWN_ID, "");
+            var idList = taxiTownId!!.split(",")
+            val nameCat = Constants.getPrefs(context)!!.getString(Constants.CATEGORY_NAMEO, "")
+            if (idList.contains(choosenTownId)) {
+                holder.itemView.freeTaxi.visibility = View.VISIBLE
+            } else {
+                holder.itemView.freeTaxi.visibility = View.GONE
+            }
+            if (nameCat == "Taxis" || relatedTo == "TaxiRelatedData") {
+                holder.itemView.freeTaxi.visibility = View.GONE
+                holder.itemView.freenavigationImage.visibility = View.GONE
+            }
+
+
+
+
             holder.itemView.view_foreground.visibility = View.GONE
             holder.itemView.layoutSecond.visibility = View.VISIBLE
             holder.itemView.title1.text = modelBusiness.business_name
-            holder.itemView.phoneNo.text = modelBusiness.contact_no
+            // holder.itemView.phoneNo.text = modelBusiness.contact_no
             var addList = modelBusiness.address.split(",")
             val stringBuilder = StringBuilder("")
             var prefix = ""
@@ -78,9 +96,82 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
             } else {
                 holder.itemView.address.text = modelBusiness.address
             }
+            try {
+//                Picasso.with(context).load(list[position].cover_image)
+//                        .placeholder(R.mipmap.placeholder)
+//                        .centerCrop()
+//                        .into(holder.itemView.imageView)
+
+//                Picasso.with(context)
+//                        .load(list[position].cover_image)
+//                        .fit()
+//                        .placeholder(R.mipmap.placeholder)
+//                        .into(holder.itemView.freeImage)
+                Glide.with(context)
+                        .load(list[position].cover_image)
+                        .apply(RequestOptions()
+                                .centerCrop()
+                                .placeholder(R.mipmap.placeholder))
+                        .into(holder.itemView.freeImage)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
             holder.itemView.freeCall.setOnClickListener {
-               // Constants.getBus().post(CALL_EVENT(modelBusiness.contact_no))
+                // Constants.getBus().post(CALL_EVENT(modelBusiness.contact_no))
                 showDialog(modelBusiness.contact_no)
+            }
+
+
+            if ((currentLatitude == 0.0 && currentLongitude == 0.0)) {
+                holder.itemView.phoneNo.visibility = View.GONE
+            } else {
+                try {
+                    var distance = Constants.findDistanceFromCurrentPosition(currentLatitude, currentLongitude
+                            , modelBusiness.lat.toDouble(), modelBusiness.long.toDouble())
+                    var roundDis = String.format("%.2f", distance)
+                    holder.itemView.phoneNo.visibility = View.VISIBLE
+                    holder.itemView.phoneNo.text = "" + roundDis.toString() + " Km away"
+                } catch (e: Exception) {
+                    holder.itemView.phoneNo.visibility = View.GONE
+                    e.printStackTrace()
+                }
+            }
+
+            holder.itemView.freeTaxi.setOnClickListener {
+
+                Constants.getBus().post(TAXI_EVENT("taxi"))
+            }
+
+
+            holder.itemView.freenavigationImage.setOnClickListener {
+                try {
+                    var gmmIntentUri = Uri.parse("google.navigation:q=${modelBusiness.lat},${modelBusiness.long}")
+//            var  gmmIntentUri = Uri.parse("google.navigation:q=30.7398,76.7827")
+                    var mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                    mapIntent.setPackage("com.google.android.apps.maps")
+                    context.startActivity(mapIntent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            holder.itemView.layoutSecond.setOnClickListener {
+                val nameCat = Constants.getPrefs(context)!!.getString(Constants.CATEGORY_NAMEO, "")
+                val intent = Intent(context, AboutBusinessActivity::class.java)
+                intent.putExtra("busId", modelBusiness.id)
+                intent.putExtra("showallpost", "no")
+                intent.putExtra("from", "businessListadapter")
+                intent.putExtra("busName", modelBusiness.business_name)
+                intent.putExtra("subscriptionType", modelBusiness.user_type)
+                intent.putExtra("freeListing", "yes")
+                intent.putExtra("nameCat", relatedTo)
+
+                intent.putExtra("distance", holder.itemView.distance.text.toString().trim())
+                intent.putExtra("mobNumber", modelBusiness.contact_no)
+                intent.putExtra("lati", modelBusiness.lat)
+                intent.putExtra("longi", modelBusiness.long)
+                context.startActivity(intent)
             }
         } else {
             val taxiTownId = Constants.getPrefs(context)!!.getString(Constants.TAXI_TOWNID, "");
@@ -107,7 +198,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
 //var roundDis:String=Constants.findDistanceFromCurrentPosition(currentLatitude,currentLatitude , modelBusiness.lat.toDouble(), modelBusiness.long.toDouble())
 //                var distance = findDistance(currentLatitude, currentLongitude
 //                        , modelBusiness.lat.toDouble(), modelBusiness.long.toDouble())
- var distance = Constants.findDistanceFromCurrentPosition(currentLatitude, currentLongitude
+                var distance = Constants.findDistanceFromCurrentPosition(currentLatitude, currentLongitude
                         , modelBusiness.lat.toDouble(), modelBusiness.long.toDouble())
                 var roundDis = String.format("%.2f", distance)
                 val stringBuilder = StringBuilder("")
@@ -133,41 +224,30 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            if (modelBusiness.opening_time.length!=0) {
+            if (modelBusiness.opening_time.length != 0) {
                 logicForOpenCloseButton(modelBusiness, holder.itemView.timing,
                         holder.itemView.statusLay, holder.itemView.openAt)
-                holder.itemView.statusLay.visibility=View.VISIBLE
-            }else{
-                holder.itemView.statusLay.visibility=View.GONE
+                holder.itemView.statusLay.visibility = View.VISIBLE
+            } else {
+                holder.itemView.statusLay.visibility = View.GONE
             }
             try {
 //                Picasso.with(context).load(list[position].cover_image)
 //                        .placeholder(R.mipmap.placeholder)
 //                        .centerCrop()
 //                        .into(holder.itemView.imageView)
+
                 Glide.with(context)
                         .load(list[position].cover_image)
                         .apply(RequestOptions()
                                 .centerCrop()
                                 .placeholder(R.mipmap.placeholder))
                         .into(holder.itemView.imageView)
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            holder.itemView.imageView.setOnClickListener {
-                val intent = Intent(context, AboutBusinessActivity::class.java)
-                intent.putExtra("busId", modelBusiness.id)
-                intent.putExtra("showallpost", "no")
-                intent.putExtra("from", "businessListadapter")
-                intent.putExtra("busName", modelBusiness.business_name)
-                intent.putExtra("subscriptionType",modelBusiness.user_type)
 
-                intent.putExtra("distance", holder.itemView.distance.text.toString().trim())
-                intent.putExtra("mobNumber",modelBusiness.contact_no)
-                intent.putExtra("lati",modelBusiness.lat)
-                intent.putExtra("longi",modelBusiness.long)
-                context.startActivity(intent)
-            }
             holder.itemView.taxiImage.setOnClickListener {
 
                 Constants.getBus().post(TAXI_EVENT("taxi"))
@@ -175,16 +255,35 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
 
 
             holder.itemView.navigationImage.setOnClickListener {
-
-                var gmmIntentUri = Uri.parse("google.navigation:q=${modelBusiness.lat},${modelBusiness.long}")
+                try {
+                    var gmmIntentUri = Uri.parse("google.navigation:q=${modelBusiness.lat},${modelBusiness.long}")
 //            var  gmmIntentUri = Uri.parse("google.navigation:q=30.7398,76.7827")
-                var mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                mapIntent.setPackage("com.google.android.apps.maps")
-                context.startActivity(mapIntent)
+                    var mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                    mapIntent.setPackage("com.google.android.apps.maps")
+                    context.startActivity(mapIntent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
             holder.itemView.callImage.setOnClickListener {
-               // Constants.getBus().post(CALL_EVENT(modelBusiness.contact_no))
+                // Constants.getBus().post(CALL_EVENT(modelBusiness.contact_no))
                 showDialog(modelBusiness.contact_no)
+            }
+            holder.itemView.imageView.setOnClickListener {
+                val nameCat = Constants.getPrefs(context)!!.getString(Constants.CATEGORY_NAMEO, "")
+                val intent = Intent(context, AboutBusinessActivity::class.java)
+                intent.putExtra("busId", modelBusiness.id)
+                intent.putExtra("showallpost", "no")
+                intent.putExtra("from", "businessListadapter")
+                intent.putExtra("busName", modelBusiness.business_name)
+                intent.putExtra("subscriptionType", modelBusiness.user_type)
+                intent.putExtra("freeListing", "no")
+                intent.putExtra("nameCat", relatedTo)
+                intent.putExtra("distance", holder.itemView.distance.text.toString().trim())
+                intent.putExtra("mobNumber", modelBusiness.contact_no)
+                intent.putExtra("lati", modelBusiness.lat)
+                intent.putExtra("longi", modelBusiness.long)
+                context.startActivity(intent)
             }
         }
 
@@ -233,7 +332,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
         alert.show()
     }
 
-//@Override
+    //@Override
 //public void onRequestPermissionsResult(int requestCode,
 //                                       String permissions[], int[] grantResults) {
 //    switch (requestCode) {
@@ -381,7 +480,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
 
     fun setOpenClosed(dayValue: Int, timing: TextView, modelBusiness: ModelBusiness,
                       currentTime: String, statusLay: LinearLayout, openAt: TextView) {
-        if (modelBusiness.opening_time!=null&&!modelBusiness.opening_time.isEmpty()&&modelBusiness.opening_time!="null") {
+        if (modelBusiness.opening_time != null && !modelBusiness.opening_time.isEmpty() && modelBusiness.opening_time != "null") {
             val array = modelBusiness.opening_time
             val arr = JSONArray(array)
             if (dayValue == 0) {

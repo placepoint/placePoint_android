@@ -16,13 +16,13 @@ class PaymentPresenter(var view: PaymentContract) {
     fun registerWebService(email: String, pass: String, bName: String,
                            bLoc: String,
                            bCat: String, auth_code: String,
-                           type: String, token: String) {
+                           type: String, token: String, coupon: String) {
 
 
         view.showLoader()
         val retrofit = Constants.getWebClient()
         val service = retrofit!!.create(Service::class.java)
-        val call: Call<ResponseBody> = service.postRegisterData(email, pass, bName, bLoc, bCat, auth_code, type, token)
+        val call: Call<ResponseBody> = service.postRegisterData(email, pass, bName, bLoc, bCat, auth_code, type, token,coupon)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 view.hideLoader()

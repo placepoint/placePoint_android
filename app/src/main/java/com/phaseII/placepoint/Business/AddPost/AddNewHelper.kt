@@ -36,4 +36,5 @@ interface AddNewHelper {
     fun getEditTime(): String
     fun getEditDay(): String
     fun getEditType(): String
+    fun getImageChanged(): String
 }

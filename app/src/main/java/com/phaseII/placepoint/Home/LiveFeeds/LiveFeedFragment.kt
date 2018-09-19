@@ -58,42 +58,46 @@ class LiveFeedFragment : Fragment(), HomeHelper {
         }catch (e:Exception){
             e.printStackTrace()
         }
-
-        var list = Constants.getHomeFeedData(data)
-        val listTemp= arrayListOf<ModelHome>()
-        if (list != null && list.size > 0) {
-
-            var business_id = "0"
-            try {
-                val showAllPosts = Constants.getPrefs(activity!!)!!.getString(Constants.SHOW_ALL_POST, "")
-                if (showAllPosts == "no") {
-                    business_id = Constants.getPrefs(activity!!)!!.getString(Constants.BUSINESS_ID, "")
-                for(i in 0 until list.size){
-                    if (list[i].bussness_id==business_id){
-                        listTemp.add(list[i])
-                    }
-                }
-                    list=listTemp
-
-                }
-            }catch (e:Exception){
-                e.printStackTrace()
-            }
+        if(!data.isEmpty()) {
+            var list = Constants.getHomeFeedData(data)
+            val listTemp = arrayListOf<ModelHome>()
             if (list != null && list.size > 0) {
+
+                var business_id = "0"
                 try {
-                    noPosts.visibility = View.GONE
-                    recyclerView.visibility = View.VISIBLE
-                    recyclerView.layoutManager = LinearLayoutManager(activity!!)
-                    recyclerView.adapter = HomeAdapter(activity!!, list!!)
-                }catch (e:Exception){
+                    val showAllPosts = Constants.getPrefs(activity!!)!!.getString(Constants.SHOW_ALL_POST, "")
+                    if (showAllPosts == "no") {
+                        business_id = Constants.getPrefs(activity!!)!!.getString(Constants.BUSINESS_ID, "")
+                        for (i in 0 until list.size) {
+                            if (list[i].bussness_id == business_id) {
+                                listTemp.add(list[i])
+                            }
+                        }
+                        list = listTemp
+
+                    }
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
-            }else{
-                recyclerView
-                noPosts.visibility = View.VISIBLE
+                if (list != null && list.size > 0) {
+                    try {
+                        noPosts.visibility = View.GONE
+                        recyclerView.visibility = View.VISIBLE
+                        recyclerView.layoutManager = LinearLayoutManager(activity!!)
+                        recyclerView.adapter = HomeAdapter(activity!!, list!!)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                } else {
+                    recyclerView
+                    noPosts.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
+                }
+            } else {
                 recyclerView.visibility = View.GONE
+                noPosts.visibility = View.VISIBLE
             }
-        } else {
+        }else{
             recyclerView.visibility = View.GONE
             noPosts.visibility = View.VISIBLE
         }
@@ -186,6 +190,11 @@ class LiveFeedFragment : Fragment(), HomeHelper {
 
     override fun onPause() {
         super.onPause()
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         Constants.getBus().unregister(this)
     }
     @Subscribe

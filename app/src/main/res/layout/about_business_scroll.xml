@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
     <ImageView
 
@@ -11,451 +11,460 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintDimensionRatio="h,2:1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.constraint.ConstraintLayout
-        android:visibility="gone"
-        android:id="@+id/constraintLayout2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/colorTrans"
-        android:clickable="true"
-        android:padding="4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/cover"
-        app:layout_constraintEnd_toEndOf="@+id/cover"
-        app:layout_constraintStart_toStartOf="@+id/cover">
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/colorTrans"
+                android:clickable="true"
+                android:padding="4dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/cover"
+                app:layout_constraintEnd_toEndOf="@+id/cover"
+                app:layout_constraintStart_toStartOf="@+id/cover">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:fontFamily="@font/bold"
-            android:gravity="center_vertical"
-            android:paddingLeft="8dp"
-            android:paddingStart="8dp"
-           android:textSize="16dp"
-            android:textColor="@color/white"
-            app:layout_constraintEnd_toStartOf="@+id/callImage"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:fontFamily="@font/bold"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="8dp"
+                    android:paddingStart="8dp"
+                    android:textColor="@color/white"
+                    android:textSize="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/callImage"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/title"
-            android:fontFamily="@font/regular"
-            android:paddingLeft="8dp"
-            android:paddingStart="8dp"
-            android:singleLine="true"
-            android:text="Description"
-            android:textColor="@color/white"
-            android:textSize="10dp"
-            app:layout_constraintEnd_toEndOf="@+id/title"
-            app:layout_constraintStart_toStartOf="@+id/title"
-            app:layout_constraintTop_toBottomOf="@+id/title" />
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/title"
+                    android:fontFamily="@font/regular"
+                    android:paddingLeft="8dp"
+                    android:paddingStart="8dp"
+                    android:singleLine="true"
+                    android:text="Description"
+                    android:textColor="@color/white"
+                    android:textSize="10dp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/title"
+                    app:layout_constraintStart_toStartOf="@+id/title"
+                    app:layout_constraintTop_toBottomOf="@+id/title" />
 
-        <ImageView
-
-
-            android:id="@+id/navigationImage"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:src="@drawable/ic_navigation"
-            app:layout_constraintBottom_toBottomOf="@+id/taxiImage"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/taxiImage" />
-
-        <ImageView
-
-            android:id="@+id/taxiImage"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_toLeftOf="@+id/navigationImage"
-            android:src="@drawable/ic_taxi"
-            app:layout_constraintBottom_toBottomOf="@+id/callImage"
-            app:layout_constraintEnd_toStartOf="@+id/navigationImage"
-            app:layout_constraintTop_toTopOf="@+id/callImage" />
-
-        <ImageView
-
-            android:id="@+id/callImage"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_toLeftOf="@+id/taxiImage"
-            android:src="@drawable/ic_call"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/taxiImage"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/distance"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/regular"
-            android:paddingLeft="8dp"
-            android:paddingStart="8dp"
-            android:singleLine="true"
-            android:text=""
-            android:textColor="@color/white"
-            android:textSize="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/desc"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/desc" />
-
-    </android.support.constraint.ConstraintLayout>
-
-    <!-- <ImageView
-         android:id="@+id/image"
-         android:layout_width="match_parent"
-         android:layout_height="200dp"
-         android:src="@drawable/business"
-         app:layout_constraintLeft_toLeftOf="parent"
-         app:layout_constraintRight_toRightOf="parent"
-         app:layout_constraintTop_toTopOf="parent" />-->
-
-    <TextView
-        android:id="@+id/label1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Description"
-        android:textColor="@color/colorText"
-        android:textSize="16sp"
-        android:fontFamily="@font/bold"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cover" />
-
-    <RelativeLayout
-        android:id="@+id/descLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label1">
-
-        <include layout="@layout/business_description" />
-    </RelativeLayout>
+                <ImageView
 
 
-    <TextView
-        android:id="@+id/label33"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Photos"
-        android:fontFamily="@font/bold"
-        android:textColor="@color/colorText"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descLayout" />
+                    android:id="@+id/navigationImage"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/ic_navigation"
+                    app:layout_constraintBottom_toBottomOf="@+id/taxiImage"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/taxiImage" />
 
-    <android.support.v7.widget.RecyclerView
+                <ImageView
 
-        android:id="@+id/horz_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label33">
+                    android:id="@+id/taxiImage"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_toLeftOf="@+id/navigationImage"
+                    android:src="@drawable/ic_taxi"
+                    app:layout_constraintBottom_toBottomOf="@+id/callImage"
+                    app:layout_constraintEnd_toStartOf="@+id/navigationImage"
+                    app:layout_constraintTop_toTopOf="@+id/callImage" />
 
-    </android.support.v7.widget.RecyclerView>
+                <ImageView
 
+                    android:id="@+id/callImage"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_toLeftOf="@+id/taxiImage"
+                    android:src="@drawable/ic_call"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/taxiImage"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/label2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Opening Hours"
-        android:fontFamily="@font/bold"
-        android:textColor="@color/colorText"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horz_recycler" />
+                <TextView
+                    android:id="@+id/distance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/regular"
+                    android:paddingLeft="8dp"
+                    android:paddingStart="8dp"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@color/white"
+                    android:textSize="10dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/desc"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/desc" />
 
-    <RelativeLayout
+            </android.support.constraint.ConstraintLayout>
 
-        android:id="@+id/dayLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label2">
+            <!-- <ImageView
+                 android:id="@+id/image"
+                 android:layout_width="match_parent"
+                 android:layout_height="200dp"
+                 android:src="@drawable/business"
+                 app:layout_constraintLeft_toLeftOf="parent"
+                 app:layout_constraintRight_toRightOf="parent"
+                 app:layout_constraintTop_toTopOf="parent" />-->
 
-        <include layout="@layout/day_layout" />
-    </RelativeLayout>
-<RelativeLayout
-    android:id="@+id/label3"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginTop="16dp"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/dayLayout">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Location"
-        android:fontFamily="@font/bold"
-        android:textColor="@color/colorText"
-        android:textSize="16sp"
-        android:textStyle="bold"
-         />
-
-    <TextView
-        android:layout_alignParentRight="true"
-        android:id="@+id/openMap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/bold"
-        android:layout_marginRight="16dp"
-        android:drawableLeft="@drawable/ic_location"
-        android:text="View on map"
-        android:textColor="@color/colorText"
-         />
-
-
-</RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/loation_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label3">
-
-        <include layout="@layout/location_text_layout" />
-    </RelativeLayout>
-    <TextView
-        android:id="@+id/label4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="16dp"
-        android:text="Selected Town"
-        android:fontFamily="@font/bold"
-        android:textColor="@color/colorText"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loation_layout" />
-    <RelativeLayout
-        android:id="@+id/selectTown_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label4">
-
-        <include layout="@layout/selecttown_text_layout" />
-    </RelativeLayout>
-<TextView
-        android:id="@+id/label5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="16dp"
-    android:fontFamily="@font/bold"
-        android:text="Selected Categories"
-        android:textColor="@color/colorText"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/selectTown_layout" />
-    <RelativeLayout
-        android:id="@+id/selectCategories_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label5">
-
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <View
-                android:id="@+id/line"
-                android:layout_width="2.5dp"
-                android:layout_height="0dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
+            <TextView
+                android:id="@+id/label1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/colorLine"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:fontFamily="@font/bold"
+                android:text="Description"
+                android:textColor="@color/colorText"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cover" />
+
+            <RelativeLayout
+                android:id="@+id/descLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label1">
+
+                <include layout="@layout/business_description" />
+            </RelativeLayout>
 
 
             <TextView
-                android:id="@+id/categoryText"
-                android:layout_width="0dp"
+                android:id="@+id/label33"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:fontFamily="@font/regular"
                 android:layout_marginTop="8dp"
-                android:text="selected Categories"
+                android:fontFamily="@font/bold"
+                android:text="Photos"
                 android:textColor="@color/colorText"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/line"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/descLayout" />
 
-
-        </android.support.constraint.ConstraintLayout>
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/openCloseLay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/background_timing_green"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="4dp"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/openStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:fontFamily="@font/bold"
-            android:text="Open Now"
-            android:textAllCaps="true"
-            android:textColor="@color/black"
-            android:textSize="10sp" />
-
-        <TextView
-            android:id="@+id/openStatusAt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/bold"
-            android:text="Open at 9 AM"
-            android:textAllCaps="false"
-            android:textColor="@color/black"
-            android:textSize="8sp"
-            android:visibility="gone" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/subscriptionHeading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/bold"
-        android:text="Subscription"
-        android:textColor="@color/colorText"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/label5"
-        app:layout_constraintStart_toStartOf="@+id/selectCategories_layout"
-        app:layout_constraintTop_toBottomOf="@+id/selectCategories_layout" />
-
-    <RelativeLayout
-        android:id="@+id/subscripLay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subscriptionHeading">
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/subscriptionLay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <View
-                android:id="@+id/line22"
-                android:layout_width="2.5dp"
-                android:layout_height="0dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/horz_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@color/colorLine"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/label33">
+
+            </android.support.v7.widget.RecyclerView>
 
 
             <TextView
-                android:id="@+id/subscriptionType"
-                android:layout_width="0dp"
+                android:id="@+id/label2"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:fontFamily="@font/regular"
                 android:layout_marginTop="8dp"
+                android:fontFamily="@font/bold"
+                android:text="Opening Hours"
                 android:textColor="@color/colorText"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/horz_recycler" />
+
+            <RelativeLayout
+
+                android:id="@+id/dayLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label2">
+
+                <include layout="@layout/day_layout" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/label3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dayLayout">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/bold"
+                    android:text="Location"
+                    android:textColor="@color/colorText"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/openMap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="16dp"
+                    android:drawableLeft="@drawable/ic_location"
+                    android:fontFamily="@font/bold"
+                    android:text="View on map"
+                    android:textColor="@color/colorText" />
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/loation_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label3">
+
+                <include layout="@layout/location_text_layout" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/label4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/bold"
+                android:text="Selected Town"
+                android:textColor="@color/colorText"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/loation_layout" />
+
+            <RelativeLayout
+                android:id="@+id/selectTown_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label4">
+
+                <include layout="@layout/selecttown_text_layout" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/label5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/bold"
+                android:text="Selected Categories"
+                android:textColor="@color/colorText"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/selectTown_layout" />
+
+            <RelativeLayout
+                android:id="@+id/selectCategories_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label5">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <View
+                        android:id="@+id/line"
+                        android:layout_width="2.5dp"
+                        android:layout_height="0dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@color/colorLine"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <TextView
+                        android:id="@+id/categoryText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/regular"
+                        android:text="selected Categories"
+                        android:textColor="@color/colorText"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/line"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                </android.support.constraint.ConstraintLayout>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/openCloseLay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/background_timing_green"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="4dp"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/line22"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/openStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:fontFamily="@font/bold"
+                    android:text="Open Now"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/openStatusAt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/bold"
+                    android:text="Open at 9 AM"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                    android:textSize="8sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/subscriptionHeading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/bold"
+                android:text="Subscription"
+                android:textColor="@color/colorText"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/label5"
+                app:layout_constraintStart_toStartOf="@+id/selectCategories_layout"
+                app:layout_constraintTop_toBottomOf="@+id/selectCategories_layout" />
+
+            <RelativeLayout
+                android:id="@+id/subscripLay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/subscriptionHeading">
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/subscriptionLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <View
+                        android:id="@+id/line22"
+                        android:layout_width="2.5dp"
+                        android:layout_height="0dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@color/colorLine"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
 
+                    <TextView
+                        android:id="@+id/subscriptionType"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/regular"
+                        android:textColor="@color/colorText"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/line22"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                </android.support.constraint.ConstraintLayout>
+            </RelativeLayout>
         </android.support.constraint.ConstraintLayout>
-    </RelativeLayout>
-</android.support.constraint.ConstraintLayout>

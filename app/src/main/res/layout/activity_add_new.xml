@@ -198,7 +198,7 @@
                     android:fontFamily="@font/bold"
                     android:padding="8dp"
                     android:text="Schedule post"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorText"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="@+id/selectCategory"
                     app:layout_constraintTop_toBottomOf="@+id/croppedImage" />
@@ -238,7 +238,7 @@
                         android:layout_height="match_parent"
                         android:drawableRight="@drawable/ic_go"
                         android:fontFamily="@font/regular"
-                        android:padding="16dp"
+                        android:padding="8dp"
                         android:text="Scheduling Option "
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

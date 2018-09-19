@@ -3,6 +3,7 @@ package com.phaseII.placepoint.More
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -12,9 +13,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import com.phaseII.placepoint.BusEvents.LogoutEvent
 import com.phaseII.placepoint.Constants
+import com.phaseII.placepoint.DashBoard.DashBoardActivity
 
 import com.phaseII.placepoint.R
+import com.phaseII.placepoint.Service
+import com.squareup.otto.Subscribe
+import kotlinx.android.synthetic.main.fragment_more.*
+import okhttp3.ResponseBody
+import org.json.JSONException
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import java.io.IOException
 
 
 class MoreFragment : Fragment(){
@@ -66,6 +81,55 @@ class MoreFragment : Fragment(){
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        Constants.getBus().register(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Constants.getBus().unregister(this)
+    }
+    @Subscribe
+    fun getMessage(event: LogoutEvent) {
+        progressBar.visibility=View.VISIBLE
+        var retrofit= Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .build()
+        val service=retrofit.create(Service::class.java)
+        val call: Call<ResponseBody> = service.logoutApp(event.value)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                progressBar.visibility=View.GONE
+                if (response.isSuccessful) {
+                    try {
+                        val res = response.body()!!.string()
+                        val `object` = JSONObject(res)
+                        val status = `object`.optString("status")
+                        // if (status.equals("true", ignoreCase = true)) {
+                        val intent = Intent(context, DashBoardActivity::class.java)
+                        intent.putExtra("from", "false")
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                        (context as Activity).finish()
+
+                        // }
+
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                progressBar.visibility=View.GONE
+                Toast.makeText(context,"Unable to Logout.", Toast.LENGTH_LONG).show()
+            }
+        })
+    }
 //    override fun onAttach(context: Context?) {
 //        super.onAttach(context)
 //        goToHome= context as HomeTab

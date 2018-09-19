@@ -62,7 +62,7 @@ class Constants {
 
         //Test---------------------------
 //       const val BASE_URL = "http://cloudart.com.au/projects/Placepoint/index.php/webservices/data_v1/"
-//       const val STRIPE_KEY = "pk_test_IWmxeaTtErjZDGj3Dcu2oJw0"
+//  const val STRIPE_KEY = "pk_test_IWmxeaTtErjZDGj3Dcu2oJw0"
 
 
         const val TOKEN = "token"

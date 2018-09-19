@@ -4,10 +4,9 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import com.phaseII.placepoint.AboutBusiness.BusinessDetails.DetailFragment
-import com.phaseII.placepoint.Home.BusinessListing.BusinessListingFragment
 import com.phaseII.placepoint.Home.LiveFeeds.LiveFeedFragment
 
-class DetailViewPagerAdapter (fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+class DetailViewPagerAdapter (fm: FragmentManager,var  fromFreeListing: String) : FragmentStatePagerAdapter(fm) {
 
 
     override fun getItem(position: Int): Fragment? {
@@ -22,7 +21,13 @@ class DetailViewPagerAdapter (fm: FragmentManager) : FragmentStatePagerAdapter(f
     }
 
     override fun getCount(): Int {
-        return 2
+        var noOfTabs=2
+        if (fromFreeListing.equals("yes")){
+            noOfTabs=1
+        }else{
+            noOfTabs=2
+        }
+        return noOfTabs
     }
 
 
