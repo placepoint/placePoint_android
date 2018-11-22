@@ -34,6 +34,10 @@ class SubCategoriesActivity : AppCompatActivity() {
         Constants.getSSlCertificate(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        Constants.getBus().register(this)
+    }
 
     private fun setToolBar() {
 
@@ -42,8 +46,6 @@ class SubCategoriesActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-       // mTitle.text = intent.getStringExtra("name") + " (" + Constants.getPrefs(this)?.getString(Constants.TOWN_NAME, "") + ")"
-
         townName=intent.getStringExtra("townName")
        townId=intent.getStringExtra("townId")
         mTitle.text = intent.getStringExtra("name") + " (" + townName + ")"

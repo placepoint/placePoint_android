@@ -50,6 +50,7 @@ class MoreAdapter(var context: Context, var items: ArrayList<String>) : Recycler
             }
             if (position == 2) {
                 Constants.getPrefs(context)!!.edit().putString("showHomeBackButton", "yes").apply()
+                Constants.getPrefs(context)!!.edit().putString("comingFrom", "more").apply()
                 val intent = Intent(context, TownActivity::class.java)
                 intent.putExtra("from", "true")
                 context.startActivity(intent)

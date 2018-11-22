@@ -4,7 +4,6 @@ import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.R
 import com.phaseII.placepoint.Service
 import okhttp3.ResponseBody
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
@@ -13,7 +12,7 @@ import retrofit2.Response
 import java.io.IOException
 
 class TownPresenter(val view: TownHelper) {
-    fun prepareDataForAdapter() {
+    fun prepareDataForAdapter(from: String) {
         view.showLoader()
         val retrofit = Constants.getWebClient()
         val service = retrofit!!.create(Service::class.java)
@@ -33,6 +32,7 @@ class TownPresenter(val view: TownHelper) {
                             view.setDataToAdapter(location.toString())
                         }
 
+
                     } catch (e: IOException) {
                         e.printStackTrace()
                     } catch (e: JSONException) {
@@ -48,7 +48,5 @@ class TownPresenter(val view: TownHelper) {
             }
         })
     }
-
-
 
 }

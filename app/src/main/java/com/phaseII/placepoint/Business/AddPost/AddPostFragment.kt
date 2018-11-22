@@ -214,7 +214,7 @@ class AddPostFragment : Fragment(), AddNewHelper
 
         selectCategory.setOnClickListener {
             val intent = Intent(activity!!, MultipleCategories::class.java)
-            intent.putExtra("from", "addPost")
+            intent.putExtra("from", "addpost")
             startActivityForResult(intent, 155)
         }
         expandLayout.setOnClickListener {
@@ -340,6 +340,7 @@ class AddPostFragment : Fragment(), AddNewHelper
 //                false
 //            }
 //        }
+
         return view
 
     }
@@ -1118,12 +1119,12 @@ class AddPostFragment : Fragment(), AddNewHelper
 //    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 //        if (item!!.itemId == android.R.id.home) {
 //            onBackPressed()
-//        } else if (item.itemId == R.id.addPost) {
+//        } else if (item.itemId == R.id.addpost) {
 //            val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 //            imm.hideSoftInputFromWindow(postText.windowToken, 0)
 //            if(!isServiceRunning){
 //
-//                mPresenter.addPost(isServiceRunning)
+//                mPresenter.addpost(isServiceRunning)
 //            }
 //
 //        }
@@ -1205,11 +1206,12 @@ class AddPostFragment : Fragment(), AddNewHelper
         Constants.getBus().register(this)
     }
 
-    override fun onPause() {
-        super.onPause()
+
+
+    override fun onDestroy() {
+        super.onDestroy()
         Constants.getBus().unregister(this)
     }
-
     @Subscribe
     fun getEventValue(event: EmptyFields) {
         editText.setText("")
@@ -1361,7 +1363,7 @@ class AddPostFragment : Fragment(), AddNewHelper
         }
         // }
         addPost.setOnClickListener {
-//            val post = addPost.text.toString()
+//            val post = addpost.text.toString()
 //            if (post.equals("DONE")) {
 //                // Toast.makeText(activity,"Pending",Toast.LENGTH_LONG).show()
 //                mPresenter.editPost(postID)

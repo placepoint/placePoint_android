@@ -3,21 +3,13 @@ package com.phaseII.placepoint.Business.Profile.BusinessProfileMap
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.location.*
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.text.Editable
-import android.text.Html
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -73,7 +65,6 @@ class ProfileMapActivity : AppCompatActivity(), OnMapReadyCallback, ProfileMapHe
                 mPresenter.setLocationData(p0)
                 Log.e("places: ", p0.toString())
             }
-
             override fun onError(p0: Status?) {
             }
 
@@ -98,35 +89,21 @@ class ProfileMapActivity : AppCompatActivity(), OnMapReadyCallback, ProfileMapHe
             mMap.isMyLocationEnabled = true
             mMap.clear()
             myLocation = LatLng(mLastLocation.latitude, mLastLocation.longitude)
-            lat=mLastLocation.latitude
-            long=mLastLocation.longitude
+            lat = mLastLocation.latitude
+            long = mLastLocation.longitude
             marker = MarkerOptions().position(myLocation)
             mMap.addMarker(marker)
-            val geocoder = Geocoder(this, Locale.getDefault())
+            val geoCoder = Geocoder(this, Locale.getDefault())
             val addresses: List<Address>
-            addresses = geocoder.getFromLocation(myLocation.latitude, myLocation.longitude, 1)
+            addresses = geoCoder.getFromLocation(myLocation.latitude, myLocation.longitude, 1)
             val address = addresses[0].getAddressLine(0)
-//            val cityName = addresses[0].locality
-//            val stateName = addresses[0].adminArea
-            val country = addresses[0].countryName
-            val knownName = addresses[0].featureName
-//        val knownName1 = m.name.toString()
-////        val latlongValue = p0.latLng
-//        lat = latlongValue.latitude
-//        long = latlongValue.longitude
-//        myLocation = latlongValue
-//        houseNo.setText(knownName1)
             street.setText(address)
-//            state.setText(stateName)
-//            city.setText(cityName)
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 20f))
-//        marker = MarkerOptions().position(myLocation)
-//        mMap.addMarker(marker)
         }
 
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setToolBar() {
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -135,13 +112,13 @@ class ProfileMapActivity : AppCompatActivity(), OnMapReadyCallback, ProfileMapHe
         val mTitle = toolbar.findViewById(R.id.toolbar_title) as TextView
         val mArrow = toolbar.findViewById(R.id.arrow_down) as ImageView
         val done = toolbar.findViewById(R.id.done) as TextView
-        done.visibility=View.VISIBLE
+        done.visibility = View.VISIBLE
         mArrow.visibility = View.GONE
         mTitle.text = "Address"
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        done.setOnClickListener{
-            intent.putExtra("location",  street.text.toString() )
+        done.setOnClickListener {
+            intent.putExtra("location", street.text.toString())
             intent.putExtra("lat", lat.toString())
             intent.putExtra("long", long.toString())
             setResult(5, intent)
@@ -155,7 +132,6 @@ class ProfileMapActivity : AppCompatActivity(), OnMapReadyCallback, ProfileMapHe
         }
         return super.onOptionsItemSelected(item)
     }
-
 
 
     override fun setMapMethods() {
@@ -228,14 +204,13 @@ class ProfileMapActivity : AppCompatActivity(), OnMapReadyCallback, ProfileMapHe
                 val address = addresses[0].getAddressLine(0)
                 val cityName = addresses[0].locality
                 val stateName = addresses[0].adminArea
-                val country = addresses[0].countryName
                 val knownName = addresses[0].featureName
                 houseNo.setText(knownName)
                 street.setText(address)
                 state.setText(stateName)
                 city.setText(cityName)
-            }catch (e:Exception){
-              e.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
 
         }
@@ -273,20 +248,17 @@ class ProfileMapActivity : AppCompatActivity(), OnMapReadyCallback, ProfileMapHe
     }
 
 
-
     override fun setGeoCoderLocation(p0: Place?) {
-        val geocoder = Geocoder(this, Locale.getDefault())
+        val geoCoder = Geocoder(this, Locale.getDefault())
         val addresses: List<Address>
-        addresses = geocoder.getFromLocation(p0!!.latLng.latitude, p0.latLng.longitude, 1)
+        addresses = geoCoder.getFromLocation(p0!!.latLng.latitude, p0.latLng.longitude, 1)
         val address = addresses[0].getAddressLine(0)
         val cityName = addresses[0].locality
         val stateName = addresses[0].adminArea
-        val country = addresses[0].countryName
-        val knownName = addresses[0].featureName
         val knownName1 = p0.name.toString()
-        val latlongValue = p0.latLng
+        val latLongValue = p0.latLng
 
-        myLocation = latlongValue
+        myLocation = latLongValue
         lat = myLocation.latitude
         long = myLocation.longitude
         houseNo.setText(knownName1)

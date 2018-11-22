@@ -9,7 +9,7 @@ interface MyTimelineHelper {
     fun hideLoader()
     fun showNetworkError(resId: Int)
     fun noPosts()
-    fun saveCategories(catagories: String)
-    fun saveLocaton(location: String)
+    fun saveCategories(categories: String)
+    fun saveLocation(location: String)
 
 }

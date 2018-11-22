@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.phaseII.placepoint.AlphabetiComparator
 import com.phaseII.placepoint.BusEvents.ShowHomeButton
+import com.phaseII.placepoint.BusEvents.ShowMainLayout
 import com.phaseII.placepoint.BusEvents.SwitchToMainCategory
 import com.phaseII.placepoint.Categories.SubCategories.SubCategoriesActivity
 import com.phaseII.placepoint.Constants
@@ -43,10 +44,7 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
                 .placeholder(R.mipmap.placeholder)
                 .resize(300, 200)
                 .into(holder.itemView.catImage)
-//        Glide.with(context)
-//                .load(parentList[position].image_url)
-//
-//                .into(holder.itemView.catImage)
+
         holder.itemView.setOnClickListener {
 
 
@@ -86,10 +84,7 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
                     Constants.getPrefs(context)!!.edit().putString("MainCatName", parentList[position].name).apply()
                     Constants.getPrefs(context)!!.edit().putString("position", position.toString()).apply()
                     Constants.getBus().post(ShowHomeButton("value"))
-                    //  mainList = intent.getParcelableArrayListExtra("List")
-                    //  var  modelData = intent.getStringExtra("model")
-                    // catId = intent.getStringExtra("catId")
-                    var childList1: ArrayList<ModelCategoryData> = arrayListOf()
+                    val childList1: ArrayList<ModelCategoryData> = arrayListOf()
                     for (i in 0 until main.size) {
                         if (parentList[position].id == main[i].parent_category) {
                             childList1.add(main[i])
@@ -107,15 +102,9 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
                         parentList = childList1
                         notifyDataSetChanged()
                     }
-//                    val grid = GridLayoutManager(this, 2)
-//                    recyclerView.layoutManager = grid as RecyclerView.LayoutManager?
-//                    adapter = SubCategoryAdapter(this, childList1, intent.getStringExtra("froms")
-//                            , intent.getStringExtra("name"),townName,townId)
-//                    recyclerView.adapter = adapter
 
                 } else {
                      Constants.getPrefs(context)!!.edit().putString("subcategory", "2").apply()
-                   //  Constants.getPrefs(context)!!.edit().putString("catListingPage", "yes").apply()
                     val stringBuilder = StringBuilder("")
                     var prefix = ""
                     for (i in 0 until parentList.size) {
@@ -148,8 +137,13 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
 
 
                     }
+
                     Constants.getPrefs(context)!!.edit().putString("showHomeBackButton", "yes").apply()
                     Constants.getBus().post(SwitchToMainCategory("value"))
+                    val value=Constants.getPrefs(context)!!.getString("cc","0").toInt()
+                    val dd=value+1
+                    Constants.getPrefs(context)!!.edit().putString("cc", dd.toString()).apply()
+
                 }
 
             }

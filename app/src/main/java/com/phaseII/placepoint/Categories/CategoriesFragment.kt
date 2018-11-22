@@ -52,6 +52,11 @@ class CategoriesFragment : Fragment(), CategoryHelper {
     override fun onResume() {
         super.onResume()
         try {
+            Constants.getBus().unregister(this)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        try {
             Constants.getBus().register(this)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -79,8 +84,9 @@ class CategoriesFragment : Fragment(), CategoryHelper {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+
+    override fun onDestroy() {
+        super.onDestroy()
         try {
             Constants.getBus().unregister(this)
         } catch (e: Exception) {
@@ -203,6 +209,9 @@ class CategoriesFragment : Fragment(), CategoryHelper {
         } else if (inSubCategory == "2") {
             Constants.getPrefs(activity!!)!!.edit().putString("showHomeBackButton", "yes").apply()
             Constants.getBus().post(SwitchToMainCategory("value"))
+            val value=Constants.getPrefs(activity!!)!!.getString("cc","0").toInt()
+            val dd=value+1
+            Constants.getPrefs(activity!!)!!.edit().putString("cc", dd.toString()).apply()
         }
 
 

@@ -206,10 +206,9 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         try {
-
             Constants.getBus().unregister(this)
         } catch (e: Exception) {
             e.printStackTrace()

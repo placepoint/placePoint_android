@@ -79,4 +79,6 @@
     <string name="premiumText">    Premium   \u20ac 150/year</string>
     <string name="freePlan">Free   \u20ac 0/year</string>
     <string name="prompt_coupon">Enter Coupon</string>
+    <string name="welcome">PlacePoint connects people looking for \nthings to do with the businesses\nproviding those services. The live feed\nsection contains information directly\nfrom the businesses in real time, giving\nyou instant in one central place. In the\n near future we will be expanding to\n include many more categories.\nPlease select category from the\n bottom menu to continue.</string>
+    <!--<string name="welcome">PlacePoint connects people looking for things to do with the businesses providing those services. The live feed section contains information  directly from the businesses in real time, giving you instant in one central place. In the near future we will be expanding to include many more categories. Please select category from the bottom menu to continue.</string>-->
 </resources>

@@ -39,11 +39,6 @@ class SubCategoryAdapter(var context: Context, var main: ArrayList<ModelCategory
                 .placeholder(R.mipmap.placeholder)
                 .resize(300, 200)
                 .into(holder.itemView.catImage)
-
-//        Glide.with(context)
-//                .load(parentList[position].image_url)
-//
-//                .into(holder.itemView.catImage)
         holder.itemView.setOnClickListener {
             val stringBuilder = StringBuilder("")
             var prefix = ""
@@ -59,62 +54,64 @@ class SubCategoryAdapter(var context: Context, var main: ArrayList<ModelCategory
             if (froms == "cat") {
 
 
-                    if (position==0&& main[position].name!="Taxis"){
+                if (position == 0 && main[position].name != "Taxis") {
 
-                Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDSUB, maincat).apply()
-                Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
-                Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, name).apply()
-                Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, savetownId).apply()
-                Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townName).apply()
-                    }else {
-                        Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDSUB, main[position].id).apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, main[position].name).apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, savetownId).apply()
-                 Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townName).apply()
+                    Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDSUB, maincat).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, name).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, savetownId).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townName).apply()
+                } else {
+                    Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDSUB, main[position].id).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, main[position].name).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, savetownId).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townName).apply()
 
-////
-                    }
-                Constants.getPrefs(context)!!.edit().putString("showHomeBackButton", "yes").apply()
-                val showback=Constants.getPrefs(context!!)!!.getString("showHomeBackButton", "no")
-                if (showback=="no") {
+                }
+                val fromWhere=Constants.getPrefs(context)!!.getString("comingFrom", "")
+                if (fromWhere=="more") {
+                    Constants.getPrefs(context)!!.edit().putString("showHomeBackButton", "yes").apply()
+                }
+                val showBack = Constants.getPrefs(context!!)!!.getString("showHomeBackButton", "no")
+                if (showBack == "no") {
                     val intent = Intent(context, DashBoardActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startActivity(intent)
                     (context as Activity).finish()
-                }else{
+                } else {
                     val intent = Intent(context, DashBoardActivity::class.java)
                     context.startActivity(intent)
                 }
             } else {
-                    if (position==0&& main[position].name!="Taxis"){
-                Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
-                Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, name).apply()
-                Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
-                Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, savetownId).apply()
-                Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townName).apply()
-                Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDSUB, maincat).apply()
+                if (position == 0 && main[position].name != "Taxis") {
+                    Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, name).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, savetownId).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townName).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDSUB, maincat).apply()
 
-                        val showback=Constants.getPrefs(context!!)!!.getString("showHomeBackButton", "no")
-                        if (showback=="no") {
-                            (context as Activity).finish()
-                        }
-
-                    }else {
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
-                        Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, main[position].name).apply()
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDSUB, main[position].id).apply()
-                       Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, savetownId).apply()
-                                   Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townName).apply()
-                        val showback=Constants.getPrefs(context!!)!!.getString("showHomeBackButton", "no")
-                        if (showback=="no") {
-                            (context as Activity).finish()
-                        }
-
+                    val showback = Constants.getPrefs(context!!)!!.getString("showHomeBackButton", "no")
+                    if (showback == "no") {
+                        (context as Activity).finish()
                     }
+
+                } else {
+                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
+                    Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, main[position].name).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDSUB, main[position].id).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, savetownId).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townName).apply()
+                    val showback = Constants.getPrefs(context!!)!!.getString("showHomeBackButton", "no")
+                    if (showback == "no") {
+                        (context as Activity).finish()
+                    }
+
+                }
             }
 
         }

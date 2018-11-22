@@ -304,7 +304,7 @@ class BusinessProfilePresenter(var view: BusinessProfileHelper) {
         }
         val address = view.getAddress()
         if (address == null || address.equals("")) {
-            view.setAdressError("Address is missing")
+            view.setAddressError("Address is missing")
 
             return
         }
@@ -322,7 +322,7 @@ class BusinessProfilePresenter(var view: BusinessProfileHelper) {
                 return
             }
             if (town_id == null || town_id.equals("")) {
-                val pretown = view.getPrefillTownId()
+                val pretown = view.getPreFillTownId()
                 if (pretown == "") {
                     view.setTownError("Town is missing")
 
@@ -333,7 +333,7 @@ class BusinessProfilePresenter(var view: BusinessProfileHelper) {
             }
 
             if (category_id == null || category_id.equals("")) {
-                val preCat = view.getPrefillCatId()
+                val preCat = view.getPreFillCatId()
                 if (preCat == "") {
                     view.setCatError("Category is missing")
 
@@ -373,7 +373,7 @@ class BusinessProfilePresenter(var view: BusinessProfileHelper) {
         view.saveBusinessName()
 
 
-        view.setclickTrue()
+        view.setClickTrue()
 
         //if (coverImage == null) {
 //        if (coverImageString == null||coverImageString.isEmpty()) {
@@ -685,7 +685,7 @@ class BusinessProfilePresenter(var view: BusinessProfileHelper) {
                                 var objcd=data!!.optJSONObject(i)
                                  business_id = objcd.optString("business_user_id")
                             }
-                            view.setBusinessPrefilledData(data.toString(), end_time, user_type,business_id)
+                            view.setBusinessPreFilledData(data.toString(), end_time, user_type,business_id)
                         } else if (status == "false") {
 
                             if (res.contains("action")) {
@@ -710,7 +710,7 @@ class BusinessProfilePresenter(var view: BusinessProfileHelper) {
     }
 
     fun setSingleBusinessPrefilledData() {
-        view.setSingleBusinessPrefilledData()
+        view.setSingleBusinessPreFilledData()
     }
 
     fun uploadCoverImage() {

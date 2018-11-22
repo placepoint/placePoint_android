@@ -6,12 +6,13 @@
     android:layout_height="wrap_content">
 
     <TextView
+
         android:id="@+id/entercon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/bold"
         android:text="@string/enter_contact"
         android:textColor="@color/colorText"
@@ -22,20 +23,19 @@
 
 
     <EditText
+
         android:id="@+id/number"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginRight="8dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/regular"
         android:hint="Enter Contact Number"
         android:inputType="number"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/entercon"
         app:layout_constraintTop_toBottomOf="@+id/entercon" />
 
     <TextView
@@ -138,8 +138,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/bold"
         android:text="@string/enter_email"
         android:textColor="@color/colorText"
@@ -154,10 +153,10 @@
         android:layout_marginTop="8dp"
         android:background="@null"
         android:hint="Enter Email"
-        android:inputType="text"
         android:imeOptions="actionDone"
-        app:layout_constraintEnd_toEndOf="@+id/number"
-        app:layout_constraintStart_toStartOf="@+id/number"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="@+id/emailText"
+        app:layout_constraintStart_toStartOf="@+id/emailText"
         app:layout_constraintTop_toBottomOf="@+id/emailText" />
 
     <TextView

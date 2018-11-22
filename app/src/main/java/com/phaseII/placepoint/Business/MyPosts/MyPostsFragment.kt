@@ -1,6 +1,7 @@
 package com.phaseII.placepoint.Business.MyPosts
 
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -12,14 +13,11 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import com.phaseII.placepoint.AboutBusiness.SingleBusinessModel
 import com.phaseII.placepoint.Constants
-
 import com.phaseII.placepoint.R
 import com.phaseII.placepoint.SubscriptionPlan.SubscriptionActivity
 import com.phaseII.placepoint.Town.ModelTown
 import kotlinx.android.synthetic.main.fragment_my_timeline.*
-
 import java.util.ArrayList
 import java.util.HashSet
 
@@ -33,7 +31,7 @@ class MyPostsFragment : Fragment(), MyTimelineHelper {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var noPosts: TextView
-
+    private val POSTCODE: Int = 111
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_my_timeline, container, false)
@@ -45,7 +43,7 @@ class MyPostsFragment : Fragment(), MyTimelineHelper {
         progressBar = v.findViewById(R.id.progressBar)
         recyclerView.stopNestedScroll()
         recyclerView.setHasFixedSize(true)
-        mPresenter.PrepareData()
+        mPresenter.prepareData()
         setHasOptionsMenu(true)
         upgrade.setOnClickListener {
             val intent = Intent(context, SubscriptionActivity::class.java)
@@ -69,7 +67,7 @@ class MyPostsFragment : Fragment(), MyTimelineHelper {
                 noPosts.visibility = View.GONE
 
                 recyclerView.layoutManager = LinearLayoutManager(activity)
-                mAdapter = MyTimelineAdapter(this.context!!, list!!)
+                mAdapter = MyTimelineAdapter(this.context!!, list)
                 recyclerView.adapter = mAdapter
             } else {
                 noPosts.visibility = View.VISIBLE
@@ -85,19 +83,8 @@ class MyPostsFragment : Fragment(), MyTimelineHelper {
         noPosts.visibility = View.VISIBLE
     }
 
-    private val POSTCODE: Int = 111
 
-//    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-//        if (item != null) {
-//            if (item.itemId == R.id.action_add) {
-//                val intent = Intent(activity!!, AddNewActivity::class.java)
-//                startActivityForResult(intent, POSTCODE)
-//            }
-//        }
-//        return super.onOptionsItemSelected(item)
-//
-//
-//    }
+
 
     override fun getAuthCode(): String {
         return Constants.getPrefs(activity!!)?.getString(Constants.AUTH_CODE, "")!!
@@ -106,36 +93,16 @@ class MyPostsFragment : Fragment(), MyTimelineHelper {
     override fun getTownId(): String {
 
         // ****************Setting selected Town by user**************************
-        var model: SingleBusinessModel = SingleBusinessModel()
-        var list: java.util.ArrayList<SingleBusinessModel>? = arrayListOf()
-        val data = Constants.getPrefs(activity!!)?.getString(Constants.SINGLE_BUSINESS_LIST, "")!!
-        list = Constants.getSingleBusinessData(data)
         val loc = Constants.getPrefs(activity!!)?.getString(Constants.LOCATION_LIST, "")!!
-        var loc_list: ArrayList<ModelTown> = arrayListOf()
-        loc_list = Constants.getTownData(loc)!!
+        val locList: ArrayList<ModelTown> = Constants.getTownData(loc)!!
         val hashSet2 = HashSet<ModelTown>()
-        hashSet2.addAll(loc_list)
-        loc_list.clear()
-        loc_list.addAll(hashSet2)
-//        if (list != null) {
-//            for(i in 0 until list.size){
-//                model=list[i]
-//                val townid=model.town_id
-//                for (i2 in 0 until loc_list.size) {
-//                    if (loc_list[i2].id == townid) {
-//                       // towns.text = loc_list[i2].townname
-//                        return loc_list[i2].id
-//                    }
-//                }
-//
-//            }
-//            //val townName = Constants.getPrefs(this)!!.getString(Constants.TOWN_NAME, "")
-//
-//        }
-        val townid = Constants.getPrefs(activity!!)?.getString(Constants.TOWN_ID2, "")
-        for (i2 in 0 until loc_list.size) {
-            if (loc_list[i2].id == townid) {
-                return loc_list[i2].id
+        hashSet2.addAll(locList)
+        locList.clear()
+        locList.addAll(hashSet2)
+        val townId = Constants.getPrefs(activity!!)?.getString(Constants.TOWN_ID2, "")
+        for (i2 in 0 until locList.size) {
+            if (locList[i2].id == townId) {
+                return locList[i2].id
             }
         }
         return Constants.getPrefs(activity!!)?.getString(Constants.TOWN_ID2, "")!!
@@ -143,7 +110,7 @@ class MyPostsFragment : Fragment(), MyTimelineHelper {
 
     override fun getCatId(): String {
         val id = Constants.getPrefs(activity!!)?.getString(Constants.MAIN_CATEGORY, "")!!
-        var result: List<String> = id.split(",").map { it.trim() }
+        val result: List<String> = id.split(",").map { it.trim() }
         return if (result.size > 1) {
             result[1]
         } else {
@@ -174,7 +141,7 @@ class MyPostsFragment : Fragment(), MyTimelineHelper {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == POSTCODE) {
                 try {
-                    mPresenter.PrepareData()
+                    mPresenter.prepareData()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -183,16 +150,17 @@ class MyPostsFragment : Fragment(), MyTimelineHelper {
         }
     }
 
-    override fun saveCategories(catagories: String) {
+    @SuppressLint("CommitPrefEdits")
+    override fun saveCategories(categories: String) {
 
         if (activity != null) {
             Constants.getPrefs(activity!!)?.edit()!!.remove(Constants.CATEGORY_LIST).apply()
-            Constants.getPrefs(activity!!)?.edit()?.putString(Constants.CATEGORY_LIST, catagories)?.apply()
+            Constants.getPrefs(activity!!)?.edit()?.putString(Constants.CATEGORY_LIST, categories)?.apply()
 
         }
     }
 
-    override fun saveLocaton(location: String) {
+    override fun saveLocation(location: String) {
         if (activity != null) {
             Constants.getPrefs(activity!!)?.edit()?.putString(Constants.LOCATION_LIST, location)?.apply()
         }

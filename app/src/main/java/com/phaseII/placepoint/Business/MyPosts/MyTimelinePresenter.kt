@@ -13,14 +13,14 @@ import retrofit2.Response
 import java.io.IOException
 
 class MyTimelinePresenter(val view: MyTimelineHelper) {
-    fun PrepareData() {
+    fun prepareData() {
         val auth_code = view.getAuthCode()
-        val town_id = view.getTownId()
+        val townId = view.getTownId()
         val limit = "10000"
         val page = "0"
         val timeline = "false"
-        val category_id = view.getCatId()
-        feedWebService(auth_code, town_id, limit, page, category_id,timeline)
+        val categoryId = view.getCatId()
+        feedWebService(auth_code, townId, limit, page, categoryId,timeline)
     }
 
     private fun feedWebService(auth_code: String, town_id: String, limit: String, page: String, category_id: String, timeline: String) {
@@ -40,7 +40,7 @@ class MyTimelinePresenter(val view: MyTimelineHelper) {
                             val location = `object`.optJSONArray("location")
                             val category     = `object`.optJSONArray("category")
                             view.saveCategories(category.toString())
-                            view.saveLocaton(location.toString())
+                            view.saveLocation(location.toString())
 
                             val data = `object`.optJSONArray("data")
                             view.setDataToAdapter(data.toString())
@@ -50,7 +50,7 @@ class MyTimelinePresenter(val view: MyTimelineHelper) {
                             val location = `object`.optJSONArray("location")
                             val category     = `object`.optJSONArray("category")
                             view.saveCategories(category.toString())
-                            view.saveLocaton(location.toString())
+                            view.saveLocation(location.toString())
 
                         }
 

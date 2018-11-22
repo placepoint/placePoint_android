@@ -18,6 +18,7 @@ class SplashActivity : Activity() {
         setContentView(R.layout.activity_splash)
         Constants.getSSlCertificate(this)
         Handler().postDelayed({
+            Constants.getPrefs(this)!!.edit().putString("cog","0").apply()
             Constants.getPrefs(this)!!.edit().putString("showBack", "no").apply()
             Constants.getPrefs(this)!!.edit().putString("subcategory", "0").apply()
             Constants.getPrefs(this)!!.edit().putString("showHomeBackButton", "no").apply()

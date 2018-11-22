@@ -169,7 +169,7 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
         dialog.setTitle("Alert")
         dialog.setMessage("You are about to share an image to Facebook. Facebook does not allow us to send the text from the image automatically. We have copied the text from the post to the clipboard for your convenience. If you would like to add the text to the image please paste it into the comment section on the next section when sharing the post.")
         dialog.setPositiveButton("Ok", DialogInterface.OnClickListener { dialog, id ->
-            Constants.ShareOnFaceBookk(modelData.description,modelData.image_url, this.context)
+            Constants.shareOnFaceBook(modelData.description,modelData.image_url, this.context)
         })
 //                .setNegativeButton("Cancel ", DialogInterface.OnClickListener { dialog, which ->
 //                    dialog.dismiss()

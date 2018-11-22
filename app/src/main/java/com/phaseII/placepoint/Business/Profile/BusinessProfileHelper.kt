@@ -40,15 +40,15 @@ interface BusinessProfileHelper {
     fun setTownError(s: String)
     fun setCatError(s: String)
     fun setContactError(s: String)
-    fun setAdressError(s: String)
+    fun setAddressError(s: String)
     fun getAuthCodeConstant(): String?
     fun getTownIdConstant(): String?
     fun getCatId(): String?
-    fun setBusinessPrefilledData(data: String, end_time: String, user_type: String, bid: String)
-    fun setSingleBusinessPrefilledData()
+    fun setBusinessPreFilledData(data: String, end_time: String, user_type: String, bid: String)
+    fun setSingleBusinessPreFilledData()
     fun getBusId(): String
-    fun getPrefillTownId():String
-    fun getPrefillCatId():String
+    fun getPreFillTownId():String
+    fun getPreFillCatId():String
     fun getOldMultiPartFiles(): String
     fun saveBusinessName()
     fun getBusName(): String
@@ -65,8 +65,8 @@ interface BusinessProfileHelper {
     fun coverImageIssue(s: String)
     fun getFromModel(): String
     fun logOut()
-    fun setclickFalse()
-    fun setclickTrue()
+    fun setClickFalse()
+    fun setClickTrue()
     fun checkingAllDaysValidation(): Boolean
     fun getUserType(): String
 

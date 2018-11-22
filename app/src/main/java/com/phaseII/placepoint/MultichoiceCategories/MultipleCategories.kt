@@ -84,7 +84,7 @@ class MultipleCategories : AppCompatActivity(), CategoryHelper,MultiChoiceRadioA
             if (from=="profile"||from=="register"){
                  ids= Constants.getPrefs(this)!!.getString(Constants.MAIN_CATEGORY, "")
 
-            }else if(from=="addPost"){
+            }else if(from=="addpost"){
 //               val ihj= Constants.getPrefs(this)!!.getString(Constants.ADDPOST_CATEGORY, "")
 //                if (ihj.isEmpty()) {
                     ids = Constants.getPrefs(this)!!.getString(Constants.MAIN_CATEGORY, "")
@@ -150,7 +150,7 @@ class MultipleCategories : AppCompatActivity(), CategoryHelper,MultiChoiceRadioA
                 Constants.getPrefs(this)?.edit()?.putString(Constants.MAIN_CATEGORY, main)?.apply()
                 Constants.getPrefs(this)?.edit()?.putString(Constants.CATEGORY_NAMES, nameMain)?.apply()
                 finish()
-            }else if (from=="addPost"){
+            }else if (from=="addpost"){
                 Constants.getPrefs(this)?.edit()?.putString(Constants.ADDPOST_CATEGORY, main)?.apply()
                 Constants.getPrefs(this)?.edit()?.putString(Constants.CATEGORY_NAMES_ADDPOST, main)?.apply()
                 val returnIntent = Intent()

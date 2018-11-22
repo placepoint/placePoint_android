@@ -25,16 +25,16 @@ import android.content.pm.PackageManager
 import android.app.Activity
 import android.location.Location
 import android.support.v4.app.ActivityCompat
-import com.phaseII.placepoint.BusEvents.CALL_EVENT
 import com.phaseII.placepoint.BusEvents.TAXI_EVENT
 import com.phaseII.placepoint.Constants
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.business_item.view.*
 import kotlin.collections.ArrayList
 
 
-class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusiness>,
-                          var relatedTo: String, var currentLatitude: Double, var currentLongitude: Double) : RecyclerView.Adapter<BusinessListAdapter.ViewHolder>() {
+class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
+                          var relatedTo: String, var currentLatitude: Double,
+                          var currentLongitude: Double) : RecyclerView.Adapter<BusinessListAdapter.ViewHolder>() {
+
     val inflater = LayoutInflater.from(context)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -55,7 +55,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
 
-        val modelBusiness = list.get(position)
+        val modelBusiness = list[position]
 
         if (modelBusiness.user_type == null) {
             modelBusiness.user_type = ""
@@ -63,7 +63,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
         if (modelBusiness.business_user_id == "0" || modelBusiness.user_type == "3") {
             val taxiTownId = Constants.getPrefs(context)!!.getString(Constants.TAXI_TOWNID, "");
             val choosenTownId = Constants.getPrefs(context)!!.getString(Constants.TOWN_ID, "");
-            var idList = taxiTownId!!.split(",")
+            val idList = taxiTownId!!.split(",")
             val nameCat = Constants.getPrefs(context)!!.getString(Constants.CATEGORY_NAMEO, "")
             if (idList.contains(choosenTownId)) {
                 holder.itemView.freeTaxi.visibility = View.VISIBLE
@@ -82,7 +82,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
             holder.itemView.layoutSecond.visibility = View.VISIBLE
             holder.itemView.title1.text = modelBusiness.business_name
             // holder.itemView.phoneNo.text = modelBusiness.contact_no
-            var addList = modelBusiness.address.split(",")
+            val addList = modelBusiness.address.split(",")
             val stringBuilder = StringBuilder("")
             var prefix = ""
             if (addList.size > 3) {
@@ -97,16 +97,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
                 holder.itemView.address.text = modelBusiness.address
             }
             try {
-//                Picasso.with(context).load(list[position].cover_image)
-//                        .placeholder(R.mipmap.placeholder)
-//                        .centerCrop()
-//                        .into(holder.itemView.imageView)
 
-//                Picasso.with(context)
-//                        .load(list[position].cover_image)
-//                        .fit()
-//                        .placeholder(R.mipmap.placeholder)
-//                        .into(holder.itemView.freeImage)
                 Glide.with(context)
                         .load(list[position].cover_image)
                         .apply(RequestOptions()
@@ -117,6 +108,11 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
                 e.printStackTrace()
             }
 
+            if (modelBusiness.contact_no==null||modelBusiness.contact_no.isEmpty()){
+                holder.itemView.freeCall.visibility=View.GONE
+            }else{
+                holder.itemView.freeCall.visibility=View.VISIBLE
+            }
             holder.itemView.freeCall.setOnClickListener {
                 // Constants.getBus().post(CALL_EVENT(modelBusiness.contact_no))
                 showDialog(modelBusiness.contact_no)
@@ -127,9 +123,9 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
                 holder.itemView.phoneNo.visibility = View.GONE
             } else {
                 try {
-                    var distance = Constants.findDistanceFromCurrentPosition(currentLatitude, currentLongitude
+                    val distance = Constants.findDistanceFromCurrentPosition(currentLatitude, currentLongitude
                             , modelBusiness.lat.toDouble(), modelBusiness.long.toDouble())
-                    var roundDis = String.format("%.2f", distance)
+                    val roundDis = String.format("%.2f", distance)
                     holder.itemView.phoneNo.visibility = View.VISIBLE
                     holder.itemView.phoneNo.text = "" + roundDis.toString() + " Km away"
                 } catch (e: Exception) {
@@ -146,9 +142,9 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
 
             holder.itemView.freenavigationImage.setOnClickListener {
                 try {
-                    var gmmIntentUri = Uri.parse("google.navigation:q=${modelBusiness.lat},${modelBusiness.long}")
+                    val gmmIntentUri = Uri.parse("google.navigation:q=${modelBusiness.lat},${modelBusiness.long}")
 //            var  gmmIntentUri = Uri.parse("google.navigation:q=30.7398,76.7827")
-                    var mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
                     mapIntent.setPackage("com.google.android.apps.maps")
                     context.startActivity(mapIntent)
                 } catch (e: Exception) {
@@ -176,7 +172,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
         } else {
             val taxiTownId = Constants.getPrefs(context)!!.getString(Constants.TAXI_TOWNID, "");
             val choosenTownId = Constants.getPrefs(context)!!.getString(Constants.TOWN_ID, "");
-            var idList = taxiTownId!!.split(",")
+            val idList = taxiTownId!!.split(",")
             val nameCat = Constants.getPrefs(context)!!.getString(Constants.CATEGORY_NAMEO, "")
             if (idList.contains(choosenTownId)) {
                 holder.itemView.taxiImage.visibility = View.VISIBLE
@@ -198,12 +194,12 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
 //var roundDis:String=Constants.findDistanceFromCurrentPosition(currentLatitude,currentLatitude , modelBusiness.lat.toDouble(), modelBusiness.long.toDouble())
 //                var distance = findDistance(currentLatitude, currentLongitude
 //                        , modelBusiness.lat.toDouble(), modelBusiness.long.toDouble())
-                var distance = Constants.findDistanceFromCurrentPosition(currentLatitude, currentLongitude
+                val distance = Constants.findDistanceFromCurrentPosition(currentLatitude, currentLongitude
                         , modelBusiness.lat.toDouble(), modelBusiness.long.toDouble())
-                var roundDis = String.format("%.2f", distance)
+                val roundDis = String.format("%.2f", distance)
                 val stringBuilder = StringBuilder("")
                 var prefix = ""
-                var addList = modelBusiness.address.split(",")
+                val addList = modelBusiness.address.split(",")
                 if (addList.size > 2) {
                     for (i in 0 until 2) {
                         stringBuilder.append(prefix)
@@ -232,10 +228,7 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
                 holder.itemView.statusLay.visibility = View.GONE
             }
             try {
-//                Picasso.with(context).load(list[position].cover_image)
-//                        .placeholder(R.mipmap.placeholder)
-//                        .centerCrop()
-//                        .into(holder.itemView.imageView)
+
 
                 Glide.with(context)
                         .load(list[position].cover_image)
@@ -264,6 +257,11 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
+            }
+            if (modelBusiness.contact_no==null||modelBusiness.contact_no.isEmpty()){
+                holder.itemView.callImage.visibility=View.GONE
+            }else{
+                holder.itemView.callImage.visibility=View.VISIBLE
             }
             holder.itemView.callImage.setOnClickListener {
                 // Constants.getBus().post(CALL_EVENT(modelBusiness.contact_no))
@@ -718,9 +716,17 @@ class BusinessListAdapter(val context: Context, val list: ArrayList<ModelBusines
 
     }
 
+    fun refreshApaper(sortedList: List<ModelBusiness>) {
+        list=sortedList
+        notifyDataSetChanged()
+    }
+
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     class ViewHolder0(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     class ViewHolder2(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+
+
 }

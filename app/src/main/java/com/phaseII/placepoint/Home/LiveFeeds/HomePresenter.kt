@@ -13,29 +13,27 @@ import retrofit2.Response
 import java.io.IOException
 
 class HomePresenter(val view: HomeHelper) {
-    fun PrepareData(from: String) {
+    fun prepareData(from: String) {
         val auth_code = view.getAuthCode()
-        val town_id = view.getTownId()
+        val townId = view.getTownId()
         val limit = "10000"
         val page = "0"
-        var timeline = "true"
-        if (from == "profile") {
-            timeline = "false"
+        val timeline = if (from == "profile") {
+            "false"
         } else {
-            timeline = "true"
+            "true"
         }
         var cat = 0
-        var category_id=""
-        if (from=="Taxi"){
-            category_id=view.getTaxiID()
+        val categoryId = if (from=="Taxi"){
+            view.getTaxiID()
         }else{
-            category_id =view.getCatId()
+            view.getCatId()
         }
-        if (category_id.isEmpty()) {
+        if (categoryId.isEmpty()) {
             cat = 1
         }
 
-        feedWebService(auth_code, town_id, limit, page, category_id, timeline, cat)
+        feedWebService(auth_code, townId, limit, page, categoryId, timeline, cat)
 
     }
 
@@ -45,10 +43,10 @@ class HomePresenter(val view: HomeHelper) {
         val retrofit = Constants.getWebClient()
         val service = retrofit!!.create(Service::class.java)
 
-        if (cat == 1) {
-            call = service.getALLFeedData(auth_code, town_id, limit, page, "android")
+        call = if (cat == 1) {
+            service.getALLFeedData(auth_code, town_id, limit, page, "android")
         } else {
-            call = service.getHomeFeedData(auth_code, town_id, limit, page, category_id, timeline)
+            service.getHomeFeedData(auth_code, town_id, limit, page, category_id, timeline)
         }
 
         call.enqueue(object : Callback<ResponseBody> {
@@ -62,9 +60,9 @@ class HomePresenter(val view: HomeHelper) {
                         if (status.equals("true", ignoreCase = true)) {
                             val data = `object`.optJSONArray("data")
                             val category = `object`.optJSONArray("category")
-                            val business_id = `object`.optString("business_id")
+                            val businessId = `object`.optString("business_id")
                             val msg = `object`.optString("msg")
-                            view.saveBusId(business_id)
+                            view.saveBusId(businessId)
                             if (!msg.isNullOrEmpty()) {
                                 view.showMsg(msg)
                             }

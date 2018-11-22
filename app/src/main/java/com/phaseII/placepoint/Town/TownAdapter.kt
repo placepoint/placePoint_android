@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.phaseII.placepoint.Categories.CategoryActivity
 import com.phaseII.placepoint.Constants
+import com.phaseII.placepoint.DashBoard.DashBoardActivity
 import com.phaseII.placepoint.R
 import com.phaseII.placepoint.Service
 import kotlinx.android.synthetic.main.town_item.view.*
@@ -35,38 +36,11 @@ class TownAdapter(val context: TownActivity, var list: List<ModelTown>,
         val model = list.get(position)
         holder.itemView.title_text.text = model.townname
         holder.itemView.main.setOnClickListener {
-//            if (from=="false") {
-//
-//                Constants.getPrefs(context)?.edit()?.putString(Constants.OPEN_TOWN, "no")?.apply()
-//                Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_ID, model.id)?.apply()
-//                Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_NAME, model.townname)?.apply()
-//
-//                val intent = Intent(context, CategoryActivity::class.java)
-//                intent.putExtra("from","cat")
-//                intent.putExtra("from1",from)
-//                context.startActivity(intent)
-//                context.finish()
-//            }else{
-                //Constants.getPrefs(context)?.edit()?.putString("firstTime", "Town")?.apply()
-//            if (from=="false") {
-//                Constants.getPrefs(context)?.edit()?.putString("getAuthCode", "yes")?.apply()
-//            }else{
-//                Constants.getPrefs(context)?.edit()?.putString("getAuthCode", "no")?.apply()
-//            }
-
             if (Constants.getPrefs(context)!!.getString("getAuthCode", "") == "") {
                 Constants.getPrefs(context)?.edit()?.putString(Constants.OPEN_TOWN, "no")?.apply()
-                //Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_ID, model.id)?.apply()
-               // Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_NAME, model.townname)?.apply()
-
                 runAppAuthService(model.id, model.townname)
 
-
             }else {
-                //if (Constants.getPrefs(context)!!.getString(Constants.CATEGORY_IDS,"").isEmpty()){
-                    Constants.getPrefs(context)?.edit()?.putString(Constants.OPEN_TOWN, "no")?.apply()
-               // Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_ID, model.id)?.apply()
-               // Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_NAME, model.townname)?.apply()
 
                 val intent = Intent(context, CategoryActivity::class.java)
                 intent.putExtra("from","cat")
@@ -74,17 +48,7 @@ class TownAdapter(val context: TownActivity, var list: List<ModelTown>,
                 intent.putExtra("townId",model.id)
                 intent.putExtra("townName", model.townname)
                 context.startActivity(intent)
-               // context.finish()
-//                }else {
-//                    val intent = Intent(context, DashBoardActivity::class.java)
-//                    context.startActivity(intent)
-//                    Constants.getPrefs(context)?.edit()?.putString(Constants.OPEN_TOWN, "no")?.apply()
-//                    Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_ID, model.id)?.apply()
-//                    Constants.getPrefs(context)?.edit()?.putString(Constants.TOWN_NAME, model.townname)?.apply()
-//                    context.finish()
-//                }
             }
-//            }
         }
     }
 
@@ -110,8 +74,10 @@ class TownAdapter(val context: TownActivity, var list: List<ModelTown>,
                         val status = `object`.optString("status")
                         if (status.equals("true", ignoreCase = true)) {
                             val data = `object`.optJSONArray("data")
-                            saveAuthDataToPrefs(setData(data),town_id,townname)
-                            //  view.getCategories()
+
+                            if (town_id != null) {
+                                runAppService(setData(data),town_id,townname)
+                            }
                         }
                     } catch (e: IOException) {
                         e.printStackTrace()
@@ -128,6 +94,64 @@ class TownAdapter(val context: TownActivity, var list: List<ModelTown>,
         })
     }
 
+    private fun runAppService( data: JSONObject, town_id1: String, townname: String) {
+
+        val device_id = Constants.getDeviceId(context)
+        val device_type = Constants.DEVICE_TYPE
+        val retrofit = Constants.getWebClient()
+        val service = retrofit!!.create(Service::class.java)
+        val call: Call<ResponseBody> = service.getAppData()
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+
+                    try {
+                        val res = response.body()!!.string()
+                        val `object` = JSONObject(res)
+                        val status = `object`.optString("status")
+                        if (status.equals("true", ignoreCase = true)) {
+                            val location = `object`.optJSONArray("location")
+                            val category     = `object`.optJSONArray("category")
+                            saveCategories(category.toString())
+                            saveTowns(location.toString())
+                            saveAuthDataToPrefs(data,town_id1,townname)
+                        }
+
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+
+                // view.showNetworkError(R.string.network_error)
+            }
+        })
+    }
+
+    private fun saveTowns(toString: String) {
+        try {
+            Constants.getPrefs(context)?.edit()?.putString(Constants.LOCATION_LIST, toString)?.apply()
+
+        } catch (e: Exception) {
+        }
+
+
+    }
+
+    private fun saveCategories(toString: String) {
+        try {
+            Constants.getPrefs(context)?.edit()?.putString(Constants.CATEGORY_LIST, toString)?.apply()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
     private fun saveAuthDataToPrefs(data: JSONObject, town_id: String?, townname: String) {
         try {
             if (data != null) {
@@ -135,31 +159,22 @@ class TownAdapter(val context: TownActivity, var list: List<ModelTown>,
                 Constants.getPrefs(context)?.edit()?.putString(Constants.AUTH_CODE, data.optString("auth_code"))?.apply()
                 Constants.getPrefs(context)?.edit()?.putString(Constants.DEVICE_ID, data.optString("device_id"))?.apply()
                 Constants.getPrefs(context)?.edit()?.putString(Constants.DEVICE_TYPE, data.optString("device_type"))?.apply()
-                //Constants.getPrefs(this)?.edit()?.putString(Constants.TOWN_ID, data.optString("town_id"))?.apply()
                 Constants.getPrefs(context)?.edit()?.putString(Constants.BUSINESS_ID, data.optString("business_id"))?.apply()
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
         Constants.getPrefs(context)?.edit()?.putString("getAuthCode", "no")?.apply()
-       // if (Constants.getPrefs(context)!!.getString(Constants.CATEGORY_IDS,"").isEmpty()){
+        Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townname).apply()
+        Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, town_id).apply()
 
-            val intent = Intent(context, CategoryActivity::class.java)
+        val intent = Intent(context, DashBoardActivity::class.java)
             intent.putExtra("from","cat")
             intent.putExtra("from1",from)
             intent.putExtra("townId",town_id)
             intent.putExtra("townName",townname)
 
             context.startActivity(intent)
-           // context.finish()
-//        }else {
-//            val intent = Intent(context, DashBoardActivity::class.java)
-//            context.startActivity(intent)
-//            context.finish()
-//        }
-//        val intent = Intent(context, DashBoardActivity::class.java)
-//        context.startActivity(intent)
-//        context.finish()
     }
 
     private fun setData(data: JSONArray?): JSONObject {
@@ -174,9 +189,5 @@ class TownAdapter(val context: TownActivity, var list: List<ModelTown>,
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-//    fun filterList( filterTown: ArrayList<ModelTown>) {
-//        this.list=filterTown
-//        notifyDataSetChanged()
-//    }
 
 }

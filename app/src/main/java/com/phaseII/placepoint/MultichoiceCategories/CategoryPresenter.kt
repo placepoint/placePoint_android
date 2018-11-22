@@ -22,7 +22,7 @@ class CategoryPresenter(val view: CategoryHelper) {
         val data = view.getCategoriesFromPrefs()
         var list = Constants.getCategoryData(data)
         val highlightCat = arrayListOf<String>()
-        if (from == "addPost") {
+        if (from == "addpost") {
           //  val ids2 = view.getMaincatIDS()
                 val selectedlist=view.getSelectedList()
 

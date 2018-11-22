@@ -21,6 +21,7 @@ class ModelBusiness() : Parcelable {
     var image_url: Array<String> = arrayOf(String())
     var updated_at: String = ""
     var user_type: String = ""
+    var distance: String = ""
 
     constructor(parcel: Parcel) : this() {
         id = parcel.readString()
@@ -40,6 +41,7 @@ class ModelBusiness() : Parcelable {
         image_url = parcel.createStringArray()
         updated_at = parcel.readString()
         user_type = parcel.readString()
+        distance = parcel.readString()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -60,6 +62,7 @@ class ModelBusiness() : Parcelable {
         parcel.writeStringArray(image_url)
         parcel.writeString(updated_at)
         parcel.writeString(user_type)
+        parcel.writeString(distance)
     }
 
     override fun describeContents(): Int {

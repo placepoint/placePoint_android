@@ -70,9 +70,13 @@ class ScheduledFragment : Fragment(), ScheduleContract {
         mPresenter.getSchedulePosts(Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, ""))
     }
 
-    override fun onPause() {
-        super.onPause()
-        Constants.getBus().unregister(this)
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            Constants.getBus().unregister(this)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun showLoader() {

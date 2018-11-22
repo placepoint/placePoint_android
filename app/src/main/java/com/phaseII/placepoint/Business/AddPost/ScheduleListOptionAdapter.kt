@@ -45,29 +45,8 @@ class ScheduleListOptionAdapter(var context:Context,var list:ArrayList<ModelSele
                 list[position].checked=true
                 holder.radioButton.isChecked=true
                 notifyDataSetChanged()
-//
             }
         }
-    }
-
-    fun getPositons(): ArrayList<String> {
-        var array= arrayListOf<String>()
-        for (i in 0 until list.size){
-           if (list[i].checked){
-               array.add(i.toString())
-           }
-        }
-       return array
-    }
-
-    fun geValue(): String {
-        var array=""
-        for (i in 0 until list.size){
-            if (list[i].checked){
-                array=list[i].name
-            }
-        }
-        return array
     }
 
     class ViewHolder(itemView:View):RecyclerView.ViewHolder(itemView){

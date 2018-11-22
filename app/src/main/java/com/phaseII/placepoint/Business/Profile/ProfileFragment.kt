@@ -7,12 +7,10 @@ import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.support.annotation.RequiresApi
@@ -57,15 +55,13 @@ import com.phaseII.placepoint.SubscriptionPlan.SubscriptionActivity
 import com.phaseII.placepoint.Town.ModelTown
 import com.phaseII.placepoint.Town.TownActivity
 import org.json.JSONArray
-import java.io.File
-import java.io.FileOutputStream
 import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.updateImageList {
+open class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.UpdateImageList {
     protected val REQUEST_ID_MULTIPLE_PERMISSIONS: Int = 110
     private var cat_id: String = ""
     private var town_id: String = ""
@@ -89,8 +85,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
     lateinit var emailText: TextView
     lateinit var townText: TextView
     lateinit var catText: TextView
-
-
 
 
     lateinit var select_town: TextView
@@ -248,12 +242,12 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         return v
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         try {
             Constants.getBus().unregister(this)
         } catch (e: Exception) {
-
+            e.printStackTrace()
         }
     }
 
@@ -267,75 +261,64 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3") {
             packageName.text = "Free Package"
             desc_layout.isClickable = true
-            bus_desc.isFocusableInTouchMode=false
-            emailIdText.isFocusableInTouchMode=false
+            bus_desc.isFocusableInTouchMode = false
+            emailIdText.isFocusableInTouchMode = false
             disablePickers()
             disableTitles()
         } else if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "2") {
             packageName.text = "Standard Package"
             desc_layout.isClickable = false
-            bus_desc.isFocusableInTouchMode=true
-            emailIdText.isFocusableInTouchMode=true
+            bus_desc.isFocusableInTouchMode = true
+            emailIdText.isFocusableInTouchMode = true
             enablePickers()
             enableTitles()
         } else if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "1") {
             packageName.text = "Premium Package"
             desc_layout.isClickable = false
-            bus_desc.isFocusableInTouchMode=true
-            emailIdText.isFocusableInTouchMode=true
+            bus_desc.isFocusableInTouchMode = true
+            emailIdText.isFocusableInTouchMode = true
             change.visibility = View.GONE
             enablePickers()
             enableTitles()
-        }else if(Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "4") {
+        } else if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "4") {
             packageName.text = "Admin"
             desc_layout.isClickable = false
-            bus_desc.isFocusableInTouchMode=true
-            emailIdText.isFocusableInTouchMode=true
+            bus_desc.isFocusableInTouchMode = true
+            emailIdText.isFocusableInTouchMode = true
             change.visibility = View.GONE
             enablePickers()
             enableTitles()
         }
-//        if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE,"")=="3"){
-//               noSubLay.visibility=View.VISIBLE
-//               mainLay.visibility=View.GONE
-//
-//        }else{
-//            noSubLay.visibility=View.GONE
-//            mainLay.visibility=View.VISIBLE
-//        }
+
         value = Constants.getPrefs(activity!!)?.getString(Constants.CATEGORY_NAMES, "")!!
         if (value != null && !value.isEmpty()) {
             select_category.text = value
         }
-        // setCategory()
 
         emailIdText.setText(Constants.getPrefs(activity!!)?.getString(Constants.EMAIL, ""))
-        // updateToolbarOption.hideRightToolbarIcon()
     }
 
     private fun setCategory() {
-        var savedCatergory = ""
+        var savedCategory = ""
         val mainCatValue = Constants.getPrefs(activity!!)!!.getString(Constants.MAIN_CATEGORY, "")
         if (!mainCatValue.isEmpty()) {
             val mainCat = mainCatValue.split(",")
-            val arrayname = arrayListOf<String>()
+            val arrayName = arrayListOf<String>()
             out@ for (p in 0 until mainCat.size) {
                 inn@ for (q in 0 until cat_list.size) {
                     if (mainCat[p] == cat_list[q].id) {
-                        arrayname.add(cat_list[q].name)
-                        if (savedCatergory.isEmpty()) {
-                            savedCatergory = cat_list[q].name
+                        arrayName.add(cat_list[q].name)
+                        savedCategory = if (savedCategory.isEmpty()) {
+                            cat_list[q].name
                         } else {
-                            savedCatergory = savedCatergory + ", " + cat_list[q].name
+                            savedCategory + ", " + cat_list[q].name
                         }
 
-//                        break@inn
-//                        break@out
                     }
                 }
             }
         }
-        select_category.text = savedCatergory
+        select_category.text = savedCategory
     }
 
     override fun getCatAndLocData() {
@@ -348,7 +331,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
             hashSet.addAll(cat_list)
             cat_list.clear()
             cat_list.addAll(hashSet)
-            val sortedList = cat_list.sortedWith(compareBy({ it.name }))
+            val sortedList = cat_list.sortedWith(compareBy { it.name })
             val array = arrayOfNulls<ModelCategoryData>(sortedList.size)
             cat_list.toArray(array)
             loc_list = Constants.getTownData(loc)!!
@@ -356,7 +339,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
             hashSet2.addAll(loc_list)
             loc_list.clear()
             loc_list.addAll(hashSet2)
-            val sortedList1 = loc_list.sortedWith(compareBy({ it.townname }))
+            val sortedList1 = loc_list.sortedWith(compareBy { it.townname })
             val array1 = arrayOfNulls<ModelTown>(sortedList1.size)
             loc_list.toArray(array1)
             for (i in 0 until cat_list.size) {
@@ -371,6 +354,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
     }
 
 
+    @SuppressLint("SetTextI18n")
     override fun handleClicks() {
         desc_layout.setOnClickListener {
             if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3") {
@@ -422,7 +406,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                 Constants.showPopup(activity!!)
                 return@setOnClickListener
             }
-            //mPresenter.showSelectCatPopup()
             val intent = Intent(activity, MultipleCategories::class.java)
             intent.putExtra("from", "profile")
             startActivity(intent)
@@ -466,11 +449,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                 return@setOnClickListener
             }
             if (AllImages != null) {
-//                if (AllImages!!.size < 5) {
                 mPresenter.openCamera()
-//                } else {
-//                    showImageLimitPopUp()
-//                }
             }
         }
         gallery.setOnClickListener {
@@ -479,18 +458,14 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                 return@setOnClickListener
             }
             if (AllImages != null) {
-//                if (AllImages!!.size < 5) {
                 mPresenter.openGallery()
-//                } else {
-//                    showImageLimitPopUp()
-//                }
             }
         }
         emailIdText.setOnClickListener {
             if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3") {
                 Constants.showPopup(activity!!)
                 emailIdText.isFocusableInTouchMode = false
-                emailIdText.setInputType(InputType.TYPE_NULL);
+                emailIdText.inputType = InputType.TYPE_NULL
                 return@setOnClickListener
             }
             emailIdText.isFocusableInTouchMode = true
@@ -547,7 +522,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
 
         cross_btn.setOnClickListener {
-            // closeTimeLayout.visibility = View.GONE
             if (closeTimeLayout.isEnabled) {
                 closeTimeLayout.isEnabled = false
                 closeTimeLayout.isClickable = false
@@ -557,10 +531,8 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                 closeStartHours.text = "12:00 AM"
                 closeEndHours.setBackgroundColor(resources.getColor(R.color.light_grey))
                 closeStartHours.setBackgroundColor(resources.getColor(R.color.light_grey))
-                // setDataAccDays("")
                 callCrossButton(true)
             } else {
-                //  setDataAccDays("")
                 callCrossButton(false)
                 closeEndHours.text = "12:00 AM"
                 closeStartHours.text = "12:00 AM"
@@ -572,19 +544,11 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                 closeEndHours.setBackgroundDrawable(resources.getDrawable(R.drawable.timer_value_bg))
             }
         }
-//        closeBox.setOnClickListener {
-//            if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3") {
-//                Constants.showPopup(activity!!)
-//                closeBox.isChecked=false
-//                return@setOnClickListener
-//            }
-//            from = "click"
-//        }
         closeBox.setOnCheckedChangeListener { buttonView, isChecked ->
-            // if (radioButtonClick!=1) {
+
             if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3") {
                 Constants.showPopup(activity!!)
-                closeBox.isChecked=false
+                closeBox.isChecked = false
                 return@setOnCheckedChangeListener
             }
             if (from != "set") {
@@ -595,16 +559,12 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                     setClosedAccToDays()
                     disablePickers()
                     setData(true)
-
-                    // setDataAccDays(checks)
-
                 } else {
                     close = false
                     transLayout.visibility = View.GONE
                     setOpenAccToDays()
                     enablePickers()
                     setData(false)
-                    // setDataAccDays(checks)
                 }
             }
         }
@@ -614,26 +574,25 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
     private fun locationOnOFF(context: Context) {
 
         var lm: LocationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        var gps_enabled = false
-        var network_enabled = false
+        var gpsEnabled = false
+        var networkEnabled = false
 
         try {
-            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+            gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
         } catch (e: Exception) {
         }
 
         try {
-            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
         } catch (q: Exception) {
         }
 
-        if (!gps_enabled && !network_enabled) {
-            // notify user
+        if (!gpsEnabled && !networkEnabled) {
             val dialog = AlertDialog.Builder(context)
             dialog.setTitle("Alert")
-            dialog.setMessage(("Your loction is turned Off"))
+            dialog.setMessage(("Your location is turned Off"))
             dialog.setPositiveButton(("Turn On"), DialogInterface.OnClickListener() { dialogInterface: DialogInterface, i: Int ->
-                var myIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                val myIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 context.startActivity(myIntent)
 
             });
@@ -657,8 +616,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                 6 -> inDay = "Sunday"
             }
             if (timeList.size > 0) {
-
-
                 if (timeList[i].startFrom == timeList[i].startTo) {
                     if (!timeList[i].status) {
                         Toast.makeText(activity, "Open from and Open To cannot be same on $inDay ", Toast.LENGTH_LONG).show()
@@ -667,29 +624,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                     }
 
                 }
-//                    if (timeList[i].startFrom == timeList[i].closeFrom) {
-//
-//                        if (!timeList[i].status) {
-//                            if (!timeList[i].closeStatus) {
-//                                Toast.makeText(activity, "Opening and Closing Time Cannot be same on $inDay ", Toast.LENGTH_LONG).show()
-//                                execute = 1
-//                                break@outer
-//                            }
-//                        }
-//
-//                    }
-//                    if (timeList[i].closeFrom == timeList[i].closeTo) {
-//                        if (!timeList[i].status) {
-//                            if (!timeList[i].closeStatus) {
-//                                Toast.makeText(activity, "Closing Time Cannot be same on $inDay ", Toast.LENGTH_LONG).show()
-//                                execute = 1
-//                                break@outer
-//                            }
-//                        }
-//
-//                    }
-
-
             }
 
         }
@@ -752,52 +686,36 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
             timeList[0].closeFrom = "12:00 AM"
             timeList[0].closeTo = "12:00 AM"
-//                timeList[0].startFrom = "12:00 AM"
-//                timeList[0].startTo = "12:00 AM"
-
-            //  timeList[0].closeStatus=b
             timeList[0].closeStatus = b
         }
         if (day == "Tuesday") {
             timeList[1].closeFrom = "12:00 AM"
             timeList[1].closeTo = "12:00 AM"
-//            timeList[1].startFrom = "12:00 AM"
-//            timeList[1].startTo = "12:00 AM"
             timeList[1].closeStatus = b
         }
         if (day == "Wednesday") {
             timeList[2].closeFrom = "12:00 AM"
             timeList[2].closeTo = "12:00 AM"
-//            timeList[2].startFrom = "12:00 AM"
-//            timeList[2].startTo = "12:00 AM"
             timeList[2].closeStatus = b
         }
         if (day == "Thursday") {
             timeList[3].closeFrom = "12:00 AM"
             timeList[3].closeTo = "12:00 AM"
-//            timeList[3].startFrom = "12:00 AM"
-//            timeList[3].startTo = "12:00 AM"
             timeList[3].closeStatus = b
         }
         if (day == "Friday") {
             timeList[4].closeFrom = "12:00 AM"
             timeList[4].closeTo = "12:00 AM"
-//            timeList[4].startFrom = "12:00 AM"
-//            timeList[4].startTo = "12:00 AM"
             timeList[4].closeStatus = b
         }
         if (day == "Saturday") {
             timeList[5].closeFrom = "12:00 AM"
             timeList[5].closeTo = "12:00 AM"
-//            timeList[5].startFrom = "12:00 AM"
-//            timeList[5].startTo = "12:00 AM"
             timeList[5].closeStatus = b
         }
         if (day == "Sunday") {
             timeList[6].closeFrom = "12:00 AM"
             timeList[6].closeTo = "12:00 AM"
-//            timeList[6].startFrom = "12:00 AM"
-//            timeList[6].startTo = "12:00 AM"
             timeList[6].closeStatus = b
         }
     }
@@ -806,19 +724,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
     private fun setData(b: Boolean) {
         try {
             if (day == "Monday") {
-//                editTimeList(day, timeList[0].startFrom, "startFrom")
-//                editTimeList(day, timeList[0].startTo, "startTo")
-//                editTimeList(day, timeList[0].closeFrom, "closeFrom")
-//                editTimeList(day, timeList[0].closeTo, "closeTo")
-//                timeList[0].status=b
-                // Constants.closedList[0] = b
-//                if (b) {
-//                    timeList[0].startFrom = "closed"
-//                    // setDataAccDays(checks)
-//                } else {
-//                    timeList[0].startFrom = "12:00 AM"
-//                    //  setDataAccDays(checks)
-//                }
                 if (b) {
                     timeList[0].closeFrom = "12:00 AM"
                     timeList[0].closeTo = "12:00 AM"
@@ -833,12 +738,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
             }
             if (day == "Tuesday") {
-//                editTimeList(day, timeList[1].startFrom, "startFrom")
-//                editTimeList(day, timeList[1].startTo, "startTo")
-//                editTimeList(day, timeList[1].closeFrom, "closeFrom")
-//                editTimeList(day, timeList[1].closeTo, "closeTo")
-                //timeList[1].status=b
-                //  Constants.closedList[1]=b
                 if (b) {
                     timeList[1].closeFrom = "12:00 AM"
                     timeList[1].closeTo = "12:00 AM"
@@ -853,12 +752,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
             }
             if (day == "Wednesday") {
-//                editTimeList(day, timeList[2].startFrom, "startFrom")
-//                editTimeList(day, timeList[2].startTo, "startTo")
-//                editTimeList(day, timeList[2].closeFrom, "closeFrom")
-//                editTimeList(day, timeList[2].closeTo, "closeTo")
-                // timeList[2].status=b
-                // Constants.closedList[2]=b
                 if (b) {
                     timeList[2].closeFrom = "12:00 AM"
                     timeList[2].closeTo = "12:00 AM"
@@ -868,19 +761,9 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
                 } else {
                     timeList[2].status = b
-
-
                 }
-
-
             }
             if (day == "Thursday") {
-//                editTimeList(day, timeList[3].startFrom, "startFrom")
-//                editTimeList(day, timeList[3].startTo, "startTo")
-//                editTimeList(day, timeList[3].closeFrom, "closeFrom")
-//                editTimeList(day, timeList[3].closeTo, "closeTo")
-                //timeList[3].status=b
-                //  Constants.closedList[3]=b
                 if (b) {
                     timeList[3].closeFrom = "12:00 AM"
                     timeList[3].closeTo = "12:00 AM"
@@ -896,12 +779,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
             }
             if (day == "Friday") {
-//                editTimeList(day, timeList[4].startFrom, "startFrom")
-//                editTimeList(day, timeList[4].startTo, "startTo")
-//                editTimeList(day, timeList[4].closeFrom, "closeFrom")
-//                editTimeList(day, timeList[4].closeTo, "closeTo")
-                //timeList[4].status=b
-                //  Constants.closedList[4]=b
                 if (b) {
                     timeList[4].closeFrom = "12:00 AM"
                     timeList[4].closeTo = "12:00 AM"
@@ -916,12 +793,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
             }
             if (day == "Saturday") {
-//                editTimeList(day, timeList[5].startFrom, "startFrom")
-//                editTimeList(day, timeList[5].startTo, "startTo")
-//                editTimeList(day, timeList[5].closeFrom, "closeFrom")
-//                editTimeList(day, timeList[5].closeTo, "closeTo")
-                // timeList[5].status=b
-                // Constants.closedList[5]=b
                 if (b) {
                     timeList[5].closeFrom = "12:00 AM"
                     timeList[5].closeTo = "12:00 AM"
@@ -935,12 +806,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
             }
             if (day == "Sunday") {
-//                editTimeList(day, timeList[6].startFrom, "startFrom")
-//                editTimeList(day, timeList[6].startTo, "startTo")
-//                editTimeList(day, timeList[6].closeFrom, "closeFrom")
-//                editTimeList(day, timeList[6].closeTo, "closeTo")
-                // timeList[6].status=b
-                //  Constants.closedList[6]=b
                 if (b) {
                     timeList[6].closeFrom = "12:00 AM"
                     timeList[6].closeTo = "12:00 AM"
@@ -962,8 +827,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
     private fun askForPermission(permission: String) {
         if (ContextCompat.checkSelfPermission(activity!!, permission) != PackageManager.PERMISSION_GRANTED) {
-            /* val utils = Utils()
-             utils.getPermission(permission, activity!!,requestCode)*/
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity!!, permission)) {
                 ActivityCompat.requestPermissions(activity!!, arrayOf(permission), FINE_LOC)
@@ -977,12 +840,12 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
     private var checks: String = ""
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "InflateParams")
     override fun showOpenStartTimePicker(day: String) {
 
 
         val values = arrayOf("AM", "PM")
-        var am_pm = 0
+        var amPm = 0
         var hours = 0
         var minutes = 0
         val d = Builder(activity!!)
@@ -1004,21 +867,19 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         numberPicker2.maxValue = 1
         numberPicker2.minValue = 0
 
-        numberPicker.setOnValueChangedListener { numberPicker, i, i1 ->
+        numberPicker.setOnValueChangedListener { _, _, _ ->
         }
-        //  numberPicker.setFormatter { i -> String.format("%02d", i) }
-        d.setPositiveButton("Done") { dialogInterface, i ->
+
+        d.setPositiveButton("Done") { dialogInterface, _ ->
             hours = numberPicker.value
             minutes = numberPickerMin.value
-            am_pm = numberPicker2.value
-            val am = values[am_pm]
-            // openStartTime = String.format("%02d", hours) + " " + am
+            amPm = numberPicker2.value
+            val am = values[amPm]
             val form = DecimalFormat("00")
             openStartTime = hours.toString() + ":" + form.format(minutes) + " " + am
             openHoursStart.text = openStartTime
             checks = "openstart"
             editTimeList(day, openStartTime, "startFrom")
-            //  setDataAccDays(checks)
             dialogInterface.dismiss()
         }
         d.setNegativeButton("Cancel") { dialogInterface, i ->
@@ -1031,7 +892,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
     @SuppressLint("SetTextI18n")
     override fun showOpenEndTimePicker() {
         val values = arrayOf("AM", "PM")
-        var am_pm = 0
+        var amPm = 0
         var hours = 0
         var minutes = 0
         val d = Builder(activity!!)
@@ -1057,26 +918,23 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         numberPicker2.maxValue = 1
         numberPicker2.minValue = 0
 
-        numberPicker.setOnValueChangedListener { numberPicker, i, i1 ->
+        numberPicker.setOnValueChangedListener { _, _, _ ->
         }
-        //  numberPicker.setFormatter { i -> String.format("%02d", i) }
-        d.setPositiveButton("Done") { dialogInterface, i ->
+        d.setPositiveButton("Done") { dialogInterface, _ ->
             hours = numberPicker.value
             minutes = numberPickerMin.value
-            am_pm = numberPicker2.value
-            val am = values[am_pm]
-            // openEndTime = String.format("%02d", hours) + " " + am
+            amPm = numberPicker2.value
+            val am = values[amPm]
             val form = DecimalFormat("00")
             openEndTime = hours.toString() + ":" + form.format(minutes) + " " + am
             openHoursEnd.text = openEndTime
             checks = "openend"
             editTimeList(day, openEndTime, "startTo")
-            //setDataAccDays(checks)
             dialogInterface.dismiss()
         }
-        d.setNegativeButton("Cancel", { dialogInterface, i ->
+        d.setNegativeButton("Cancel") { dialogInterface, i ->
             dialogInterface.dismiss()
-        })
+        }
         val alertDialog = d.create()
         alertDialog.show()
     }
@@ -1281,7 +1139,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
     @SuppressLint("SetTextI18n")
     override fun showCloseStartTimePicker() {
         val values = arrayOf("AM", "PM")
-        var am_pm = 0
+        var amPm = 0
         var hours = 0
         var minutes = 0
         val d = Builder(activity!!)
@@ -1309,18 +1167,15 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
         numberPicker.setOnValueChangedListener { numberPicker, i, i1 ->
         }
-        // numberPicker.setFormatter { i -> String.format("%02d", i) }
         d.setPositiveButton("Done") { dialogInterface, i ->
             hours = numberPicker.value
             minutes = numberPickerMin.value
-            am_pm = numberPicker2.value
-            val am: String = values[am_pm]
-            //closeStartTime = String.format("%02d", hours) + " " + am
+            amPm = numberPicker2.value
+            val am: String = values[amPm]
             val form = DecimalFormat("00")
             closeStartTime = hours.toString() + ":" + form.format(minutes) + " " + am
             closeStartHours.text = closeStartTime
             checks = "closestart"
-            //setDataAccDays(checks)
             editTimeList(day, closeStartTime, "closeFrom")
             dialogInterface.dismiss()
         }
@@ -1331,9 +1186,9 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         alertDialog.show()
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "InflateParams")
     override fun showCloseEndTimePicker() {
-        var am_pm = 0
+        var amPm = 0
         var hours = 0
         var minutes = 0
         val d = Builder(activity!!)
@@ -1349,38 +1204,33 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         numberPickerMin.maxValue = 59
         numberPickerMin.minValue = 0
         numberPickerMin.wrapSelectorWheel = true
-
         numberPicker2.displayedValues = null
         numberPicker.maxValue = 12
         numberPicker.minValue = 1
         numberPicker2.displayedValues = arrayOf("AM", "PM")
         numberPicker.wrapSelectorWheel = true
-
-        //  numberPicker2.displayedValues = values
         numberPicker2.wrapSelectorWheel = false
         numberPicker2.maxValue = 1
         numberPicker2.minValue = 0
 
         numberPicker.setOnValueChangedListener { numberPicker, i, i1 ->
         }
-        // numberPicker.setFormatter { i -> String.format("%02d", i) }
+
         d.setPositiveButton("Done") { dialogInterface, i ->
             hours = numberPicker.value
             minutes = numberPickerMin.value
-            am_pm = numberPicker2.value
-            val am = numberPicker2.displayedValues[am_pm]
-            // closeEndTime = String.format("%02d", hours) + " " + am
+            amPm = numberPicker2.value
+            val am = numberPicker2.displayedValues[amPm]
             val form = DecimalFormat("00")
             closeEndTime = hours.toString() + ":" + form.format(minutes) + " " + am
             closeEndHours.text = closeEndTime
             checks = "closeend"
             editTimeList(day, closeEndTime, "closeTo")
-            // setDataAccDays(checks)
             dialogInterface.dismiss()
         }
-        d.setNegativeButton("Cancel", { dialogInterface, i ->
+        d.setNegativeButton("Cancel") { dialogInterface, i ->
             dialogInterface.dismiss()
-        })
+        }
         val alertDialog = d.create()
         alertDialog.show()
     }
@@ -1408,9 +1258,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     try {
                         val packageManager = activity!!.packageManager
-                        // if device support camera?
                         if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-                            //yes
                             cameraIntent("")
                         }
                     } catch (e: Exception) {
@@ -1448,20 +1296,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                     pickFromGallery("multiple")
             }
         }
-
-
-        /* if (requestCode == 3) {
-
-             if (ActivityCompat.checkSelfPermission(activity!!, permissions[0]) == PackageManager.PERMISSION_GRANTED) {
-                 mPresenter.askForGPSPermission()
-                 val editor = Constants.getPrefs(activity!!)?.edit()
-                 editor?.putBoolean(Constants.LOCATION_ACCESS, true)
-                 editor?.apply()
-                 startActivityForResult(Intent(activity!!, ProfileMapActivity::class.java), FINE_LOC)
-             }
-
-
-         }*/
     }
 
     override fun openCropper(list: java.util.ArrayList<Uri>, s: String) {
@@ -1497,7 +1331,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
                 if (ContextCompat.checkSelfPermission(activity!!,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    //do your stuff
                     val values = ContentValues()
                     values.put(MediaStore.Images.Media.TITLE, "New Picture")
                     values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera")
@@ -1516,7 +1349,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
             } else {
                 if (ContextCompat.checkSelfPermission(activity!!,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    //do your stuff
                     val values = ContentValues()
                     values.put(MediaStore.Images.Media.TITLE, "New Picture")
                     values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera")
@@ -1581,7 +1413,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                     intent1.putExtra("aspectX", 1)
                     intent1.putExtra("aspectY", 1)
                     intent1.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString())
-                   // intent1.putExtra(MediaStore.EXTRA_OUTPUT, getBitmapFromUri())
                     startActivityForResult(Intent.createChooser(intent1, "Select Picture"), SELECT_PICTURES)
 
                 } catch (e: Exception) {
@@ -1591,8 +1422,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         }
 
     }
-
-
 
 
     protected fun requestPermission(permission: String, rationale: String, requestCode: Int) {
@@ -1623,15 +1452,12 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
 
     private var coverImage: Uri? = null
-    private var coverImageString: String? = ""
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == 9) {
             if (data != null) {
                 value = data.getStringExtra("result")
-
-                //select_cate.text=data.getStringExtra("result")
             }
         }
 
@@ -1662,20 +1488,8 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                 CroppedImages!!.addAll(listFromCropper!!)
                 AllImages!!.addAll(OldImages!!)
                 AllImages!!.addAll(listFromCropper!!)
-
-
-//                if (AllImages!!.size > 5) {
-//                    showImageLimitPopUp()
-//                    AllImages!!.subList(5, AllImages!!.size).clear()
-//                }
                 type = "new"
                 mPresenter.setAdapterForCroppedImages(AllImages, CroppedImages!!, preLoadImages, type)
-
-                /* if (listFromCropper!!.size > 0) {
-                     //   croppedImage.visibility = View.VISIBLE
-                     for (i in listFromCropper!!) {
-                     }
-                 }*/
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -1687,8 +1501,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                 val args = data!!.getBundleExtra("BUNDLE")
                 CoverFromCropper = (args.getSerializable("ARRAYLIST") as java.util.ArrayList<Uri>?)
                 val b = CoverFromCropper!![0]
-                //val b = resultUri
-
                 Glide.with(activity!!)
                         .load(b)
                         .apply(RequestOptions()
@@ -1733,38 +1545,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
                 coverImage = uri
             }
         }
-    }
-
-    private fun SaveImage(b: Bitmap): File {
-        val root = Environment.getExternalStorageDirectory().toString()
-        val myDir = File("$root/Android/data/com.example.user24.placepoint/Asaved_images")
-        myDir.mkdirs()
-        val generator = Random()
-        var n = 10000
-        n = generator.nextInt(n)
-        val fname = "Image-$n.jpg"
-        val file = File(myDir, fname)
-        if (file.exists())
-            file.delete()
-        try {
-            val out = FileOutputStream(file)
-            b.compress(Bitmap.CompressFormat.JPEG, 90, out)
-            out.flush()
-            out.close()
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return file
-    }
-
-
-    private fun showImageLimitPopUp() {
-        Builder(activity!!)
-                .setMessage("You cannot select more than 5 images.")
-                .setPositiveButton(R.string.ok, DialogInterface.OnClickListener { dialog, which ->
-                    dialog.dismiss()
-                }).create().show()
     }
 
     override fun askForGPS() {
@@ -1879,7 +1659,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         val mRecyclerView: RecyclerView
 
         val builder = Builder(activity!!)
-        val optionDialog = builder.create()
         val inflater = LayoutInflater.from(activity!!)
         val content = inflater.inflate(R.layout.custom_dialog, null)
         builder.setView(content)
@@ -1914,146 +1693,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
             }
             d.dismiss()
         })
-
-//        cancel.setOnClickListener {
-//            optionDialog.dismiss()
-//        }
-//        ok.setOnClickListener {
-//            cat_id = adapter.getSelected()
-//            bus_cat.text = adapter.getFirstSelectedName()
-//            optionDialog.dismiss()
-//        }
-
         builder.show()
-//        val items1 = cat_name.toTypedArray()
-//        val items = items1.distinct().toTypedArray()
-//        val len = items.size
-//        val arrayChecked = BooleanArray(len)
-//        val mainCatValue = Constants.getPrefs(activity!!)!!.getString(Constants.MAIN_CATEGORY, "")
-//
-//        val mainCat = mainCatValue.split(",")
-//        val arrayname = arrayListOf<String>()
-//        for (p in 0 until mainCat.size) {
-//            for (q in 0 until cat_list.size) {
-//                if (mainCat[p] == cat_list[q].id) {
-//                    arrayname.add(cat_list[q].name)
-//                }
-//            }
-//        }
-//
-//        for (t in 0 until items.size) {
-//            var exist = false
-//            for (g in 0 until arrayname.size) {
-//                if (items[t] == arrayname[g]) {
-//                    exist = true
-//                }
-//            }
-////            var exist = false
-////            inner@ for (j in 0 until items.size) {
-////                if (cat_list[j].id == mainCat[i]) {
-////                    exist = true
-////
-////                    break@inner
-////                }
-////            }
-//            arrayChecked[t] = exist
-//        }
-//        var dialog: AlertDialog
-//        val builder = AlertDialog.Builder(activity!!)
-//        builder.setMultiChoiceItems(items, arrayChecked) { dialog, which, isChecked ->
-//            // Update the clicked item checked status
-//            arrayChecked[which] = isChecked
-//
-//            // Get the clicked item
-//            val color = items[which]
-//
-//        }
-//
-//
-//        // Set the positive/yes button click listener
-//        builder.setPositiveButton("OK") { _, _ ->
-//            // Do something when click positive button
-//            arrayname.clear()
-//            cat_id=""
-//            for (h in 0 until arrayChecked.size) {
-//                if (arrayChecked[h]) {
-//                    arrayname.add(items[h])
-//                }
-//            }
-//            for (a in 0 until arrayname.size) {
-//                for (k in 0 until cat_list.size) {
-//
-//                    if (arrayname[a] == cat_list[k].name) {
-//                        if (cat_id.isEmpty()) {
-//                            cat_id = cat_list[k].id
-//
-//                        } else {
-//                            cat_id = cat_id + "," + cat_list[k].id
-//                        }
-//                    }
-//                }
-//            }
-//
-//            for (i in 0 until items.size) {
-//
-//
-//                val checked = arrayChecked[i]
-//                if (checked) {
-//                    val name = items[i]
-//                    for (l in 0 until cat_list.size) {
-//                        if (name == cat_list[l].name) {
-//                            if (cat_id.isEmpty()) {
-//                                cat_id = cat_list[l].id
-//                                select_category.text = cat_list[l].name
-//                            } else {
-//                                select_category.text = cat_list[i].name
-//                                cat_id = cat_id + "," + cat_list[l].id
-//                            }
-//                        }
-//                    }
-////                    cat_id = if (cat_id.isEmpty()) {
-////                        cat_list[i].id
-////                        select_category.setText(cat_list[i].name).toString()
-////                    } else {
-////                        cat_id + "," + cat_list[i].id
-////                    }
-//                }
-//            }
-//
-//        }
-//        builder.setNegativeButton("Cancel") { _, _ ->
-//            // Do something when click positive button
-//
-//        }
-//
-//        // Initialize the AlertDialog using builder object
-//        dialog = builder.create()
-//
-//        // Finally, display the alert dialog
-//        dialog.show()
-
-
-//        val builder = AlertDialog.Builder(activity!!)
-//                .setSingleChoiceItems(items, -1) { dialog, which -> value[0] = items[which] }
-//                .setPositiveButton("Ok") { dialog, which ->
-//                    try {
-//                        val lw = (dialog as AlertDialog).listView
-//                        val checkedItem = lw.adapter.getItem(lw.checkedItemPosition)
-//                        val selectedCat = checkedItem.toString()
-//                        val pos = lw.checkedItemPosition
-//                        select_category.text = selectedCat
-//                        cat_id = cat_list[pos].id
-//                        Constants.getPrefs(activity!!)?.edit()?.putString(Constants.CATEGORY_NAME, selectedCat)?.apply()
-//                        Constants.getPrefs(activity!!)?.edit()?.putString(Constants.CATEGORY, cat_id)?.apply()
-//                        dialog.dismiss()
-//                    } catch (e: Exception) {
-//                        e.printStackTrace()
-//                    }
-//                    // dialog.dismiss()
-//                }
-//                .setNegativeButton("Cancel"
-//                ) { dialog, which -> dialog.dismiss() }.create()
-//        builder.show()
 
 
     }
@@ -2070,11 +1710,11 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         return Constants.getPrefs(activity!!)?.getString(Constants.MAIN_CATEGORY, "")!!
     }
 
-    override fun getPrefillTownId(): String {
+    override fun getPreFillTownId(): String {
         return model.town_id
     }
 
-    override fun getPrefillCatId(): String {
+    override fun getPreFillCatId(): String {
         return model.category_id
     }
 
@@ -2107,14 +1747,13 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         }
         jsonContact = gson.toJson(timeList1)
         Log.e("List", jsonContact)
-        // val jsonArray = JSONArray(jsonContact)
         return jsonContact
     }
 
     override fun getClosingHours(): String {
-        var timeList1: ArrayList<ModelTimeString> = arrayListOf()
+        val timeList1: ArrayList<ModelTimeString> = arrayListOf()
         for (i in 0 until timeList.size) {
-            var model = ModelTimeString()
+            val model = ModelTimeString()
             model.closeFrom = timeList[i].closeFrom
             model.closeTo = timeList[i].closeTo
             model.startFrom = timeList[i].startFrom
@@ -2130,20 +1769,22 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         return jsonContact
     }
 
+    @SuppressLint("SetTextI18n")
     override fun showLoader() {
         progressBar.visibility = View.VISIBLE
         progressBar2.visibility = View.VISIBLE
         save.text = "saving to the server..."
     }
 
-    override fun setclickFalse() {
+    override fun setClickFalse() {
         isServiceRunning = false
     }
 
-    override fun setclickTrue() {
+    override fun setClickTrue() {
         isServiceRunning = true
     }
 
+    @SuppressLint("SetTextI18n")
     override fun hideLoader() {
         isServiceRunning = false
         save.text = "save"
@@ -2166,8 +1807,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
     override fun getOldMultiPartFiles(): String {
         val gsonBuilder = GsonBuilder().create()
-        val jsonFromJavaArrayList = gsonBuilder.toJson(preLoadImages)
-        return jsonFromJavaArrayList
+        return gsonBuilder.toJson(preLoadImages)
     }
 
     override fun showMessage(msg: String?, busId: String) {
@@ -2188,7 +1828,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
             intent.putExtra("showallpost", "no")
             intent.putExtra("from", "profile")
             intent.putExtra("busName", bus_name.text.toString())
-            intent.putExtra("subscriptionType",Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE,""))
+            intent.putExtra("subscriptionType", Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, ""))
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
         }
@@ -2200,8 +1840,8 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
     }
 
     override fun setPreFilledData() {
-        val busname = Constants.getPrefs(activity!!)?.getString(Constants.MY_BUSINESS_NAME, "")
-        bus_name.setText(busname)
+        val busName = Constants.getPrefs(activity!!)?.getString(Constants.MY_BUSINESS_NAME, "")
+        bus_name.setText(busName)
     }
 
     override fun getLatitude(): String {
@@ -2229,7 +1869,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         number.error = s
     }
 
-    override fun setAdressError(s: String) {
+    override fun setAddressError(s: String) {
         Toast.makeText(activity!!, "No Address selected", Toast.LENGTH_SHORT).show()
     }
 
@@ -2259,22 +1899,22 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         return ""
     }
 
-    override fun setBusinessPrefilledData(data: String, end_time: String, user_type: String, bid: String) {
+    @SuppressLint("SetTextI18n")
+    override fun setBusinessPreFilledData(data: String, end_time: String, user_type: String, bid: String) {
         if (activity != null && isAdded) {
             if (end_time != "N/A") {
 
                 try {
                     val currentTime = getCurrentTime()
-
                     val sdf = SimpleDateFormat("yyyy-MM-dd")
                     val start = sdf.parse(currentTime)
                     val end = sdf.parse(end_time)
                     if (start.after(end)) {
-                        expirePlanOn.text = "Expired on- "+ parseDateToddMMyyyy(end_time)
+                        expirePlanOn.text = "Expired on- " + parseDateToFormat(end_time)
                     } else {
-                        expirePlanOn.text = "Expires on- " + parseDateToddMMyyyy(end_time)
+                        expirePlanOn.text = "Expires on- " + parseDateToFormat(end_time)
                     }
-                }catch (e:Exception){
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
@@ -2285,36 +1925,18 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun getCurrentTime(): String {
-
         val sdf = SimpleDateFormat("yyyy-MM-dd")
         return sdf.format(Date())
     }
 
 
-    private var intitalSetting: Boolean = false
+    private var initialSetting: Boolean = false
 
     private var list: java.util.ArrayList<SingleBusinessModel>? = arrayListOf()
-    private fun changeTimeFormat(time: String): String {
-        val inputPattern = "hha"
-        val outputPattern = "hh:mm aa"
-        val inputFormat = SimpleDateFormat(inputPattern)
-        val outputFormat = SimpleDateFormat(outputPattern)
 
-        var date: Date? = null
-        var str: String = ""
-
-        try {
-            date = inputFormat.parse(time.trim())
-            str = outputFormat.format(date)
-        } catch (e: ParseException) {
-            e.printStackTrace()
-        }
-
-        return str
-    }
-
-    fun parseDateToddMMyyyy(time: String): String? {
+    fun parseDateToFormat(time: String): String? {
         val inputPattern = "yyyy-MM-dd"
         val outputPattern = "dd-MMM-yyyy"
         val inputFormat = SimpleDateFormat(inputPattern)
@@ -2332,6 +1954,7 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
 
         return str
     }
+
     override fun saveBusinessName() {
         Constants.getPrefs(activity!!)?.edit()?.putString(Constants.BUSINESS_NAME, bus_name.text.toString())?.apply()
     }
@@ -2352,10 +1975,6 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
     }
 
     private fun disablePickers() {
-        /*openHoursStart.text = "0am"
-        closeStartHours.text = "0am"
-        openHoursEnd.text = "0PM"
-        closeEndHours.text = "0pm"*/
         openHoursStart.setBackgroundColor(resources.getColor(R.color.light_grey))
         openHoursEnd.setBackgroundColor(resources.getColor(R.color.light_grey))
         closeStartHours.setBackgroundColor(resources.getColor(R.color.light_grey))
@@ -2365,11 +1984,8 @@ class ProfileFragment : Fragment(), BusinessProfileHelper, HorzRecyclerAdapter.u
         closeStartHours.isEnabled = false
         closeEndHours.isEnabled = false
     }
-private fun disableTitles() {
-        /*openHoursStart.text = "0am"
-        closeStartHours.text = "0am"
-        openHoursEnd.text = "0PM"
-        closeEndHours.text = "0pm"*/
+
+    private fun disableTitles() {
         coverTitle.setTextColor(resources.getColor(R.color.light_grey))
         header.setTextColor(resources.getColor(R.color.light_grey))
         add_label.setTextColor(resources.getColor(R.color.light_grey))
@@ -2378,14 +1994,11 @@ private fun disableTitles() {
         emailText.setTextColor(resources.getColor(R.color.light_grey))
         townText.setTextColor(resources.getColor(R.color.light_grey))
         catText.setTextColor(resources.getColor(R.color.light_grey))
-    emailIdText.setTextColor(resources.getColor(R.color.light_grey))
-    select_category.setTextColor(resources.getColor(R.color.light_grey))
-    select_town.setTextColor(resources.getColor(R.color.light_grey))
-   // coverlay.visibility=View.VISIBLE
-
-
-
+        emailIdText.setTextColor(resources.getColor(R.color.light_grey))
+        select_category.setTextColor(resources.getColor(R.color.light_grey))
+        select_town.setTextColor(resources.getColor(R.color.light_grey))
     }
+
     private fun enableTitles() {
 
         coverTitle.setTextColor(resources.getColor(R.color.black))
@@ -2399,429 +2012,36 @@ private fun disableTitles() {
         emailIdText.setTextColor(resources.getColor(R.color.black))
         select_category.setTextColor(resources.getColor(R.color.black))
         select_town.setTextColor(resources.getColor(R.color.black))
-      //  coverlay.visibility=View.GONE
-
-    }
-    private fun setDataAccDays(checks: String) {
-        if (day == "Monday") {
-            modelTime = ModelTime()
-            if (Constants.closedList[0]) {
-                try {
-                    modelTime.startFrom = "closed"
-                    modelTime.startTo = "closed"
-                    modelTime.closeFrom = "closed"
-                    modelTime.closeTo = "closed"
-                    timeList[0] = modelTime
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-            } else {
-                modelTime = ModelTime()
-                if (intitalSetting) {
-                    modelTime.startFrom = openStartTime
-                    modelTime.startTo = openEndTime
-                    modelTime.closeFrom = closeStartTime
-                    modelTime.closeTo = closeEndTime
-                    timeList[0] = modelTime
-                } else {
-                    if (checks == "openstart") {
-                        modelTime.startFrom = timeList[0].startFrom
-                        modelTime.startTo = timeList[0].startTo
-                        modelTime.closeFrom = timeList[0].closeFrom
-                        modelTime.closeTo = timeList[0].closeTo
-                    } else if (checks == "openend") {
-                        modelTime.startTo = timeList[0].startTo
-                        modelTime.startFrom = timeList[0].startFrom
-                        modelTime.closeFrom = timeList[0].closeFrom
-                        modelTime.closeTo = timeList[0].closeTo
-                    } else if (checks == "closestart") {
-                        modelTime.closeFrom = timeList[0].closeFrom
-                        modelTime.startTo = timeList[0].startTo
-                        modelTime.startFrom = timeList[0].startFrom
-                        modelTime.closeTo = timeList[0].closeTo
-                    } else if (checks == "closeend") {
-                        modelTime.closeTo = timeList[0].closeTo
-                        modelTime.startTo = timeList[0].startTo
-                        modelTime.closeFrom = timeList[0].closeFrom
-                        modelTime.startFrom = timeList[0].startFrom
-                    } else {
-                        modelTime.closeTo = timeList[0].closeTo
-                        modelTime.startTo = timeList[0].startTo
-                        modelTime.closeFrom = timeList[0].closeFrom
-                        modelTime.startFrom = timeList[0].startFrom
-                    }
-                    timeList[0] = modelTime
-
-                }
-            }
-
-        } else if (day == "Tuesday") {
-            modelTime = ModelTime()
-            if (Constants.closedList[1]) {
-                try {
-                    modelTime.startFrom = "closed"
-                    modelTime.startTo = "closed"
-                    modelTime.closeFrom = "closed"
-                    modelTime.closeTo = "closed"
-                    timeList[1] = modelTime
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-            } else {
-                if (intitalSetting) {
-                    modelTime.startFrom = openStartTime
-                    modelTime.startTo = openEndTime
-                    modelTime.closeFrom = closeStartTime
-                    modelTime.closeTo = closeEndTime
-                    timeList[1] = modelTime
-                } else {
-                    if (checks == "openstart") {
-                        modelTime.startFrom = timeList[1].startFrom
-                        modelTime.startTo = timeList[1].startTo
-                        modelTime.closeFrom = timeList[1].closeFrom
-                        modelTime.closeTo = timeList[1].closeTo
-                    } else if (checks == "openend") {
-                        modelTime.startTo = timeList[1].startTo
-                        modelTime.startFrom = timeList[1].startFrom
-                        modelTime.closeFrom = timeList[1].closeFrom
-                        modelTime.closeTo = timeList[1].closeTo
-                    } else if (checks == "closestart") {
-                        modelTime.closeFrom = timeList[1].closeFrom
-                        modelTime.startTo = timeList[1].startTo
-                        modelTime.startFrom = timeList[1].startFrom
-                        modelTime.closeTo = timeList[1].closeTo
-                    } else if (checks == "closeend") {
-                        modelTime.closeTo = timeList[1].closeTo
-                        modelTime.startTo = timeList[1].startTo
-                        modelTime.closeFrom = timeList[1].closeFrom
-                        modelTime.startFrom = timeList[1].startFrom
-                    } else {
-                        modelTime.closeTo = timeList[1].closeTo
-                        modelTime.startTo = timeList[1].startTo
-                        modelTime.closeFrom = timeList[1].closeFrom
-                        modelTime.startFrom = timeList[1].startFrom
-                    }
-                    timeList[1] = modelTime
-
-                }
-            }
-
-        } else if (day == "Wednesday") {
-            modelTime = ModelTime()
-            if (Constants.closedList[2]) {
-                try {
-                    modelTime.startFrom = "closed"
-                    modelTime.startTo = "closed"
-                    modelTime.closeFrom = "closed"
-                    modelTime.closeTo = "closed"
-                    timeList[2] = modelTime
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-            } else {
-                if (intitalSetting) {
-                    modelTime.startFrom = openStartTime
-                    modelTime.startTo = openEndTime
-                    modelTime.closeFrom = closeStartTime
-                    modelTime.closeTo = closeEndTime
-                    timeList[2] = modelTime
-                } else {
-                    if (checks == "openstart") {
-                        modelTime.startFrom = timeList[2].startFrom
-                        modelTime.startTo = timeList[2].startTo
-                        modelTime.closeFrom = timeList[2].closeFrom
-                        modelTime.closeTo = timeList[2].closeTo
-                    } else if (checks == "openend") {
-                        modelTime.startTo = timeList[2].startTo
-                        modelTime.startFrom = timeList[2].startFrom
-                        modelTime.closeFrom = timeList[2].closeFrom
-                        modelTime.closeTo = timeList[2].closeTo
-                    } else if (checks == "closestart") {
-                        modelTime.closeFrom = timeList[2].closeFrom
-                        modelTime.startTo = timeList[2].startTo
-                        modelTime.startFrom = timeList[2].startFrom
-                        modelTime.closeTo = timeList[2].closeTo
-                    } else if (checks == "closeend") {
-                        modelTime.closeTo = timeList[2].closeTo
-                        modelTime.startTo = timeList[2].startTo
-                        modelTime.closeFrom = timeList[2].closeFrom
-                        modelTime.startFrom = timeList[2].startFrom
-                    } else {
-                        modelTime.closeTo = timeList[2].closeTo
-                        modelTime.startTo = timeList[2].startTo
-                        modelTime.closeFrom = timeList[2].closeFrom
-                        modelTime.startFrom = timeList[2].startFrom
-                    }
-                    timeList[2] = modelTime
-
-                }
-            }
-
-
-        } else if (day == "Thursday") {
-            modelTime = ModelTime()
-            if (Constants.closedList[3]) {
-                try {
-                    modelTime.startFrom = "closed"
-                    modelTime.startTo = "closed"
-                    modelTime.closeFrom = "closed"
-                    modelTime.closeTo = "closed"
-                    timeList[3] = modelTime
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-            } else {
-                if (intitalSetting) {
-                    modelTime.startFrom = openStartTime
-                    modelTime.startTo = openEndTime
-                    modelTime.closeFrom = closeStartTime
-                    modelTime.closeTo = closeEndTime
-                    timeList[3] = modelTime
-                } else {
-                    if (checks == "openstart") {
-                        modelTime.startFrom = timeList[3].startFrom
-                        modelTime.startTo = timeList[3].startTo
-                        modelTime.closeFrom = timeList[3].closeFrom
-                        modelTime.closeTo = timeList[3].closeTo
-                    } else if (checks == "openend") {
-                        modelTime.startTo = timeList[3].startTo
-                        modelTime.startFrom = timeList[3].startFrom
-                        modelTime.closeFrom = timeList[3].closeFrom
-                        modelTime.closeTo = timeList[3].closeTo
-                    } else if (checks == "closestart") {
-                        modelTime.closeFrom = timeList[3].closeFrom
-                        modelTime.startTo = timeList[3].startTo
-                        modelTime.startFrom = timeList[3].startFrom
-                        modelTime.closeTo = timeList[3].closeTo
-                    } else if (checks == "closeend") {
-                        modelTime.closeTo = timeList[3].closeTo
-                        modelTime.startTo = timeList[3].startTo
-                        modelTime.closeFrom = timeList[3].closeFrom
-                        modelTime.startFrom = timeList[3].startFrom
-                    } else {
-                        modelTime.closeTo = timeList[3].closeTo
-                        modelTime.startTo = timeList[3].startTo
-                        modelTime.closeFrom = timeList[3].closeFrom
-                        modelTime.startFrom = timeList[3].startFrom
-                    }
-                    timeList[3] = modelTime
-
-                }
-            }
-        } else if (day == "Friday") {
-            modelTime = ModelTime()
-            if (Constants.closedList[4]) {
-                try {
-                    modelTime.startFrom = "closed"
-                    modelTime.startTo = "closed"
-                    modelTime.closeFrom = "closed"
-                    modelTime.closeTo = "closed"
-                    timeList[4] = modelTime
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-            } else {
-                if (intitalSetting) {
-                    modelTime.startFrom = openStartTime
-                    modelTime.startTo = openEndTime
-                    modelTime.closeFrom = closeStartTime
-                    modelTime.closeTo = closeEndTime
-                    timeList[4] = modelTime
-                } else {
-                    if (checks == "openstart") {
-                        modelTime.startFrom = timeList[4].startFrom
-                        modelTime.startTo = timeList[4].startTo
-                        modelTime.closeFrom = timeList[4].closeFrom
-                        modelTime.closeTo = timeList[4].closeTo
-                    } else if (checks == "openend") {
-                        modelTime.startTo = timeList[4].startTo
-                        modelTime.startFrom = timeList[4].startFrom
-                        modelTime.closeFrom = timeList[4].closeFrom
-                        modelTime.closeTo = timeList[4].closeTo
-                    } else if (checks == "closestart") {
-                        modelTime.closeFrom = timeList[4].closeFrom
-                        modelTime.startTo = timeList[4].startTo
-                        modelTime.startFrom = timeList[4].startFrom
-                        modelTime.closeTo = timeList[4].closeTo
-                    } else if (checks == "closeend") {
-                        modelTime.closeTo = timeList[4].closeTo
-                        modelTime.startTo = timeList[4].startTo
-                        modelTime.closeFrom = timeList[4].closeFrom
-                        modelTime.startFrom = timeList[4].startFrom
-                    } else {
-                        modelTime.closeTo = timeList[4].closeTo
-                        modelTime.startTo = timeList[4].startTo
-                        modelTime.closeFrom = timeList[4].closeFrom
-                        modelTime.startFrom = timeList[4].startFrom
-                    }
-                    timeList[4] = modelTime
-
-                }
-            }
-        } else if (day == "Saturday") {
-            modelTime = ModelTime()
-            if (Constants.closedList[5]) {
-                try {
-                    modelTime.startFrom = "closed"
-                    modelTime.startTo = "closed"
-                    modelTime.closeFrom = "closed"
-                    modelTime.closeTo = "closed"
-                    timeList[5] = modelTime
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-            } else {
-                if (intitalSetting) {
-                    modelTime.startFrom = openStartTime
-                    modelTime.startTo = openEndTime
-                    modelTime.closeFrom = closeStartTime
-                    modelTime.closeTo = closeEndTime
-                    timeList[5] = modelTime
-                } else {
-                    if (checks == "openstart") {
-                        modelTime.startFrom = timeList[5].startFrom
-                        modelTime.startTo = timeList[5].startTo
-                        modelTime.closeFrom = timeList[5].closeFrom
-                        modelTime.closeTo = timeList[5].closeTo
-                    } else if (checks == "openend") {
-                        modelTime.startTo = timeList[5].startTo
-                        modelTime.startFrom = timeList[5].startFrom
-                        modelTime.closeFrom = timeList[5].closeFrom
-                        modelTime.closeTo = timeList[5].closeTo
-                    } else if (checks == "closestart") {
-                        modelTime.closeFrom = timeList[5].closeFrom
-                        modelTime.startTo = timeList[5].startTo
-                        modelTime.startFrom = timeList[5].startFrom
-                        modelTime.closeTo = timeList[5].closeTo
-                    } else if (checks == "closeend") {
-                        modelTime.closeTo = timeList[5].closeTo
-                        modelTime.startTo = timeList[5].startTo
-                        modelTime.closeFrom = timeList[5].closeFrom
-                        modelTime.startFrom = timeList[5].startFrom
-                    } else {
-                        modelTime.closeTo = timeList[5].closeTo
-                        modelTime.startTo = timeList[5].startTo
-                        modelTime.closeFrom = timeList[5].closeFrom
-                        modelTime.startFrom = timeList[5].startFrom
-                    }
-                    timeList[5] = modelTime
-
-                }
-            }
-        } else if (day == "Sunday") {
-            modelTime = ModelTime()
-            if (Constants.closedList[6]) {
-                try {
-                    modelTime.startFrom = "closed"
-                    modelTime.startTo = "closed"
-                    modelTime.closeFrom = "closed"
-                    modelTime.closeTo = "closed"
-                    timeList[6] = modelTime
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-            } else {
-                if (intitalSetting) {
-                    modelTime.startFrom = openStartTime
-                    modelTime.startTo = openEndTime
-                    modelTime.closeFrom = closeStartTime
-                    modelTime.closeTo = closeEndTime
-                    timeList[6] = modelTime
-                } else {
-                    when (checks) {
-                        "openstart" -> {
-                            modelTime.startFrom = timeList[6].startFrom
-                            modelTime.startTo = timeList[6].startTo
-                            modelTime.closeFrom = timeList[6].closeFrom
-                            modelTime.closeTo = timeList[6].closeTo
-                        }
-                        "openend" -> {
-                            modelTime.startTo = timeList[6].startTo
-                            modelTime.startFrom = timeList[6].startFrom
-                            modelTime.closeFrom = timeList[6].closeFrom
-                            modelTime.closeTo = timeList[6].closeTo
-                        }
-                        "closestart" -> {
-                            modelTime.closeFrom = timeList[6].closeFrom
-                            modelTime.startTo = timeList[6].startTo
-                            modelTime.startFrom = timeList[6].startFrom
-                            modelTime.closeTo = timeList[6].closeTo
-                        }
-                        "closeend" -> {
-                            modelTime.closeTo = timeList[6].closeTo
-                            modelTime.startTo = timeList[6].startTo
-                            modelTime.closeFrom = timeList[6].closeFrom
-                            modelTime.startFrom = timeList[6].startFrom
-                        }
-                        else -> {
-                            modelTime.closeTo = timeList[6].closeTo
-                            modelTime.startTo = timeList[6].startTo
-                            modelTime.closeFrom = timeList[6].closeFrom
-                            modelTime.startFrom = timeList[6].startFrom
-                        }
-                    }
-                    timeList[6] = modelTime
-
-                }
-            }
-        }
-
     }
 
     private fun setClosedAccToDays() {
-        if (day.equals("Monday")) {
-            //  timeList[0].close = "true"
-            Constants.closedList[0] = close
-        } else if (day == "Tuesday") {
-            //   timeList[1].close = "true"
-            Constants.closedList[1] = close
-        } else if (day == "Wednesday") {
-            //  timeList[2].close = "true"
-            Constants.closedList[2] = close
-        } else if (day == "Thursday") {
-            // timeList[3].close = "true"
-            Constants.closedList[3] = close
-        } else if (day == "Friday") {
-            // timeList[4].close = "true"
-            Constants.closedList[4] = close
-        } else if (day == "Saturday") {
-            //  timeList[5].close = "true"
-            Constants.closedList[5] = close
-        } else if (day == "Sunday") {
-            //  timeList[6].close = "true"
-            Constants.closedList[6] = close
+        when (day) {
+            "Monday" ->
+                Constants.closedList[0] = close
+            "Tuesday" ->
+                Constants.closedList[1] = close
+            "Wednesday" ->
+                Constants.closedList[2] = close
+            "Thursday" ->
+                Constants.closedList[3] = close
+            "Friday" ->
+                Constants.closedList[4] = close
+            "Saturday" ->
+                Constants.closedList[5] = close
+            "Sunday" ->
+                Constants.closedList[6] = close
         }
     }
 
     private fun setOpenAccToDays() {
-        if (day.equals("Monday")) {
-            //timeList[0].close = "false"
-            Constants.closedList[0] = close
-        } else if (day == "Tuesday") {
-            //  timeList[1].close = "false"
-            Constants.closedList[1] = close
-        } else if (day == "Wednesday") {
-            // timeList[2].close = "false"
-            Constants.closedList[2] = close
-        } else if (day == "Thursday") {
-            //  timeList[3].close = "false"
-            Constants.closedList[3] = close
-        } else if (day == "Friday") {
-            // timeList[4].close = "false"
-            Constants.closedList[4] = close
-        } else if (day == "Saturday") {
-            //  timeList[5].close = "false"
-            Constants.closedList[5] = close
-        } else if (day == "Sunday") {
-            // timeList[6].close = "false"
-            Constants.closedList[6] = close
+        when (day) {
+            "Monday" -> Constants.closedList[0] = close
+            "Tuesday" -> Constants.closedList[1] = close
+            "Wednesday" -> Constants.closedList[2] = close
+            "Thursday" -> Constants.closedList[3] = close
+            "Friday" -> Constants.closedList[4] = close
+            "Saturday" -> Constants.closedList[5] = close
+            "Sunday" -> Constants.closedList[6] = close
         }
     }
 
@@ -2840,32 +2060,18 @@ private fun disableTitles() {
         }
 
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-//            if (open==1) {
-//                if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3") {
-//                    Constants.showPopup(activity!!)
-//                    return
-//                }
             word_count.text = s.length.toString() + "/" + MAX_WORDS
-//            }
-//            open=1
+
         }
 
         override fun afterTextChanged(s: Editable) {}
     }
-    //For contact Number
     val mTextEditorWatcher2 = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
 
         }
 
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-//            if (open1==1) {
-//                if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3") {
-//                    Constants.showPopup(activity!!)
-//                    return
-//                }
-//            }
-//            open1=1
         }
 
         override fun afterTextChanged(s: Editable) {}
@@ -2889,7 +2095,6 @@ private fun disableTitles() {
                 .setPositiveButton("Ok") { dialog, which ->
                     try {
                         val lw = (dialog as AlertDialog).listView
-                        val checkedItem = lw.adapter.getItem(lw.checkedItemPosition)
                         val pos = lw.checkedItemPosition
                         if (pos == 0) {
                             cameraIntent("cover")
@@ -2901,69 +2106,10 @@ private fun disableTitles() {
                         e.printStackTrace()
                     }
 
-                    // dialog.dismiss()
                 }
                 .setNegativeButton("Cancel"
                 ) { dialog, which -> dialog.dismiss() }.create()
         builder.show()
-
-    }
-
-//    private fun cameraIntentCoverImage() {
-//        if (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.CAMERA)
-//                == PackageManager.PERMISSION_DENIED) {
-//            ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA)
-//        } else {
-//            if (ContextCompat.checkSelfPermission(activity!!,
-//                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-//                //do your stuff
-//                val values = ContentValues()
-//                values.put(MediaStore.Images.Media.TITLE, "New Picture")
-//                values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera")
-//                imageUri2 = activity!!.contentResolver.insert(
-//                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-//                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri2)
-//                startActivityForResult(intent, REQUEST_CAMERA_COVER)
-//
-//            } else {
-//                requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//                        getString(R.string.permission_write_storage_rationale),
-//                        REQUEST_STORAGE_WRITE_ACCESS_PERMISSION)
-//            }
-//        }
-//    }
-
-    private fun pickFromGalleryCoverImage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
-                    getString(R.string.permission_read_storage_rationale),
-                    REQUEST_STORAGE_READ_ACCESS_PERMISSION)
-        } else if (ContextCompat.checkSelfPermission(activity!!,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    getString(R.string.permission_write_storage_rationale),
-                    REQUEST_STORAGE_WRITE_ACCESS)
-        } else {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-                    .setType("image/*")
-                    .addCategory(Intent.CATEGORY_OPENABLE)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                val mimeTypes = arrayOf("image/jpeg", "image/png")
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-            }
-
-            try {
-                val intent1 = Intent()
-                intent1.type = "image/*"
-                intent1.action = Intent.ACTION_GET_CONTENT
-                startActivityForResult(Intent.createChooser(intent1, "Select Picture"), SELECT_COVER)
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
 
     }
 
@@ -2986,17 +2132,16 @@ private fun disableTitles() {
             e.printStackTrace()
         }
         return ""
-        //return model.cover_image+"jpg"
     }
 
     private fun getRealPathFromURI(uri: Uri?): String {
         var cursor = activity!!.contentResolver.query(uri, null, null, null, null)
         cursor!!.moveToFirst()
-        var document_id = cursor.getString(0)
-        document_id = document_id.substring(document_id.lastIndexOf(":") + 1)
+        var documentId = cursor.getString(0)
+        documentId = documentId.substring(documentId.lastIndexOf(":") + 1)
         cursor.close()
         cursor = activity!!.contentResolver.query(
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media._ID + " = ? ", arrayOf(document_id), null)
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media._ID + " = ? ", arrayOf(documentId), null)
         cursor!!.moveToFirst()
         val path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
         cursor.close()
@@ -3015,9 +2160,7 @@ private fun disableTitles() {
     }
 
     override fun getEmail(): String {
-        // return Constants.getPrefs(activity!!)!!.getString(Constants.EMAIL, "")
         return emailIdText.text.toString()
-
     }
 
     override fun getFromModel(): String {
@@ -3031,8 +2174,7 @@ private fun disableTitles() {
     @SuppressLint("CommitPrefEdits")
     override fun logOut() {
         if (activity != null) {
-            val builder: Builder
-            builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val builder: Builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 Builder(activity!!, android.R.style.Theme_Material_Dialog_Alert)
             } else {
                 Builder(activity!!)
@@ -3042,8 +2184,6 @@ private fun disableTitles() {
                     .setPositiveButton("Ok") { dialog, which ->
                         Constants.getPrefs(activity!!)?.edit()!!.putBoolean(Constants.LOGIN, false)!!.apply()
                         Constants.getPrefs(activity!!)!!.edit().remove(Constants.LOGGED).apply()
-                        //  setDrawerItems()
-                        // mPresenter.logOut(Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, ""))
                         val intent = Intent(activity!!, TownActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         startActivity(intent)
@@ -3059,13 +2199,11 @@ private fun disableTitles() {
     override fun setRadioGroupListener() {
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
 
-           // if (open == 1) {
-                if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3") {
-                    Constants.showPopup(activity!!)
-                    disablePickers()
-                    return@setOnCheckedChangeListener
-                }
-            //}
+            if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3") {
+                Constants.showPopup(activity!!)
+                disablePickers()
+                return@setOnCheckedChangeListener
+            }
             open = 1
             radioButtonClick = 1
             from = "set"
@@ -3073,10 +2211,6 @@ private fun disableTitles() {
 
                 R.id.mon -> {
                     day = "Monday"
-                    /* openStartTime = "0AM"
-                     closeEndTime = "0PM"
-                     openEndTime = "0PM"
-                     closeStartTime = "0PM"*/
                     try {
 
                         if (timeList[0].status) {
@@ -3105,76 +2239,9 @@ private fun disableTitles() {
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
-//                    closeTimeLayout.visibility = View.VISIBLE
-//                    closeBox.isChecked = Constants.closedList[0]
-//
-//                    try {
-//                        if (timeList[0].startFrom == "closed") {
-//                            closeBox.isChecked = true
-//                            disablePickers()
-//                            openStartTime = "12:00 AM"
-//                            closeEndTime = "12:00 AM"
-//                            openEndTime = "12:00 AM"
-//                            closeStartTime = "12:00 AM"
-//
-//                            openHoursStart.text = "12:00 AM"
-//                            closeStartHours.text = "12:00 AM"
-//                            openHoursEnd.text = "12:00 AM"
-//                            closeEndHours.text = "12:00 AM"
-//                        } else {
-//                            closeBox.isChecked = false
-//                            enablePickers()
-//                            openHoursStart.text = timeList[0].startFrom
-//                            closeStartHours.text = timeList[0].closeFrom
-//                            openHoursEnd.text = timeList[0].startTo
-//                            closeEndHours.text = timeList[0].closeTo
-//
-//
-//                        }
-//                    } catch (e: Exception) {
-//                        openHoursStart.text = "12:00 AM"
-//                        closeStartHours.text = "12:00 AM"
-//                        openHoursEnd.text = "12:00 AM"
-//                        closeEndHours.text = "12:00 AM"
-//                    }
-
                 }
                 R.id.tues -> {
                     day = "Tuesday"
-//                    openStartTime = "12:00 AM"
-//                    closeEndTime = "12:00 AM"
-//                    openEndTime = "12:00 AM"
-//                    closeStartTime = "12:00 AM"
-//                    closeTimeLayout.visibility = View.VISIBLE
-//                    closeBox.isChecked = Constants.closedList[1]
-//                    try {
-//                        if (timeList[1].startFrom == "closed") {
-//                            closeBox.isChecked = true
-//                            disablePickers()
-//                            openStartTime = "12:00 AM"
-//                            closeEndTime = "12:00 AM"
-//                            openEndTime = "12:00 AM"
-//                            closeStartTime = "12:00 AM"
-//
-//                            openHoursStart.text = "12:00 AM"
-//                            closeStartHours.text = "12:00 AM"
-//                            openHoursEnd.text = "12:00 AM"
-//                            closeEndHours.text = "12:00 AM"
-//                        } else {
-//                            closeBox.isChecked = false
-//                            openHoursStart.text = timeList[1].startFrom
-//                            closeStartHours.text = timeList[1].closeFrom
-//                            openHoursEnd.text = timeList[1].startTo
-//                            closeEndHours.text = timeList[1].closeTo
-//                            enablePickers()
-//                        }
-//                    } catch (e: Exception) {
-//                        openHoursStart.text = "12:00 AM"
-//                        closeStartHours.text = "12:00 AM"
-//                        openHoursEnd.text = "12:00 AM"
-//                        closeEndHours.text = "12:00 AM"
-//                    }
-//
                     try {
 
                         if (timeList[1].status) {
@@ -3206,41 +2273,6 @@ private fun disableTitles() {
                 }
                 R.id.wed -> {
                     day = "Wednesday"
-//                    openStartTime = "12:00 AM"
-//                    closeEndTime = "12:00 AM"
-//                    openEndTime = "12:00 AM"
-//                    closeStartTime = "12:00 AM"
-//                    closeTimeLayout.visibility = View.VISIBLE
-//                    closeBox.isChecked = Constants.closedList[2]
-//
-//                    try {
-//                        if (timeList[2].startFrom == "closed") {
-//                            closeBox.isChecked = true
-//                            disablePickers()
-//                            openStartTime = "12:00 AM"
-//                            closeEndTime = "12:00 AM"
-//                            openEndTime = "12:00 AM"
-//                            closeStartTime = "12:00 AM"
-//
-//                            openHoursStart.text = "12:00 AM"
-//                            closeStartHours.text = "12:00 AM"
-//                            openHoursEnd.text = "12:00 AM"
-//                            closeEndHours.text = "12:00 AM"
-//                        } else {
-//                            closeBox.isChecked = false
-//                            openHoursStart.text = timeList[2].startFrom
-//                            closeStartHours.text = timeList[2].closeFrom
-//                            openHoursEnd.text = timeList[2].startTo
-//                            closeEndHours.text = timeList[2].closeTo
-//
-//                            enablePickers()
-//                        }
-//                    } catch (e: Exception) {
-//                        openHoursStart.text = "12:00 AM"
-//                        closeStartHours.text = "12:00 AM"
-//                        openHoursEnd.text = "12:00 AM"
-//                        closeEndHours.text = "12:00 AM"
-//                    }
                     try {
 
                         if (timeList[2].status) {
@@ -3272,41 +2304,6 @@ private fun disableTitles() {
                 }
                 R.id.thu -> {
                     day = "Thursday"
-//                    openStartTime = "12:00 AM"
-//                    closeEndTime = "12:00 AM"
-//                    openEndTime = "12:00 AM"
-//                    closeStartTime = "12:00 AM"
-//                    closeTimeLayout.visibility = View.VISIBLE
-//                    closeBox.isChecked = Constants.closedList[3]
-//                    try {
-//                        if (timeList[3].startFrom == "closed") {
-//                            closeBox.isChecked = true
-//                            disablePickers()
-//                            openStartTime = "12:00 AM"
-//                            closeEndTime = "12:00 AM"
-//                            openEndTime = "12:00 AM"
-//                            closeStartTime = "12:00 AM"
-//
-//                            openHoursStart.text = "12:00 AM"
-//                            closeStartHours.text = "12:00 AM"
-//                            openHoursEnd.text = "12:00 AM"
-//                            closeEndHours.text = "12:00 AM"
-//                        } else {
-//                            closeBox.isChecked = false
-//                            openHoursStart.text = timeList[3].startFrom
-//                            closeStartHours.text = timeList[3].closeFrom
-//                            openHoursEnd.text = timeList[3].startTo
-//                            closeEndHours.text = timeList[3].closeTo
-//
-//                            enablePickers()
-//                        }
-//                    } catch (e: Exception) {
-//                        closeBox.isChecked = false
-//                        openHoursStart.text = "12:00 AM"
-//                        closeStartHours.text = "12:00 AM"
-//                        openHoursEnd.text = "12:00 AM"
-//                        closeEndHours.text = "12:00 AM"
-//                    }
                     try {
                         if (timeList[3].status) {
                             setLayout(true)
@@ -3340,41 +2337,6 @@ private fun disableTitles() {
                 }
                 R.id.fri -> {
                     day = "Friday"
-//                    openStartTime = "12:00 AM"
-//                    closeEndTime = "12:00 AM"
-//                    openEndTime = "12:00 AM"
-//                    closeStartTime = "12:00 AM"
-//                    closeTimeLayout.visibility = View.VISIBLE
-//                    closeBox.isChecked = Constants.closedList[4]
-//
-//                    try {
-//                        if (timeList[4].startFrom == "closed") {
-//                            closeBox.isChecked = true
-//                            disablePickers()
-//                            openStartTime = "12:00 AM"
-//                            closeEndTime = "12:00 AM"
-//                            openEndTime = "12:00 AM"
-//                            closeStartTime = "12:00 AM"
-//
-//                            openHoursStart.text = "12:00 AM"
-//                            closeStartHours.text = "12:00 AM"
-//                            openHoursEnd.text = "12:00 AM"
-//                            closeEndHours.text = "12:00 AM"
-//                        } else {
-//                            closeBox.isChecked = false
-//                            openHoursStart.text = timeList[4].startFrom
-//                            closeStartHours.text = timeList[4].closeFrom
-//                            openHoursEnd.text = timeList[4].startTo
-//                            closeEndHours.text = timeList[4].closeTo
-//
-//                            enablePickers()
-//                        }
-//                    } catch (e: Exception) {
-//                        openHoursStart.text = "12:00 AM"
-//                        closeStartHours.text = "12:00 AM"
-//                        openHoursEnd.text = "12:00 AM"
-//                        closeEndHours.text = "12:00 AM"
-//                    }
                     try {
 
                         if (timeList[4].status) {
@@ -3402,45 +2364,9 @@ private fun disableTitles() {
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
-                    // }
                 }
                 R.id.sat -> {
                     day = "Saturday"
-//                    openStartTime = "12:00 AM"
-//                    closeEndTime = "12:00 AM"
-//                    openEndTime = "12:00 AM"
-//                    closeStartTime = "12:00 AM"
-//                    closeTimeLayout.visibility = View.VISIBLE
-//                    closeBox.isChecked = Constants.closedList[5]
-//
-//                    try {
-//                        if (timeList[5].startFrom == "closed") {
-//                            closeBox.isChecked = true
-//                            disablePickers()
-//                            openStartTime = "12:00 AM"
-//                            closeEndTime = "12:00 AM"
-//                            openEndTime = "12:00 AM"
-//                            closeStartTime = "12:00 AM"
-//
-//                            openHoursStart.text = "12:00 AM"
-//                            closeStartHours.text = "12:00 AM"
-//                            openHoursEnd.text = "12:00 AM"
-//                            closeEndHours.text = "12:00 AM"
-//                        } else {
-//                            closeBox.isChecked = false
-//                            openHoursStart.text = timeList[5].startFrom
-//                            closeStartHours.text = timeList[5].closeFrom
-//                            openHoursEnd.text = timeList[5].startTo
-//                            closeEndHours.text = timeList[5].closeTo
-//
-//                            enablePickers()
-//                        }
-//                    } catch (e: Exception) {
-//                        openHoursStart.text = "12:00 AM"
-//                        closeStartHours.text = "12:00 AM"
-//                        openHoursEnd.text = "12:00 AM"
-//                        closeEndHours.text = "12:00 AM"
-//                    }
                     try {
 
                         if (timeList[5].status) {
@@ -3473,40 +2399,6 @@ private fun disableTitles() {
                 }
                 R.id.sun -> {
                     day = "Sunday"
-//                    openStartTime = "12:00 AM"
-//                    closeEndTime = "12:00 AM"
-//                    openEndTime = "12:00 AM"
-//                    closeStartTime = "12:00 AM"
-//                    closeTimeLayout.visibility = View.VISIBLE
-//                    closeBox.isChecked = Constants.closedList[6]
-//                    try {
-//                        if (timeList[6].startFrom == "closed") {
-//                            closeBox.isChecked = true
-//                            disablePickers()
-//                            openStartTime = "12:00 AM"
-//                            closeEndTime = "12:00 AM"
-//                            openEndTime = "12:00 AM"
-//                            closeStartTime = "12:00 AM"
-//
-//                            openHoursStart.text = "12:00 AM"
-//                            closeStartHours.text = "12:00 AM"
-//                            openHoursEnd.text = "12:00 AM"
-//                            closeEndHours.text = "12:00 AM"
-//                        } else {
-//                            closeBox.isChecked = false
-//                            openHoursStart.text = timeList[6].startFrom
-//                            closeStartHours.text = timeList[6].closeFrom
-//                            openHoursEnd.text = timeList[6].startTo
-//                            closeEndHours.text = timeList[6].closeTo
-//
-//                            enablePickers()
-//                        }
-//                    } catch (e: Exception) {
-//                        openHoursStart.text = "12:00 AM"
-//                        closeStartHours.text = "12:00 AM"
-//                        openHoursEnd.text = "12:00 AM"
-//                        closeEndHours.text = "12:00 AM"
-//                    }
                     try {
 
                         if (timeList[6].status) {
@@ -3549,12 +2441,7 @@ private fun disableTitles() {
             closeStartHours.isClickable = false
             closeEndHours.setBackgroundColor(resources.getColor(R.color.light_grey))
             closeStartHours.setBackgroundColor(resources.getColor(R.color.light_grey))
-            // setDataAccDays("")
-//            callCrossButton(false)
         } else {
-            //  setDataAccDays("")
-//            callCrossButton(true)
-
             closeTimeLayout.isEnabled = true
             closeTimeLayout.isClickable = true
             closeEndHours.isClickable = true
@@ -3572,17 +2459,11 @@ private fun disableTitles() {
             transLayout.visibility = View.VISIBLE
             setClosedAccToDays()
             disablePickers()
-            // setData(true)
-
-            // setDataAccDays(checks)
-
         } else {
             close = false
             transLayout.visibility = View.GONE
             setOpenAccToDays()
             enablePickers()
-            //setData(false)
-            // setDataAccDays(checks)
         }
         from = "click"
     }
@@ -3590,13 +2471,14 @@ private fun disableTitles() {
 
     //******************************************************************************************
 
-    override fun setSingleBusinessPrefilledData() {
+    @SuppressLint("CommitPrefEdits")
+    override fun setSingleBusinessPreFilledData() {
         from = "set"
         val data = Constants.getPrefs(activity!!)?.getString(Constants.SINGLE_BUSINESS_LIST, "")!!
         list = Constants.getSingleBusinessData(data)
         try {
             if (list != null) {
-                intitalSetting = false
+                initialSetting = false
                 mPresenter.setInitialTimeData(arr)
                 for (i in 0 until list!!.size) {
                     model = list!![i]
@@ -3606,9 +2488,9 @@ private fun disableTitles() {
                     number.setText(model.contact_no)
                     lat = model.lat
                     long = model.long
-                    if (model.description!="[]") {
+                    if (model.description != "[]") {
                         bus_desc.setText(model.description)
-                    }else{
+                    } else {
                         bus_desc.setText("")
                     }
 
@@ -3622,31 +2504,27 @@ private fun disableTitles() {
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
-
-
-                    // val town = Constants.getPrefs(activity!!)?.getString(Constants.TOWN_NAME, "")!!
-                    ///   val cat = Constants.getPrefs(activity!!)?.getString(Constants.CATEGORY_NAME, "")!!
                     getCatAndLocData()
                     try {
-                        val town_id = model.town_id
-                        val cat_id = model.category_id
-                        var savedCatergory = ""
-                        val mainCat = cat_id.split(",")
+                        val townId = model.town_id
+                        val catId = model.category_id
+                        var savedCategory = ""
+                        val mainCat = catId.split(",")
                         for (i1 in 0 until cat_list.size) {
                             for (j in 0 until mainCat.size)
                                 if (cat_list[i1].id == mainCat[j]) {
-                                    if (savedCatergory.isEmpty()) {
-                                        savedCatergory = cat_list[i1].name
+                                    savedCategory = if (savedCategory.isEmpty()) {
+                                        cat_list[i1].name
                                     } else {
-                                        savedCatergory = savedCatergory + ", " + cat_list[i1].name
+                                        savedCategory + ", " + cat_list[i1].name
                                     }
 
 
                                 }
                         }
-                        select_category.text = savedCatergory
+                        select_category.text = savedCategory
                         for (i2 in 0 until loc_list.size) {
-                            if (loc_list[i2].id == town_id) {
+                            if (loc_list[i2].id == townId) {
                                 select_town.text = loc_list[i2].townname
                                 Constants.getPrefs(activity!!)?.edit()?.putString(Constants.TOWN_ID2, loc_list[i2].id)?.apply()
                             }
@@ -3655,8 +2533,6 @@ private fun disableTitles() {
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
-
-                    val business_user_id = model.business_user_id
 
                     try {
 
@@ -3686,19 +2562,10 @@ private fun disableTitles() {
                             } else {
                                 enablePickers()
                                 if (objMon.optString("closeStatus") == "true") {
-//                                    val date = changeTimeFormat(objMon.optString("startFrom"))
-//                                    if (date != null && !date.isEmpty()) {
-//                                        openHoursStart.text = date
-//                                    } else {
-//                                        openHoursStart.text = objMon.optString("startFrom")
-//                                    }
-
                                     openHoursStart.text = objMon.optString("startFrom")
                                     openHoursEnd.text = objMon.optString("startTo")
                                     closeStartHours.text = "12:00 AM"
                                     closeEndHours.text = "12:00 AM"
-
-
                                     closeTimeLayout.isEnabled = false
                                     closeTimeLayout.isClickable = false
                                     closeEndHours.isClickable = false
@@ -3712,26 +2579,6 @@ private fun disableTitles() {
                                     closeStartHours.text = objMon.optString("closeFrom")
                                     closeEndHours.text = objMon.optString("closeTo")
                                 }
-//                                if (objMon.optString("closeFrom") != "closed") {
-//                                    val date = changeTimeFormat(objMon.optString("closeFrom"))
-//                                    if (date != null && !date.isEmpty()) {
-//                                        closeStartHours.text = date
-//                                    } else {
-//                                        closeStartHours.text = objMon.optString("closeFrom")
-//                                    }
-//                                } else {
-//                                    closeStartHours.text = "12:00 AM"
-//                                    closeTimeLayout.isEnabled = false
-//                                    closeTimeLayout.isClickable = false
-//                                    closeEndHours.isClickable = false
-//                                    closeStartHours.isClickable = false
-//                                    closeEndHours.text = "12:00 AM"
-//                                    closeStartHours.text = "12:00 AM"
-//                                    closeEndHours.setBackgroundColor(resources.getColor(R.color.light_grey))
-//                                    closeStartHours.setBackgroundColor(resources.getColor(R.color.light_grey))
-//                                }
-
-
                             }
 
                             try {
@@ -3744,7 +2591,6 @@ private fun disableTitles() {
                                     val status = obj.optString("status")
                                     val closeStatus = obj.optString("closeStatus")
                                     if (status == "true") {
-                                        // timeList[i1].close = "true"
                                         Constants.closedList[i1] = true
                                         timeList[i1].status = true
                                     } else {
@@ -3752,7 +2598,6 @@ private fun disableTitles() {
                                         timeList[i1].status = false
                                     }
                                     if (closeStatus == "true") {
-                                        // timeList[i1].close = "true"
                                         Constants.closedList[i1] = true
                                         timeList[i1].closeStatus = true
                                     } else {
@@ -3776,7 +2621,7 @@ private fun disableTitles() {
                 }
                 from = "click"
             } else {
-                intitalSetting = true
+                initialSetting = true
                 mPresenter.setInitialTimeData(arr)
                 from = "click"
             }
@@ -3786,33 +2631,10 @@ private fun disableTitles() {
 
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        try {
-            //  updateToolbarOption=context as hideToolBarOption
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    override fun onAttach(activity: Activity?) {
-        super.onAttach(activity)
-        try {
-            //    updateToolbarOption=activity as hideToolBarOption
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
     override fun updateHorizontalImageList(position: Int) {
-//        if (AllImages!=null) {
-//            AllImages!!.removeAt(position)
-//        }
+
     }
 
-    interface hideToolBarOption {
-        fun hideRightToolbarIcon()
-    }
 
     override fun getUserType(): String {
         return Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "")

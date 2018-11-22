@@ -31,9 +31,6 @@ class MyTimelinePagerAdapter( var list: ArrayList<Int>, val context: Context?) :
         val imageView = itemView.findViewById(R.id.viewPagerItem) as ImageView
 
         if (context != null) {
-
-
-
             Glide.with(context).load(list[position])
                     .apply(RequestOptions()
                             .placeholder(R.mipmap.placeholder))
@@ -46,7 +43,6 @@ class MyTimelinePagerAdapter( var list: ArrayList<Int>, val context: Context?) :
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-       // super.destroyItem(container, position, `object`)
         (container as ViewPager).removeView(`object` as View)
     }
 

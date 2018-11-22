@@ -4,7 +4,6 @@ package com.phaseII.placepoint.Home.BusinessListing
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
@@ -15,9 +14,6 @@ import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
 import com.phaseII.placepoint.BusEvents.*
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.Home.TitleModel
@@ -26,18 +22,20 @@ import com.phaseII.placepoint.R
 import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.business_listing_fragment.*
 import android.location.LocationManager
-import android.content.Context.LOCATION_SERVICE
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
+import android.widget.*
+import com.github.florent37.tutoshowcase.TutoShowcase
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.phaseII.placepoint.ConstantClass.GpsTracker
+import kotlinx.android.synthetic.main.filter_dialog.view.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
@@ -51,11 +49,9 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
     }
 
     override fun onProviderEnabled(provider: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onProviderDisabled(provider: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -64,6 +60,7 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
     lateinit var toolbar: Toolbar
     lateinit var mTitle: TextView
     lateinit var noData: TextView
+
     lateinit var toolbarArrow: ImageView
     lateinit var progressBar: ProgressBar
     var cat_list: ArrayList<ModelCategoryData> = arrayListOf()
@@ -73,52 +70,53 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
     var imglist: MutableList<String> = arrayListOf()
     var currentLatitude: Double = 0.toDouble()
     var currentLongitude: Double = 0.toDouble()
+    lateinit var mData: String
+    lateinit var mrelatedTo: String
     lateinit var phoneNumber: String
+    lateinit var pCat: String
+    lateinit var mc: String
+    var mCat: Int = 0
+    var c: Int = 0
+    var m: Int = 0
+    var mh: Int = 0
+    lateinit var adapter: BusinessListAdapter
+    var openingDialog = 0
+    private var dialogo: AlertDialog? = null
+    var dialogsAll = Vector<AlertDialog>()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater!!.inflate(R.layout.business_listing_fragment, container, false)
 
         progressBar = view.findViewById(R.id.progressBar)
+
         noData = view.findViewById(R.id.noData)
         mPresenter = BusinessPresenter(this)
         val tracker = GpsTracker(activity)
         if (!tracker.canGetLocation()) {
             tracker.showSettingsAlert()
         } else {
-            var loc=tracker.getLocation()
+            var loc = tracker.getLocation()
             currentLatitude = tracker.getLatitude()
             currentLongitude = tracker.getLongitude()
         }
-       Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
+        Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
 
-            mPresenter.prepareBusinessData("catRelatedData")
+        mPresenter.prepareBusinessData("catRelatedData")
 
 
         return view
     }
 
 
-    private fun getCatAndLocData() {
-        val cat = Constants.getPrefs(this.activity!!)?.getString(Constants.CATEGORY_LIST, "")!!
-        try {
-            cat_list = Constants.getCategoryData(cat)!!
-            val hashSet = HashSet<ModelCategoryData>()
-            hashSet.addAll(cat_list)
-            cat_list.clear()
-            cat_list.addAll(hashSet)
-            for (i in 0 until cat_list.size) {
-                cat_name.add(cat_list[i].name)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-    }
-
     override fun setDataToAdapter(data: String, cat: Int, parent_category_name: String, relatedTo: String) {
-        Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
+        mData = data
+        mrelatedTo = relatedTo
+        mCat = cat
+        pCat = parent_category_name
+
         try {
+            Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
             saveBusinessData(data)
-            val list1 = Constants.getbusinessData(data)
+            val list1 = Constants.getBusinessData(data)
             val list33 = arrayListOf<ModelBusiness>()
             val list44 = arrayListOf<ModelBusiness>()
             if (list1 != null) {
@@ -137,12 +135,18 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
                     for (i in 0 until list44.size) {
                         list1.add(list44[i])
                     }
-
+                    Constants.getPrefs(activity!!)!!.edit().putString("showBDLive", "yes").apply()
+                    if (Constants.getPrefs(activity!!)!!.getString("showBBLiveYes", "no") == "no") {
+                        if (Constants.getPrefs(activity!!)!!.getString("showBDLive", "no") == "yes") {
+                            Constants.getPrefs(activity!!)!!.edit().putString("showBBLiveYes", "yes").apply()
+                            showCaseBusinessList()
+                        }
+                    }
                     if (relatedTo == "TaxiRelatedData") {
                         noData.visibility = View.GONE
                         taxiList.visibility = View.VISIBLE
                         businessList.visibility = View.GONE
-                        Constants.getBus().register(this)
+                        //  Constants.getBus().register(this)
                         var permission = Constants.getPrefs(activity!!)!!.getString("permission", "")
                         if (permission.isEmpty() || permission == "no") {
                             if (Build.VERSION.SDK_INT >= 23 &&
@@ -153,9 +157,9 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
                             }
                         }
                         taxiList.layoutManager = LinearLayoutManager(this.activity!!) as RecyclerView.LayoutManager?
-                        taxiList.adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, currentLatitude, currentLongitude)
-
-                        var modell = TitleModel()
+                        adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, currentLatitude, currentLongitude)
+                        taxiList.adapter = adapter
+                        val modell = TitleModel()
 
                         if (cat == 1) {
                             modell.name = "Taxis"
@@ -166,13 +170,10 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
                         }
 
                         Constants.getBus().post(SeTaxitTitleEvent("Taxi"))
-                        // Constants.getPrefs(activity!!)!!.edit().putString("idtitle",parent_category_name+" in "+Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME,""))
-
-                    }
-                    else {
+                    } else {
                         taxiList.visibility = View.GONE
                         businessList.visibility = View.VISIBLE
-                        var modell = TitleModel()
+                        val modell = TitleModel()
                         if (cat == 1) {
                             modell.name = parent_category_name
                             modell.status = "1"
@@ -184,8 +185,7 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
                         Constants.getPrefs(activity!!)!!.edit().putString("idtitle", "All " + parent_category_name + " in " + Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME, ""))
                         var gps = GpsTracker(this.activity)
                         noData.visibility = View.GONE
-
-                        Constants.getBus().register(this)
+                        //  Constants.getBus().register(this)
                         var permission = Constants.getPrefs(activity!!)!!.getString("permission", "")
                         if (permission.isEmpty() || permission == "no") {
                             if (Build.VERSION.SDK_INT >= 23 &&
@@ -196,22 +196,19 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
                             }
                         }
                         businessList.layoutManager = LinearLayoutManager(this.activity!!) as RecyclerView.LayoutManager?
-                        businessList.adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, gps.getLatitude(), gps.getLongitude())
+                        adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, gps.getLatitude(), gps.getLongitude())
+                        businessList.adapter = adapter
                     }
-//                if (list44.size>0){
-//                    freeList.layoutManager = LinearLayoutManager(this.activity!!) as RecyclerView.LayoutManager?
-//                    freeList.adapter = FreeListingAdapter(this.activity!!, list44)
-//                }
 
-                }
-                else {
-
+                } else {
+                    Constants.getPrefs(activity!!)!!.edit().putString("showBDLive", "no").apply()
                     if (relatedTo == "TaxiRelatedData") {
+
                         noData.visibility = View.VISIBLE
                         taxiList.visibility = View.VISIBLE
                         businessList.visibility = View.GONE
-                        Constants.getBus().register(this)
-                        var permission = Constants.getPrefs(activity!!)!!.getString("permission", "")
+                        // Constants.getBus().register(this)
+                        val permission = Constants.getPrefs(activity!!)!!.getString("permission", "")
                         if (permission.isEmpty() || permission == "no") {
                             if (Build.VERSION.SDK_INT >= 23 &&
                                     ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -220,10 +217,7 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
                                 ), 10)
                             }
                         }
-//                        taxiList.layoutManager = LinearLayoutManager(this.activity!!) as RecyclerView.LayoutManager?
-//                        taxiList.adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, currentLatitude, currentLongitude)
-
-                        var modell = TitleModel()
+                        val modell = TitleModel()
 
                         if (cat == 1) {
                             modell.name = "Taxis"
@@ -234,11 +228,9 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
                         }
 
                         Constants.getBus().post(SeTaxitTitleEvent("Taxi"))
-                        // Constants.getPrefs(activity!!)!!.edit().putString("idtitle",parent_category_name+" in "+Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_NAME,""))
+                    } else {
 
-                    }else {
-
-                        var modell = TitleModel()
+                        val modell = TitleModel()
                         if (cat == 1) {
                             modell.name = parent_category_name
                             modell.status = "1"
@@ -253,15 +245,22 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
                 }
             }
 
-        } catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    private fun showCaseBusinessList() {
+        TutoShowcase.from(activity!!)
+                .setContentView(R.layout.tutorialfour)
+                .showOnce("yes")
+                .show()
     }
 
     private fun saveBusinessData(data: String) {
         try {
             Constants.getPrefs(this.activity!!)?.edit()?.putString(Constants.BUSINESS_LIST, data)?.apply()
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 
@@ -299,23 +298,19 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
         return Constants.getPrefs(activity!!)?.getString(Constants.TAXI_SUB_ID, "")!!
     }
 
+
     override fun onResume() {
         super.onResume()
+        c = 0
+        m = 0
         Constants.getSSlCertificate(activity!!)
         if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
-          //  Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
-
             mPresenter.prepareBusinessData("TaxiRelatedData")
         }
-//        if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
-//            Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
-//
-//            mPresenter.prepareBusinessData("TaxiRelatedData")
-//        }
 
         try {
             Constants.getBus().register(this)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         if (ActivityCompat.checkSelfPermission(activity!!,
@@ -323,66 +318,68 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
             ActivityCompat.requestPermissions(activity!! as Activity, arrayOf(Manifest.permission.CALL_PHONE), 1)
             return
         }
+
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-//        if (requestCode==671){
-//            val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$phoneNumber"))
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Constants.getPrefs(activity!!)!!.edit().putString("permission", "yes").apply()
+
+        } else {
+            Constants.getPrefs(activity!!)!!.edit().putString("permission", "no").apply()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+//        try {
+//            Constants.getBus().unregister(this)
+//        } catch (e: Exception) {
 //
-//            if (ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-//                startActivity(intent)
-//            }
-//        }else {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Constants.getPrefs(activity!!)!!.edit().putString("permission", "yes").apply()
-//                if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
-//                     Constants.getPrefs(activity!!)!!.edit().putString("showTaxiAtHome", "no").apply()
-//
-//                    mPresenter.prepareBusinessData("TaxiRelatedData")
-//                }else{
-//                    mPresenter.prepareBusinessData("catRelatedData")
-//                }
-            } else {
-                Constants.getPrefs(activity!!)!!.edit().putString("permission", "no").apply()
-            }
 //        }
     }
+
     override fun onPause() {
         super.onPause()
         try {
             Constants.getBus().unregister(this)
-        }catch (e:Exception){
+        } catch (e: Exception) {
 
         }
 
     }
 
+    override fun onStop() {
+        super.onStop()
+        try {
+            Constants.getBus().unregister(this)
+        } catch (e: Exception) {
+
+        }
+    }
     @Subscribe
     fun getEventValue(event: BusiniessListingTaxiEvent) {
 
         mPresenter.prepareBusinessData("TaxiRelatedData")
 
     }
- @Subscribe
-    fun getEventValue(event: CALL_EVENT) {
-     showDialog(event.value)
-    }
 
+    @Subscribe
+    fun getEventValue(event: CALL_EVENT) {
+        showDialog(event.value)
+    }
 
 
     private fun showDialog(phoneNo: String) {
 
-        phoneNumber=phoneNo
+        phoneNumber = phoneNo
         val dialog = AlertDialog.Builder(activity!!)
         dialog.setCancelable(false)
         dialog.setTitle("Make a call")
         dialog.setMessage(phoneNo)
         dialog.setPositiveButton("Call", DialogInterface.OnClickListener { dialog, id ->
-            //            val callIntent = Intent(Intent.ACTION_CALL)
-//            callIntent.data = Uri.parse(phoneNo)
-//            startActivity(callIntent)
             val callIntent = Intent(Intent.ACTION_CALL)
             callIntent.data = Uri.parse("tel:$phoneNo")
             if (ActivityCompat.checkSelfPermission(activity!!,
@@ -400,6 +397,7 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
         val alert = dialog.create()
         alert.show()
     }
+
     @Subscribe
     fun getEventValue(event: BusiniessListingBackEvent) {
         var model = TitleModel()
@@ -408,6 +406,137 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
         Constants.getBus().post(SetTitleEvent(model))
         taxiList.visibility = View.GONE
         businessList.visibility = View.VISIBLE
+
+    }
+
+
+
+    @Subscribe
+    fun getEventValue(event: ShowFilter) {
+//
+//      c++
+
+
+        val dd=Constants.getPrefs(activity!!)!!.getString("hit", "0").toInt()
+//        if (c ==dd ) {
+
+//if (dd==0) {
+    try {
+        Constants.getPrefs(activity!!)!!.edit().putString("hit", "1").apply()
+
+        askBeforeFilter()
+Constants.getBus().register(this)
+    } catch (e: Exception) {
+        e.printStackTrace()
+   // }
+}
+
+
+
+
+
+
+
+
+    }
+
+
+    lateinit var mAlertDialog: AlertDialog
+
+    @SuppressLint("CommitPrefEdits")
+    private fun askBeforeFilter() {
+
+
+
+
+        val mDialogView = LayoutInflater.from(activity!!).inflate(R.layout.filter_dialog, null)
+        //AlertDialogBuilder
+        val mBuilder = AlertDialog.Builder(activity!!)
+                .setView(mDialogView)
+                .setTitle("SortBy")
+        //.setCancelable(false)
+        mAlertDialog = mBuilder.create()
+        dialogsAll.add(mAlertDialog)
+        mAlertDialog.show()
+        mDialogView.radioOne.isChecked = true
+        mDialogView.okButton.setOnClickListener {
+            for (dialog in dialogsAll){
+                if (dialog.isShowing){
+                    dialog.dismiss()
+
+
+                }
+            }
+
+            Constants.getPrefs(activity!!)!!.edit().putString("cob", "0").apply()
+            if (mDialogView.radioOne.isChecked) {
+
+                val list1: ArrayList<ModelBusiness> = Constants.getBusinessData(mData)!!
+                if (list1 != null) {
+                    for (i in 0 until list1.size) {
+                        if (list1[i].lat.isEmpty() || list1[i].lat == null) {
+                            list1[i].lat = "0"
+                        }
+                        if (list1[i].long.isEmpty() || list1[i].long == null) {
+                            list1[i].long = "0"
+                        }
+                        val distance = Constants.findDistanceFromCurrentPosition(currentLatitude, currentLongitude
+                                , list1.get(i).lat.replace("[;\\\\/:*?\\\"<>|&']", "").toDouble(), list1.get(i).long.replace("[;\\\\/:*?\\\"<>|&']", "").toDouble())
+                        val roundDis = String.format("%.2f", distance)
+                        val model = ModelBusiness()
+                        model.distance = roundDis
+                        list1[i].distance = roundDis
+                    }
+                }
+                for (jj in 0 until list1.size) {
+                    System.out.println("LL: " + list1[jj].distance)
+                }
+                val sortedList = list1.sortedWith(compareBy { it.distance.toDouble() })
+                val gps = GpsTracker(this.activity)
+                //   adapter.refreshApaper(sortedList)
+                businessList.layoutManager = LinearLayoutManager(activity!!)
+                adapter = BusinessListAdapter(activity!!, sortedList, mrelatedTo, gps.getLatitude(), gps.getLongitude())
+                businessList.adapter = adapter
+
+            }
+            if (mDialogView.radioTwo.isChecked) {
+
+                mPresenter.prepareBusinessData("catRelatedData")
+            }
+
+        }
+        //cancel button click of custom layout
+        mDialogView.cancleButton.setOnClickListener {
+            //dismiss dialog
+            for (dialog in dialogsAll){
+                if (dialog.isShowing){
+                    dialog.dismiss()
+                    dialogsAll.remove(dialog)
+
+                }
+            }
+
+        }
+
+
+
+//        dialogo = AlertDialog.Builder(activity!!)
+//                .setTitle("Alert!")
+//                .setMessage("Are you sure you want to  sort by Nearest Listing?")
+//                .setPositiveButton("Yes") { dialog, which ->
+//                    openingDialog = 0
+//
+//
+//                }
+//                .setNegativeButton("No") { dialog, Which ->
+//                    openingDialog = 0
+//                    dialog.dismiss()
+//                }.show()
+
+    }
+
+    fun showData() {
+        askBeforeFilter()
 
     }
 

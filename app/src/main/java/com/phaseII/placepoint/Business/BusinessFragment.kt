@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar
 import android.widget.TextView
 import android.graphics.Typeface
 import android.view.inputmethod.InputMethodManager
+import com.github.florent37.tutoshowcase.TutoShowcase
 import com.phaseII.placepoint.*
 import com.phaseII.placepoint.BusEvents.*
 import com.squareup.otto.Subscribe
@@ -87,6 +88,11 @@ class BusinessFragment : Fragment() {
                 val position = tab.position
                 if (position == 1) {
                     Constants.getBus().post(EmptyFields("empty"))
+                    if(Constants.getPrefs(activity!!)!!.getString("showALiveYes","no")=="no") {
+                        Constants.getPrefs(activity!!)!!.edit().putString("showALiveYes", "yes").apply()
+                        showCase()
+                    }
+
                 }
                 hideKeyboard(mTitle)
             }
@@ -117,7 +123,16 @@ class BusinessFragment : Fragment() {
             }
         })
     }
-
+    private fun showCase() {
+        TutoShowcase.from(activity!!)
+                .setContentView(R.layout.tutorialtwo)
+//                .on(R.id.tapToExitLay)
+//                .onClickContentView(R.id.tapToExitLay, View.OnClickListener {
+//
+//                })
+                .showOnce("yes")
+                .show()
+    }
     private fun hideKeyboard(activity: View) {
 
         val imm = context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -170,9 +185,8 @@ class BusinessFragment : Fragment() {
         super.onResume()
         Constants.getBus().register(this)
     }
-
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         Constants.getBus().unregister(this)
     }
 }

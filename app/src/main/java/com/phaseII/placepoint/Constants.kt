@@ -54,24 +54,21 @@ class Constants {
         //Live----------------------------
 
        // const val BASE_URL = "http://34.254.213.227/webservices/data_v1/"
-        const val BASE_URL = "https://www.placepoint.ie/webservices/data_v1/"
+       const val BASE_URL = "https://www.placepoint.ie/webservices/data_v1/"
         const val STRIPE_KEY = "pk_live_kt0mTsSnlapCVN44Ilfy7snQ"
 
         //"https://www.placepoint.ie/webservices/data_v1/"
         //=================================
 
         //Test---------------------------
-//       const val BASE_URL = "http://cloudart.com.au/projects/Placepoint/index.php/webservices/data_v1/"
+      // const val BASE_URL = "http://cloudart.com.au/projects/Placepoint/index.php/webservices/data_v1/"
 //  const val STRIPE_KEY = "pk_test_IWmxeaTtErjZDGj3Dcu2oJw0"
 
 
         const val TOKEN = "token"
         const val DEVICE_TYPE = "Android"
         val closedList: ArrayList<Boolean> = arrayListOf()
-
-
         const val PRIVACY_URL = "https://www.placepoint.ie/privacypolicy"
-
         const val OPEN_TOWN: String = "open_town"
         const val OPEN_CAT: String = "open_cat"
         const val TOWN_NAME: String = "town_name"
@@ -204,13 +201,12 @@ class Constants {
         //-------------------------------------------------------------------------
         @SuppressLint("HardwareIds")
         fun getDeviceId(context: Context): String {
-            val deviceId = Settings.Secure.getString(context.contentResolver,
+            return Settings.Secure.getString(context.contentResolver,
                     Settings.Secure.ANDROID_ID)
-            return deviceId
         }
 
         //--------------------------------------------------------------------------
-        fun getbusinessData(data: String): java.util.ArrayList<ModelBusiness>? {
+        fun getBusinessData(data: String): java.util.ArrayList<ModelBusiness>? {
             val listType = object : TypeToken<List<ModelBusiness>>() {
             }.type
             return getGsonObject().fromJson(data, listType)
@@ -281,7 +277,7 @@ class Constants {
             val outputFormat = SimpleDateFormat(outputPattern)
 
             var date: Date? = null
-            var str: String = ""
+            var str = ""
 
             try {
                 date = inputFormat.parse(updated_at)
@@ -318,41 +314,23 @@ class Constants {
             context.startActivity(Intent.createChooser(shareIntent, "Share Post"))
         }
 
-        fun ShareOnFaceBookk(text: String, link: String, context: Context) {
-//            val myUri = Uri.parse(link)
-//            val builder = StrictMode.VmPolicy.Builder()
-//            StrictMode.setVmPolicy(builder.build())
-//
-//            val shareIntent = Intent(android.content.Intent.ACTION_SEND)
-//            shareIntent.type = "image/*"
-//            shareIntent.putExtra(Intent.EXTRA_STREAM, myUri)
-//            shareIntent.putExtra(Intent.EXTRA_TEXT, text)
-//            context.startActivity(Intent.createChooser(shareIntent, "Share Post"))
+        fun shareOnFaceBook(text: String, link: String, context: Context) {
 
-
-            var intent = Intent(Intent.ACTION_SEND)
-            intent.setType("text/plain");
-// intent.putExtra(Intent.EXTRA_SUBJECT, "Foo bar"); // NB: has no effect!
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "text/plain"
             intent.putExtra(Intent.EXTRA_TEXT, link)
-
-// See if official Facebook app is found
-            var facebookAppFound = false;
-            var matches = context.getPackageManager().queryIntentActivities(intent, 0);
+            var facebookAppFound = false
+            val matches = context.packageManager.queryIntentActivities(intent, 0)
             for (info in matches) {
                 if (info.activityInfo.packageName.toLowerCase().startsWith("com.facebook.katana")) {
-                    intent.setPackage(info.activityInfo.packageName);
-                    facebookAppFound = true;
-                    break;
+                    intent.setPackage(info.activityInfo.packageName)
+                    facebookAppFound = true
+                    break
                 }
             }
-
-// As fallback, launch sharer.php in a browser
             if (!facebookAppFound) {
-//    var  sharerUrl = "https://www.facebook.com/sharer/sharer.php?u=" + urlToShare;
-//    intent = new Intent(Intent.ACTION_VIEW, Uri.parse(sharerUrl));
                 Toast.makeText(context, "Facebook app not found.", Toast.LENGTH_LONG).show()
             }
-
             context.startActivity(intent)
         }
 
@@ -369,7 +347,7 @@ class Constants {
             dialog.setTitle("Alert")
             dialog.setMessage("You are a free user and can only choose one category. Please upgrade your plan to choose more categories.")
             dialog.setPositiveButton("Upgrade", DialogInterface.OnClickListener { dialog, id ->
-                showUpgradePopup(context)
+                showUpGradePopup(context)
             })
                     .setNegativeButton("Cancel ", DialogInterface.OnClickListener { dialog, which ->
                         dialog.dismiss()
@@ -379,7 +357,7 @@ class Constants {
             alert.show()
         }
 
-        fun showUpgradePopup(context: Context) {
+        private fun showUpGradePopup(context: Context) {
             val dialogBuilder = AlertDialog.Builder(context)
 // ...Irrelevant code for customizing the buttons and title
             dialogBuilder.setTitle("Choose Subscription Plan")
@@ -391,24 +369,20 @@ class Constants {
             var value = 0
             val radioGroup = dialogView.findViewById(R.id.radioGroup) as RadioGroup
             val checkedIdIs = Constants.getPrefs(context)!!.getString(Constants.USERTYPE, "1")
-            if (checkedIdIs == "3") {
-                radioGroup.check(R.id.free)
-            } else if (checkedIdIs == "2") {
-                radioGroup.check(R.id.standard)
-            } else {
-                radioGroup.check(R.id.premium)
+            when (checkedIdIs) {
+                "3" -> radioGroup.check(R.id.free)
+                "2" -> radioGroup.check(R.id.standard)
+                else -> radioGroup.check(R.id.premium)
             }
 
 
             radioGroup.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
 
                 Constants.getPrefs(context)?.edit()?.remove(Constants.MAIN_CATEGORY)?.apply()
-                if (checkedId == R.id.free) {
-                    value = 3
-                } else if (checkedId == R.id.standard) {
-                    value = 2
-                } else {
-                    value = 1
+                value = when (checkedId) {
+                    R.id.free -> 3
+                    R.id.standard -> 2
+                    else -> 1
                 }
                 Constants.getPrefs(context)!!.edit().putString(Constants.USERTYPE, value.toString()).apply()
             })
@@ -422,13 +396,14 @@ class Constants {
 
         }
 
+        @SuppressLint("InflateParams")
         fun showPopup(context: Context) {
-            var builder = AlertDialog.Builder(context);
-            var inflater = context.layoutInflater
-            var dialogView = inflater.inflate(R.layout.subscription_popup, null)
+            val builder = AlertDialog.Builder(context);
+            val inflater = context.layoutInflater
+            val dialogView = inflater.inflate(R.layout.subscription_popup, null)
             builder.setView(dialogView)
-            var closeBtn = dialogView.findViewById(R.id.upgrade) as Button
-            var dialog = builder.create()
+            val closeBtn = dialogView.findViewById(R.id.upgrade) as Button
+            val dialog = builder.create()
 
             closeBtn.setOnClickListener {
                 val intent = Intent(context, SubscriptionActivity::class.java)
@@ -484,24 +459,25 @@ class Constants {
             })
         }
 
+        @SuppressLint("SimpleDateFormat")
         fun findingOpenWhen(modelBusiness: ModelBusiness, dayValue: Int): String {
             var weekDay=-1
             var checkday=dayValue
-            var opeiningDayTime = ArrayList<String>()
+            val openingDayTime = ArrayList<String>()
             val array = modelBusiness.opening_time
             val arr = JSONArray(array)
             for (dd in 0 until 7) {
                 if (dd <= arr.length()) {
-                    var jsonObject = arr.getJSONObject(dd)
-                    var startFrom = jsonObject.optString("startFrom")
-                    opeiningDayTime.add(startFrom)
+                    val jsonObject = arr.getJSONObject(dd)
+                    val startFrom = jsonObject.optString("startFrom")
+                    openingDayTime.add(startFrom)
                 }
             }
 
             try {
-                var currentTime = getCurrentTime()
-                var todayOpeningTime = arr.getJSONObject(dayValue)
-                var todayStartTime = todayOpeningTime.optString("startFrom")
+                val currentTime = getCurrentTime()
+                val todayOpeningTime = arr.getJSONObject(dayValue)
+                val todayStartTime = todayOpeningTime.optString("startFrom")
                 if (todayStartTime.contains("AM")) {
                     todayStartTime.replace("AM", "am")
                 } else if (todayStartTime.contains("PM")) {
@@ -511,10 +487,10 @@ class Constants {
                 val start = sdf.parse(currentTime)
                 val end = sdf.parse(todayStartTime)
 
-                if (start.after(end)) {
-                    checkday = dayValue + 1
+                checkday = if (start.after(end)) {
+                    dayValue + 1
                 } else {
-                    checkday = dayValue
+                    dayValue
                 }
             }catch (e:Exception){
                 e.printStackTrace()
@@ -526,12 +502,11 @@ class Constants {
                     checkday = 0
                 }
                 if (checkday <= 6) {
-                    var jsonObject = arr.getJSONObject(checkday)
-                    var startFrom = jsonObject.optString("startFrom")
-                    var startTo = jsonObject.optString("startTo")
+                    val jsonObject = arr.getJSONObject(checkday)
+                    val startFrom = jsonObject.optString("startFrom")
+                    val startTo = jsonObject.optString("startTo")
                     if (startFrom == "12:00 AM"&&startTo == "12:00 AM") {
                         openingtime = ""
-//                        break@outer
                     }else{
                         if (checkday==0){
                             openingtime = "$startFrom Monday"
@@ -560,38 +535,40 @@ class Constants {
                 }
 
             }
-            if (openingtime.isEmpty()) {
-                return ""
+            return if (openingtime.isEmpty()) {
+                ""
             } else {
-                return openingtime
+                openingtime
             }
             return ""
 
         }
 
+         @SuppressLint("SimpleDateFormat")
          fun getCurrentTime(): String {
             val sdf = SimpleDateFormat("hh:mm a")
             return sdf.format(Date())
         }
 
+        @SuppressLint("SimpleDateFormat")
         fun findingOpenWhen2(modelBusiness: SingleBusinessModel, dayValue1: Int): String {
 
             var checkday=dayValue1
             var weekDay=-1
-            var opeiningDayTime = ArrayList<String>()
+            val openingDayTime = ArrayList<String>()
             val array = modelBusiness.opening_time
             val arr = JSONArray(array)
             for (dd in 0 until 7) {
                 if (dd <= arr.length()) {
-                    var jsonObject = arr.getJSONObject(dd)
-                    var startFrom = jsonObject.optString("startFrom")
-                    opeiningDayTime.add(startFrom)
+                    val jsonObject = arr.getJSONObject(dd)
+                    val startFrom = jsonObject.optString("startFrom")
+                    openingDayTime.add(startFrom)
                 }
             }
             try {
-                var currentTime = getCurrentTime()
-                var todayOpeningTime = arr.getJSONObject(dayValue1)
-                var todayStartTime = todayOpeningTime.optString("startFrom")
+                val currentTime = getCurrentTime()
+                val todayOpeningTime = arr.getJSONObject(dayValue1)
+                val todayStartTime = todayOpeningTime.optString("startFrom")
                 if (todayStartTime.contains("AM")) {
                     todayStartTime.replace("AM", "am")
                 } else if (todayStartTime.contains("PM")) {
@@ -601,10 +578,10 @@ class Constants {
                 val start = sdf.parse(currentTime)
                 val end = sdf.parse(todayStartTime)
 
-                if (start.after(end)) {
-                    checkday = dayValue1 + 1
+                checkday = if (start.after(end)) {
+                    dayValue1 + 1
                 } else {
-                    checkday = dayValue1
+                    dayValue1
                 }
             }catch (e:Exception){
                 e.printStackTrace()
@@ -615,12 +592,11 @@ class Constants {
                     checkday = 0
                 }
                 if (checkday <= 6) {
-                    var jsonObject = arr.getJSONObject(checkday)
-                    var startFrom = jsonObject.optString("startFrom")
-                    var startTo = jsonObject.optString("startTo")
+                    val jsonObject = arr.getJSONObject(checkday)
+                    val startFrom = jsonObject.optString("startFrom")
+                    val startTo = jsonObject.optString("startTo")
                     if (startFrom == "12:00 AM"&&startTo == "12:00 AM") {
                         openingtime = ""
-//                        break@outer
                     }else{
                         weekDay=checkday
                         if (checkday==0){
@@ -650,10 +626,10 @@ class Constants {
                 }
 
             }
-            if (openingtime.isEmpty()) {
-                return ""
+            return if (openingtime.isEmpty()) {
+                ""
             } else {
-                return openingtime
+                openingtime
             }
             return ""
         }
@@ -680,7 +656,7 @@ class Constants {
         fun getSSlCertificate(context: Context) {
             try {
                 ProviderInstaller.installIfNeeded(context)
-                var sslContext: SSLContext = SSLContext.getInstance("TLSv1.2")
+                val sslContext: SSLContext = SSLContext.getInstance("TLSv1.2")
                 sslContext.init(null, null, null)
                 sslContext.createSSLEngine()
             } catch (e:Exception) {

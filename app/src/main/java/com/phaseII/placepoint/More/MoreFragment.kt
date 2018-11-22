@@ -85,10 +85,13 @@ class MoreFragment : Fragment(){
         super.onResume()
         Constants.getBus().register(this)
     }
-
-    override fun onPause() {
-        super.onPause()
-        Constants.getBus().unregister(this)
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            Constants.getBus().unregister(this)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
     @Subscribe
     fun getMessage(event: LogoutEvent) {

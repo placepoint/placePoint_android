@@ -45,7 +45,7 @@ interface Service {
                       @Field("auth_code") auth_code: String?): Call<ResponseBody>
 
     @Multipart
-    @POST("addPost")
+    @POST("addpost")
     fun addPost(@Part("auth_code") auth_code: RequestBody?,
                 @Part("width") width: RequestBody?,
                 @Part("height") height: RequestBody?,
