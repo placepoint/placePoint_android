@@ -27,10 +27,10 @@ class BusinessFragment : Fragment() {
 
 
     private lateinit var tabLayout: TabLayout
-    public lateinit var viewPager: ViewPager
-    private lateinit var myContext: FragmentActivity
+    private lateinit var viewPager: ViewPager
     lateinit var toolbar: Toolbar
     lateinit var mTitle: TextView
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -139,7 +139,7 @@ class BusinessFragment : Fragment() {
         imm.hideSoftInputFromWindow(activity.windowToken, 0)
     }
 
-    fun setCustomFont(tabLayout: TabLayout) {
+    private fun setCustomFont(tabLayout: TabLayout) {
         try {
             val vg = tabLayout.getChildAt(0) as ViewGroup
             val tabsCount = vg.childCount
@@ -165,6 +165,8 @@ class BusinessFragment : Fragment() {
 
     @Subscribe
     fun getEventValue(event: PositionChangEvent) {
+        val setto=event.value.ftype
+        Constants.getPrefs(activity!!)!!.edit().putString("ftype",setto).apply()
         viewPager.currentItem = 3
     }
 
@@ -187,6 +189,10 @@ class BusinessFragment : Fragment() {
     }
     override fun onDestroy() {
         super.onDestroy()
-        Constants.getBus().unregister(this)
+        try {
+            Constants.getBus().unregister(this)
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
     }
 }

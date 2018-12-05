@@ -127,7 +127,7 @@ class ScheduledFragment : Fragment(), ScheduleContract {
                     noData.visibility = View.GONE
                     adapter = ScheduleAdapter(activity!!, list2!!)
                     val linear = LinearLayoutManager(activity)
-                    scheduleList.layoutManager = linear
+                    scheduleList.layoutManager = linear as RecyclerView.LayoutManager?
                     scheduleList.adapter = adapter
                 }
             } catch (e: Exception) {

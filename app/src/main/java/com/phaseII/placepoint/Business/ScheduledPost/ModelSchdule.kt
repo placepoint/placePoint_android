@@ -19,4 +19,8 @@ class ModelSchdule {
     lateinit var next_run:String
     lateinit var created_at:String
     lateinit var updated_at :String
+    lateinit var ftype :String
+    lateinit var max_redemption :String
+    lateinit var per_person_redemption :String
+    lateinit var validity_date :String
 }

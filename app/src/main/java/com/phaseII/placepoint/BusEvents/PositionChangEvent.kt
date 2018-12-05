@@ -1,5 +1,7 @@
 package com.phaseII.placepoint.BusEvents
 
-class PositionChangEvent(var value:String) {
+import com.phaseII.placepoint.Business.AddPost.ShowFlashOrPost
+
+class PositionChangEvent(var value:ShowFlashOrPost) {
 
 }

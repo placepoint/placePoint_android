@@ -62,58 +62,45 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/staticLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:background="@color/background"
+                android:id="@+id/staticLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <android.support.v4.widget.SwipeRefreshLayout
+                    android:id="@+id/pullToRefresh"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                   >
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/flashPostList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
 
-            <ImageView
-                android:id="@+id/logo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="38dp"
-                android:contentDescription="@string/logo"
-                android:src="@mipmap/placeholder"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="16dp"
-                android:background="@color/colorPrimary"
-                android:text="Welcome"
-                android:textColor="@color/colorlightPrimary"
-                android:textSize="18dp"
-                app:layout_constraintEnd_toEndOf="@+id/logo"
-                app:layout_constraintStart_toStartOf="@+id/logo"
-                app:layout_constraintTop_toBottomOf="@+id/logo" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="24dp"
-                android:gravity="center"
-                android:text="@string/welcome"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/logo"
-                app:layout_constraintStart_toStartOf="@+id/logo"
-                app:layout_constraintTop_toBottomOf="@+id/button" />
-        </android.support.constraint.ConstraintLayout>
+                </android.support.v4.widget.SwipeRefreshLayout>
+                <TextView
+                    android:fontFamily="@font/bold"
+                    android:visibility="gone"
+                    android:padding="16dp"
+                    android:id="@+id/noFlashData"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="No flash posts available at the moment"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    />
+                <ProgressBar
+                    android:id="@+id/progressFlashHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone" />
+            </RelativeLayout>
     </LinearLayout>
     <!--<com.phaseII.placepoint.Home.ViewPagerHomeInXml-->
     <!--android:id="@+id/viewpager"-->

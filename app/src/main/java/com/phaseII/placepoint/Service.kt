@@ -1,7 +1,5 @@
 package com.phaseII.placepoint
 
-import android.app.Service
-import android.net.Uri
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -58,7 +56,12 @@ interface Service {
                 @Part("day") day: RequestBody,
                 @Part("time") time: RequestBody,
                 @Part("now_status") now_status: RequestBody,
-                @Part("category") category: RequestBody): Call<ResponseBody>
+                @Part("category") category: RequestBody,
+                @Part("ftype") ftype: RequestBody,
+                @Part("max_redemption") max_redemption: RequestBody,
+                @Part("validity_date") validity_date: RequestBody,
+                @Part("validity_time") validity_time: RequestBody,
+                @Part("per_person_redemption") per_person_redemption: RequestBody): Call<ResponseBody>
 
 
     @Multipart
@@ -75,7 +78,13 @@ interface Service {
                          @Part("day") day: RequestBody,
                          @Part("time") time: RequestBody,
                          @Part("category") category: RequestBody,
-                         @Part("title") title1: RequestBody): Call<ResponseBody>
+                         @Part("title") title1: RequestBody,
+                         @Part("ftype") ftype: RequestBody,
+                         @Part("max_redemption") max_redemption: RequestBody,
+                         @Part("validity_date") validity_date: RequestBody,
+                         @Part("validity_time") validity_time: RequestBody,
+                         @Part("per_person_redemption") per_person_redemption: RequestBody): Call<ResponseBody>
+
 
     @FormUrlEncoded
     @POST("getFeeds")
@@ -259,6 +268,43 @@ interface Service {
     fun CheckCouponValidity(@Field("auth_code") auth_code: String,
                             @Field("coupon") couponID: String,
                             @Field("type") userType: String): Call<ResponseBody>
+
+   @FormUrlEncoded
+    @POST("getFlashPost")
+    fun getFlashDetail(@Field("auth_code") auth_code: String,
+                            @Field("town_id") town_id: String,
+                            @Field("category_id") category_id: String,
+                            @Field("limit") limit: String,
+                            @Field("page") page: String): Call<ResponseBody>
+
+ @FormUrlEncoded
+    @POST("claimDeal")
+    fun claimPost(@Field("auth_code") auth_code: String,
+                            @Field("post_id") town_id: String,
+                            @Field("name") name: String,
+                            @Field("email") email: String): Call<ResponseBody>
+@FormUrlEncoded
+    @POST("getClaimedFlashPostList")
+    fun getClaimedFlashPostList(@Field("auth_code") auth_code: String,
+                            @Field("post_id") town_id: String): Call<ResponseBody>
+
+@FormUrlEncoded
+    @POST("changeFlashPostStatus")
+    fun changeFlashPostStatus(@Field("auth_code") auth_code: String,
+                            @Field("ids") ids: String,
+                            @Field("post_id") town_id: String): Call<ResponseBody>
+
+@FormUrlEncoded
+    @POST("updateOnesignalid")
+    fun updateOnesignalid(@Field("auth_code") auth_code: String,
+                            @Field("onesignal_id") onesignal_id: String,
+                            @Field("town_id") town_id: String): Call<ResponseBody>
+@FormUrlEncoded
+    @POST("sendEmail")
+    fun sendEmail(@Field("auth_code") auth_code: String,
+                            @Field("post_id") post_id: String): Call<ResponseBody>
+
+
 
 
 }

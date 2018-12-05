@@ -25,6 +25,7 @@ import com.bumptech.glide.request.RequestOptions
 
 import kotlinx.android.synthetic.main.timeline_item.view.*
 import com.phaseII.placepoint.AboutBusiness.AboutBusinessActivity
+import com.phaseII.placepoint.Business.MyPosts.FlashDetail.FlashDetailActivity
 import com.phaseII.placepoint.ConstantClass.MySpannable
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.Home.ModelHome
@@ -52,7 +53,14 @@ class MyTimelineAdapter(private val context: Context, private val list: ArrayLis
         val inFormat = SimpleDateFormat("MMM, dd yyyy hh:mm aa")
         val newDate = inFormat1.parse(modelData.created_at)
 
+if(modelData.ftype=="0"){
+    holder.itemView.shareFaceBook.visibility=View.VISIBLE
+    holder.itemView.flashImage.visibility=View.GONE
+}else{
+    holder.itemView.shareFaceBook.visibility=View.GONE
+    holder.itemView.flashImage.visibility=View.VISIBLE
 
+}
         holder.itemView.dateTime.text = inFormat.format(newDate)
         holder.itemView.name.text = name
         if (!modelData.video_link.isEmpty()) {
@@ -68,6 +76,16 @@ class MyTimelineAdapter(private val context: Context, private val list: ArrayLis
         holder.itemView.name.setOnClickListener {
             val intent = Intent(context, AboutBusinessActivity::class.java)
             intent.putExtra("busId", modelData.bussness_id)
+            intent.putExtra("showallpost", "no")
+            intent.putExtra("from", "timelineadapter")
+            intent.putExtra("busName", modelData.business_name)
+            intent.putExtra("subscriptionType", Constants.getPrefs(context)!!.getString(Constants.USERTYPE, ""))
+            context.startActivity(intent)
+        }
+
+        holder.itemView.flashImage.setOnClickListener {
+            val intent = Intent(context, FlashDetailActivity::class.java)
+            intent.putExtra("busId", modelData.id)
             intent.putExtra("showallpost", "no")
             intent.putExtra("from", "timelineadapter")
             intent.putExtra("busName", modelData.business_name)

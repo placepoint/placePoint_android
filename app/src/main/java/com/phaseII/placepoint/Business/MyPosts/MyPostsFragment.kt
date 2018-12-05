@@ -14,6 +14,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.phaseII.placepoint.Constants
+import com.phaseII.placepoint.Home.ModelHome
 import com.phaseII.placepoint.R
 import com.phaseII.placepoint.SubscriptionPlan.SubscriptionActivity
 import com.phaseII.placepoint.Town.ModelTown
@@ -61,21 +62,32 @@ class MyPostsFragment : Fragment(), MyTimelineHelper {
     }
 
     override fun setDataToAdapter(data: String) {
-        val list = Constants.getHomeFeedData(data)
-        try {
-            if (list != null && list.size > 0) {
-                noPosts.visibility = View.GONE
-
-                recyclerView.layoutManager = LinearLayoutManager(activity)
-                mAdapter = MyTimelineAdapter(this.context!!, list)
-                recyclerView.adapter = mAdapter
-            } else {
-                noPosts.visibility = View.VISIBLE
+        var list= ArrayList<ModelHome>()
+        list = Constants.getHomeFeedData(data)
+        var postList=ArrayList<ModelHome>()
+        //postList=list
+        if (list!!.size>0) {
+            for (i in 0 until list.size){
+                if (list[i].ftype=="0"){
+                    postList!!.add(list[i])
+                }
             }
-        } catch (e: Exception) {
+                try {
+                    if (postList != null && postList.size > 0) {
+                        noPosts.visibility = View.GONE
 
+                        recyclerView.layoutManager = LinearLayoutManager(activity)
+                        mAdapter = MyTimelineAdapter(this.context!!, postList)
+                        recyclerView.adapter = mAdapter
+                    } else {
+                        noPosts.visibility = View.VISIBLE
+                    }
+                } catch (e: Exception) {
+
+                }
+        }else{
+            noPosts.visibility = View.VISIBLE
         }
-
     }
 
     override fun noPosts() {

@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager
 
 import android.support.v4.app.FragmentStatePagerAdapter
 import com.phaseII.placepoint.Business.AddPost.AddPostFragment
-import com.phaseII.placepoint.Business.MyPosts.MyPostsFragment
+import com.phaseII.placepoint.Business.MyPosts.BothPostAndFlashPostFragment
 import com.phaseII.placepoint.Business.Profile.ProfileFragment
 import com.phaseII.placepoint.Business.ScheduledPost.ScheduledFragment
 
@@ -19,7 +19,7 @@ class ViewPagerAdapterBusiness(fm: FragmentManager) : FragmentStatePagerAdapter(
             }
             1 -> return AddPostFragment()
             2 -> return ScheduledFragment()
-            3 -> return MyPostsFragment()
+            3 -> return BothPostAndFlashPostFragment()
         }
         return null
     }

@@ -54,15 +54,15 @@ class Constants {
         //Live----------------------------
 
        // const val BASE_URL = "http://34.254.213.227/webservices/data_v1/"
-       const val BASE_URL = "https://www.placepoint.ie/webservices/data_v1/"
-        const val STRIPE_KEY = "pk_live_kt0mTsSnlapCVN44Ilfy7snQ"
+//       const val BASE_URL = "https://www.placepoint.ie/webservices/data_v1/"
+//        const val STRIPE_KEY = "pk_live_kt0mTsSnlapCVN44Ilfy7snQ"
 
         //"https://www.placepoint.ie/webservices/data_v1/"
         //=================================
 
         //Test---------------------------
-      // const val BASE_URL = "http://cloudart.com.au/projects/Placepoint/index.php/webservices/data_v1/"
-//  const val STRIPE_KEY = "pk_test_IWmxeaTtErjZDGj3Dcu2oJw0"
+       const val BASE_URL = "http://cloudart.com.au/projects/Placepoint/index.php/webservices/data_v1/"
+  const val STRIPE_KEY = "pk_test_IWmxeaTtErjZDGj3Dcu2oJw0"
 
 
         const val TOKEN = "token"
@@ -262,7 +262,7 @@ class Constants {
         }
 
         //-------------------------------------------------------------------------
-        fun getHomeFeedData(data: String): java.util.ArrayList<ModelHome>? {
+        fun getHomeFeedData(data: String): java.util.ArrayList<ModelHome> {
             val listType = object : TypeToken<List<ModelHome>>() {
             }.type
             return getGsonObject().fromJson(data, listType)

@@ -151,6 +151,7 @@ class MultipleCategories : AppCompatActivity(), CategoryHelper,MultiChoiceRadioA
                 Constants.getPrefs(this)?.edit()?.putString(Constants.CATEGORY_NAMES, nameMain)?.apply()
                 finish()
             }else if (from=="addpost"){
+                Constants.getPrefs(this)?.edit()?.putString("comingFrom", "addPost")?.apply()
                 Constants.getPrefs(this)?.edit()?.putString(Constants.ADDPOST_CATEGORY, main)?.apply()
                 Constants.getPrefs(this)?.edit()?.putString(Constants.CATEGORY_NAMES_ADDPOST, main)?.apply()
                 val returnIntent = Intent()

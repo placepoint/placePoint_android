@@ -47,6 +47,7 @@ import kotlinx.android.synthetic.main.activity_add_new.*
 
 
 import org.json.JSONObject
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -79,6 +80,8 @@ class AddPostFragment : Fragment(), AddNewHelper
     lateinit var monthCheck: TextView
     lateinit var specificCheck: TextView
     lateinit var specificDayLay: LinearLayout
+    lateinit var flashHiddenLayout: LinearLayout
+    lateinit var flashClick: RelativeLayout
     lateinit var monthLay: LinearLayout
     lateinit var dayLay: LinearLayout
 
@@ -103,9 +106,15 @@ class AddPostFragment : Fragment(), AddNewHelper
     lateinit var youtubeField: EditText
     lateinit var postText: EditText
     lateinit var progressBar: ProgressBar
+    lateinit var switchFlash: Switch
+    lateinit var flashMax: EditText
+    lateinit var flashPerPerson: TextView
+    lateinit var flashselectDay: TextView
+    lateinit var flashdayTime: TextView
     var recyclerItems: ArrayList<Uri> = arrayListOf()
     var imageUri: Uri? = null
     var isServiceRunning = false
+    var isflashVisible = false
     private var listFromCropper: java.util.ArrayList<Uri>? = arrayListOf()
     var open = 0
     var dayOpen = 0
@@ -122,14 +131,21 @@ class AddPostFragment : Fragment(), AddNewHelper
     var adposition2 = 0
     var checkedItem = -1
     var checkedItem1 = -1
+
     var checkedItem2 = -1
     private var postID: String = "0"
     private var imagestatus: String = "false"
 
-    private lateinit var editTime: String
-    private lateinit var editDay: String
-    private lateinit var editType: String
+    private var editTime: String = ""
+    private var editDay: String = ""
+    private var editType: String = ""
     private lateinit var imagePath: String
+    private var maxChecked: String = ""
+    private var maxCheckedPos: Int = 0
+    private var flashCheckedPos: Int = 0
+    private var maxPersonValue: String = ""
+    private var flashPersonValue: String = ""
+
     //  lateinit var updater:setToMyPost
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.activity_add_new, container, false)
@@ -139,6 +155,8 @@ class AddPostFragment : Fragment(), AddNewHelper
         nowCheck = view.findViewById(R.id.nowCheck)
         expandLayout = view.findViewById(R.id.expandLay)
         hidenLay = view.findViewById(R.id.hidenLay)
+        flashHiddenLayout = view.findViewById(R.id.flashHiddenLayout)
+        flashClick = view.findViewById(R.id.flashClick)
         upgrade = view.findViewById(R.id.upgrade)
         scrollView = view.findViewById(R.id.scrollView)
 
@@ -170,16 +188,43 @@ class AddPostFragment : Fragment(), AddNewHelper
         postText = view.findViewById(R.id.editText)
         cancel = view.findViewById(R.id.cancel)
         progressBar = view.findViewById(R.id.progressBar)
+        switchFlash = view.findViewById(R.id.switchFlash)
+        flashMax = view.findViewById(R.id.flashMax)
+        flashPerPerson = view.findViewById(R.id.flashPerPerson)
+        flashselectDay = view.findViewById(R.id.flashselectDay)
+        flashdayTime = view.findViewById(R.id.flashdayTime)
 
         nowCheck.isChecked = false
         editText.imeOptions = EditorInfo.IME_ACTION_DONE
         editText.setRawInputType(InputType.TYPE_CLASS_TEXT)
         editText.addTextChangedListener(mTextEditorWatcher)
         // setToolBar(view)
-       // croppedImage.visibility = View.GONE
+        // croppedImage.visibility = View.GONE
         saveForDialog()
         clearPrefs()
         Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_CATEGORY).apply()
+
+
+        //-----------------------FlashWork--------------------------------------------
+        flashMax.setText("")
+        flashPerPerson.text = ""
+        flashselectDay.text = ""
+        flashdayTime.text = "Time"
+        flashClick.setOnClickListener {
+            flashMax.setText("")
+            if (!isflashVisible) {
+                isflashVisible = true
+                flashHiddenLayout.visibility = View.VISIBLE
+            } else {
+                flashHiddenLayout.visibility = View.GONE
+                isflashVisible = false
+            }
+        }
+
+
+        //----------------------------------------------------------------------------
+
+
         camera.setOnClickListener {
             mPresenter.openCamera()
         }
@@ -191,7 +236,7 @@ class AddPostFragment : Fragment(), AddNewHelper
             mPresenter.openGallery()
         }
         cancel.setOnClickListener {
-            imagestatus="true"
+            imagestatus = "true"
             if (listFromCropper != null && listFromCropper!!.size > 0) {
                 for (i in listFromCropper!!) {
                     listFromCropper!!.remove(i)
@@ -207,7 +252,7 @@ class AddPostFragment : Fragment(), AddNewHelper
         if (s != null) {
             profileText.text = s
         }
-        editText.setOnClickListener{
+        editText.setOnClickListener {
             editText.isFocusableInTouchMode = true
             editText.isFocusable = true
         }
@@ -231,6 +276,8 @@ class AddPostFragment : Fragment(), AddNewHelper
         }
 
         schedulePost.setOnClickListener {
+            //Footer.requestFocus()
+
             val post = addPost.text.toString()
             if (post.equals("DONE")) {
 
@@ -242,6 +289,7 @@ class AddPostFragment : Fragment(), AddNewHelper
                 checkedItem = -1
                 checkedItem1 = -1
                 checkedItem2 = -1
+                editType = ""
                 if (open == 0) {
                     open = 1
                     specificTime.text = "Time"
@@ -270,6 +318,60 @@ class AddPostFragment : Fragment(), AddNewHelper
                     }
                 }
             }
+
+
+        }
+//        flashMax .setOnClickListener {
+//
+//            lateinit var dialog: AlertDialog
+//            val array = arrayOf("20", "40", "60", "80", "100", "120", "140", "160", "180", "200")
+//
+//            val builder = AlertDialog.Builder(activity!!)
+//            builder.setTitle("Select")
+//            builder.setSingleChoiceItems(array, maxCheckedPos) { _, which ->
+//                maxPersonValue = array[which]
+//
+//                try {
+//                    maxCheckedPos = which
+//                    flashMax.text = maxPersonValue
+//                } catch (e: Exception) {
+//
+//                }
+//                dialog.dismiss()
+//            }
+//            dialog = builder.create()
+//            dialog.show()
+//
+//        }
+        flashPerPerson.setOnClickListener {
+
+            lateinit var dialog: AlertDialog
+            val array = arrayOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+            val builder = AlertDialog.Builder(activity!!)
+            builder.setTitle("Select")
+            builder.setSingleChoiceItems(array, flashCheckedPos) { _, which ->
+                flashPersonValue = array[which]
+                flashPerPerson.text = flashPersonValue
+                try {
+                    flashCheckedPos = which
+                } catch (e: Exception) {
+
+                }
+                dialog.dismiss()
+            }
+            dialog = builder.create()
+            dialog.show()
+
+
+        }
+        flashselectDay.setOnClickListener {
+
+            datePicker(flashselectDay)
+
+        }
+        flashdayTime.setOnClickListener {
+
+            openTimePicker(flashdayTime)
 
         }
         specificTime.setOnClickListener {
@@ -305,7 +407,7 @@ class AddPostFragment : Fragment(), AddNewHelper
 
         addPost.setOnClickListener {
             val post = addPost.text.toString()
-            if (post.equals("DONE")) {
+            if (post == "DONE") {
                 //Toast.makeText(activity,"Pending",Toast.LENGTH_LONG).show()
                 mPresenter.editPost(postID)
             } else {
@@ -327,19 +429,11 @@ class AddPostFragment : Fragment(), AddNewHelper
 
         }
 
-        editText.setFocusableInTouchMode(false);
-        editText.setFocusable(false);
-        editText.setFocusableInTouchMode(true);
-        editText.setFocusable(true);
+        editText.isFocusableInTouchMode = false
+        editText.isFocusable = false
+        editText.isFocusableInTouchMode = true
+        editText.isFocusable = true
 
-//        editText.setOnEditorActionListener() { v, actionId, event ->
-//            if(actionId == EditorInfo.IME_ACTION_DONE){
-//
-//                true
-//            } else {
-//                false
-//            }
-//        }
 
         return view
 
@@ -349,19 +443,15 @@ class AddPostFragment : Fragment(), AddNewHelper
         try {
             editTime = ""
             editDay = ""
-            editType = ""
-          //
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_TYPE).apply()
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_DAY).apply()
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_TIME).apply()
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_NOW_STATUS).apply()
-
             Constants.getPrefs(activity!!)!!.edit().remove(Constants.CATEGORY_NAMES_ADDPOST).apply()
             youtubeField.setText("")
-            youtubeField.visibility=View.GONE
-            croppedImage.visibility=View.GONE
-            cancel.visibility=View.GONE
-            //Picasso.with(activity!!).load("cc").into(croppedImage)
+            youtubeField.visibility = View.GONE
+            croppedImage.visibility = View.GONE
+            cancel.visibility = View.GONE
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -371,14 +461,21 @@ class AddPostFragment : Fragment(), AddNewHelper
         Toast.makeText(activity, s, Toast.LENGTH_LONG).show()
     }
 
-    override fun clearPrefsall(type: String) {
+    override fun clearPrefsall(type: String, ftype: String) {
 
         clearPrefs()
         Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_CATEGORY).apply()
         if (!type.isEmpty()) {
+            var model = ShowFlashOrPost()
+            model.ftype = ftype
+            model.name = "schedule"
             Constants.getBus().post(ScheduleChangEvent("schedule"))
         } else {
-            Constants.getBus().post(PositionChangEvent("change"))
+            var model = ShowFlashOrPost()
+            model.ftype = ftype
+            model.name = "change"
+
+            Constants.getBus().post(PositionChangEvent(model))
         }
     }
 
@@ -424,10 +521,6 @@ class AddPostFragment : Fragment(), AddNewHelper
 
     private fun openTimePicker(view: TextView) {
         val mcurrentTime = Calendar.getInstance()
-//        val myFormat = "hh:mm a"
-//        var sdf = SimpleDateFormat(myFormat, Locale.US);
-//        val formated_time = sdf.format(mcurrentTime.getTime());
-
         val hour = mcurrentTime.get(Calendar.HOUR_OF_DAY)
         val minute = mcurrentTime.get(Calendar.MINUTE)
         val mTimePicker: TimePickerDialog
@@ -435,10 +528,6 @@ class AddPostFragment : Fragment(), AddNewHelper
             var am_pm = ""
             var hour = 0
             hour = selectedHour
-
-//            mcurrentTime.set(Calendar.MINUTE, minute)
-//            mcurrentTime.set(Calendar.HOUR,hour)
-            // am_pm = calendar.get(Calendar.HOUR).toString() + if (calendar.get(Calendar.AM_PM) === Calendar.AM) "am" else "pm"
             if (selectedHour > 12) {
                 hour = hour - 12
                 am_pm = "PM"
@@ -670,8 +759,8 @@ class AddPostFragment : Fragment(), AddNewHelper
 //            // Your Code
 //        }
 //    }
-        });
-        alert.show();
+        })
+        alert.show()
 
 
 //        var dialogBuilder = AlertDialog.Builder(activity!!)
@@ -761,14 +850,6 @@ class AddPostFragment : Fragment(), AddNewHelper
         builder.setNegativeButton(negativeText, onNegativeButtonClickListener)
         mAlertDialog = builder.show()
     }
-//    private fun setToolBar(view:View) {
-//      //  toolbar = view.findViewById(R.id.toolbar)
-//        val mTitle = toolbar.findViewById(R.id.toolbar_title) as TextView
-//        val mArrow = toolbar.findViewById(R.id.arrow_down) as ImageView
-//        mArrow.visibility = View.GONE
-//        mTitle.text = "Add New Post"
-//
-//    }
 
 
     val mTextEditorWatcher = object : TextWatcher {
@@ -932,9 +1013,7 @@ class AddPostFragment : Fragment(), AddNewHelper
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     try {
                         val packageManager = activity!!.packageManager
-                        // if device support camera?
                         if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-                            //yes
                             cameraIntent()
                         }
                     } catch (e: Exception) {
@@ -995,15 +1074,7 @@ class AddPostFragment : Fragment(), AddNewHelper
                                     .into(croppedImage)
                         }
                     }
-                imagestatus="true"
-                var h = croppedImage.height
-                var w = croppedImage.width
-//                if (h>200){
-//                    croppedImage.layoutParams.height = 200
-//                }
-//                if (w>200){
-//                    croppedImage.layoutParams.width = 200
-//                }
+                imagestatus = "true"
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -1015,17 +1086,7 @@ class AddPostFragment : Fragment(), AddNewHelper
             }
         }
         if (requestCode === SELECT_PICTURES) {
-            // val selectedImage = data!!.data
-//            recyclerItems.add(selectedImage!!)
-//            val picturePath = getRealPathFromURI2(selectedImage,
-//                    this)
-//            val args = Bundle()
-//            val i = Intent(activity!!, PostCropper::class.java)
-////            i.putExtra("filePath", selectedImage!!.toString())
-//            args.putSerializable("LIST", recyclerItems)
-//            i.putExtra("BUN", args)
-//            i.putExtra("from", "post")
-//            startActivity(i)
+
             try {
                 recyclerItems.clear()
                 val uri = data!!.data
@@ -1055,7 +1116,8 @@ class AddPostFragment : Fragment(), AddNewHelper
         val args = Bundle()
         args.putSerializable("LIST", list)
         intent.putExtra("BUN", args)
-        intent.putExtra("from", "post")
+        intent.putExtra("from",                //Toast.makeText(activity,"Pending",Toast.LENGTH_LONG).show()
+                "post")
         startActivityForResult(intent, 2)
 
     }
@@ -1096,10 +1158,10 @@ class AddPostFragment : Fragment(), AddNewHelper
     }
 
     override fun showNetworkError(resId: Int) {
-        if(activity!=null) {
+        if (activity != null) {
             try {
                 Toast.makeText(activity!!, getString(resId), Toast.LENGTH_SHORT).show()
-            }catch (e:Exception){
+            } catch (e: Exception) {
 
             }
         }
@@ -1110,26 +1172,6 @@ class AddPostFragment : Fragment(), AddNewHelper
             Toast.makeText(activity!!, msg, Toast.LENGTH_SHORT).show()
         }
     }
-
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.menu_addpost, menu)
-//        return super.onCreateOptionsMenu(menu)
-//    }
-
-//    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-//        if (item!!.itemId == android.R.id.home) {
-//            onBackPressed()
-//        } else if (item.itemId == R.id.addpost) {
-//            val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-//            imm.hideSoftInputFromWindow(postText.windowToken, 0)
-//            if(!isServiceRunning){
-//
-//                mPresenter.addpost(isServiceRunning)
-//            }
-//
-//        }
-//        return super.onOptionsItemSelected(item)
-//    }
 
 
     override fun serviceIsRunning(b: Boolean) {
@@ -1145,17 +1187,9 @@ class AddPostFragment : Fragment(), AddNewHelper
     }
 
     override fun saveLocAndCat(data: JSONObject) {
-//        try {
-//            Constants.getPrefs(activity!!)?.edit()?.putString(Constants.CATEGORY, data.optString("category"))?.apply()
-//            Constants.getPrefs(activity!!)?.edit()?.putString(Constants.TOWN_ID, data.optString("location"))?.apply()
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
+
         val intent = Intent()
         activity!!.setResult(Activity.RESULT_OK, intent)
-        //GlobalBus.getBus().post(Events.FragmentActivityMessage("hello"));
-//        updater=activity as setToMyPost
-//        updater.myPost()
 
     }
 
@@ -1168,14 +1202,23 @@ class AddPostFragment : Fragment(), AddNewHelper
     }
 
     override fun getType(): String {
+        if (editType == null) {
+            return ""
+        }
         return editType
     }
 
     override fun getDay(): String {
+        if (editDay == null) {
+            return ""
+        }
         return editDay
     }
 
     override fun getTime(): String {
+        if (editTime == null) {
+            return ""
+        }
         return editTime
     }
 
@@ -1207,11 +1250,11 @@ class AddPostFragment : Fragment(), AddNewHelper
     }
 
 
-
     override fun onDestroy() {
         super.onDestroy()
         Constants.getBus().unregister(this)
     }
+
     @Subscribe
     fun getEventValue(event: EmptyFields) {
         editText.setText("")
@@ -1233,9 +1276,65 @@ class AddPostFragment : Fragment(), AddNewHelper
 
     }
 
+    fun parseDateToddMMyyyy(time: String): String? {
+        val inputPattern = "yyyy-MM-dd hh:mm:ss"
+        // val outputPattern = "dd MMM yyyy h:mm a"
+        val outputPattern = "dd MMM yyyy"
+        val inputFormat = SimpleDateFormat(inputPattern)
+        val outputFormat = SimpleDateFormat(outputPattern)
+
+        var date: Date? = null
+        var str: String? = null
+
+        try {
+            date = inputFormat.parse(time)
+            str = outputFormat.format(date)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+
+        return str
+    }
+
+    fun parseDateToddMMyyyy2(time: String): String? {
+        val inputPattern = "yyyy-MM-dd hh:mm:ss"
+        // val outputPattern = "dd MMM yyyy h:mm a"
+        val outputPattern = "hh:mm a"
+        val inputFormat = SimpleDateFormat(inputPattern)
+        val outputFormat = SimpleDateFormat(outputPattern)
+
+        var date: Date? = null
+        var str: String? = null
+
+        try {
+            date = inputFormat.parse(time)
+            str = outputFormat.format(date)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+
+        return str
+    }
 
     @Subscribe
     fun getEventValue(event: SetwhileEditScheduleEvent) {
+        isflashVisible = false
+        flashMax.setText("")
+        flashPerPerson.text = ""
+        flashselectDay.text = ""
+        flashdayTime.text = "Time"
+        flashHiddenLayout.visibility = View.GONE
+        if (event.value.ftype.equals("1")) {
+            isflashVisible = true
+            flashHiddenLayout.visibility = View.VISIBLE
+            flashMax.setText(event.value.max_redemption)
+            flashPerPerson.text = event.value.per_person_redemption
+            flashselectDay.text = parseDateToddMMyyyy(event.value.validity_date)
+            flashdayTime.text = parseDateToddMMyyyy2(event.value.validity_date)
+            flashPersonValue = event.value.per_person_redemption
+            maxPersonValue = event.value.max_redemption
+
+        }
         postID = event.value.id
         addPost.text = "DONE"
         open = 1
@@ -1273,19 +1372,19 @@ class AddPostFragment : Fragment(), AddNewHelper
         selectCategory.text = main
         if (!event.value.image_url.isEmpty()) {
             croppedImage.visibility = View.VISIBLE
-            cancel.visibility=View.VISIBLE
+            cancel.visibility = View.VISIBLE
             Picasso.with(activity).load(event.value.image_url).into(croppedImage)
-            imagePath=event.value.image_url
-        }else{
-            imagePath=""
+            imagePath = event.value.image_url
+        } else {
+            imagePath = ""
             croppedImage.visibility = View.GONE
-            cancel.visibility=View.GONE
+            cancel.visibility = View.GONE
         }
         if (event.value.video_link.isEmpty()) {
             youtubeField.setText("")
-            youtubeField.visibility=View.GONE
-        }else{
-            youtubeField.visibility=View.VISIBLE
+            youtubeField.visibility = View.GONE
+        } else {
+            youtubeField.visibility = View.VISIBLE
             youtubeField.setText(event.value.video_link)
 
         }
@@ -1318,7 +1417,7 @@ class AddPostFragment : Fragment(), AddNewHelper
             if (day == "2") {
                 adposition2 = 1
                 checkedItem2 = 1
-                selectDay.text =  "Tuesday"
+                selectDay.text = "Tuesday"
             }
             if (day == "3") {
                 adposition2 = 2
@@ -1343,7 +1442,7 @@ class AddPostFragment : Fragment(), AddNewHelper
             if (day == "7") {
                 adposition2 = 6
                 checkedItem2 = 6
-                selectDay.text =  "Sunday"
+                selectDay.text = "Sunday"
             }
         }
         if (event.value.type == "2") {
@@ -1363,14 +1462,8 @@ class AddPostFragment : Fragment(), AddNewHelper
         }
         // }
         addPost.setOnClickListener {
-//            val post = addpost.text.toString()
-//            if (post.equals("DONE")) {
-//                // Toast.makeText(activity,"Pending",Toast.LENGTH_LONG).show()
-//                mPresenter.editPost(postID)
-//            }
             val post = addPost.text.toString()
             if (post.equals("DONE")) {
-                //Toast.makeText(activity,"Pending",Toast.LENGTH_LONG).show()
                 mPresenter.editPost(postID)
             } else {
                 val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -1403,6 +1496,49 @@ class AddPostFragment : Fragment(), AddNewHelper
 
     override fun getImageChanged(): String {
         return imagestatus
+    }
+
+    override fun isFlashSwitchIsOn(): Boolean {
+        return isflashVisible
+    }
+
+    override fun getMaxFlashValue(): String {
+        return flashPersonValue
+    }
+
+    override fun getPersonFlashValue(): String {
+        maxPersonValue=flashMax.text.toString()
+        return maxPersonValue
+    }
+
+    override fun getFlashDate(): String {
+        if (!flashselectDay.text.toString().isEmpty()) {
+            return parseDateToddMMyyyy22(flashselectDay.text.toString())!!
+        }
+        return flashselectDay.text.toString()
+    }
+
+    override fun getFlashTime(): String {
+        return flashdayTime.text.toString()
+    }
+
+    fun parseDateToddMMyyyy22(time: String): String? {
+        val inputPattern = "dd MMM yyyy"
+        val outputPattern = "yyyy-MM-dd"
+        val inputFormat = SimpleDateFormat(inputPattern)
+        val outputFormat = SimpleDateFormat(outputPattern)
+
+        var date: Date? = null
+        var str: String? = null
+
+        try {
+            date = inputFormat.parse(time)
+            str = outputFormat.format(date)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return str
     }
 }
 

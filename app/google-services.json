@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "643287937740",
+    "firebase_url": "https://placepoint-android.firebaseio.com",
+    "project_id": "placepoint-android",
+    "storage_bucket": "placepoint-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643287937740:android:3afdf43228c12f39",
+        "android_client_info": {
+          "package_name": "com.user24.placepoint"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "643287937740-ojuc6jqj7iihdc09vbfgi78abe36gvh0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkXbFkPOfHxftcjB0U2-S1RCZG9QYcIN4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

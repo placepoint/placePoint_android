@@ -71,6 +71,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_filter"/>
+<ImageView
+      android:visibility="gone"
+        android:id="@+id/sendMail"
+        android:layout_gravity="right"
+        android:layout_marginRight="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_mail"/>
 </android.support.v7.widget.Toolbar>
 
 

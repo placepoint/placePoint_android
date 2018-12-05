@@ -16,6 +16,13 @@ class ModelHome() : Parcelable {
     lateinit var status: String
     lateinit var business_name: String
     lateinit var user_type: String
+    lateinit var ftype: String
+    lateinit var expired: String
+    lateinit var redeemed: String
+    lateinit var max_redemption: String
+    lateinit var per_person_redemption: String
+    lateinit var validity_date: String
+
 
     constructor(parcel: Parcel) : this() {
         id = parcel.readString()
@@ -30,6 +37,12 @@ class ModelHome() : Parcelable {
         status = parcel.readString()
         business_name = parcel.readString()
         user_type = parcel.readString()
+        ftype = parcel.readString()
+        expired = parcel.readString()
+        redeemed = parcel.readString()
+        max_redemption = parcel.readString()
+        per_person_redemption = parcel.readString()
+        validity_date = parcel.readString()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -45,6 +58,12 @@ class ModelHome() : Parcelable {
         parcel.writeString(status)
         parcel.writeString(business_name)
         parcel.writeString(user_type)
+        parcel.writeString(ftype)
+        parcel.writeString(expired)
+        parcel.writeString(redeemed)
+        parcel.writeString(max_redemption)
+        parcel.writeString(per_person_redemption)
+        parcel.writeString(validity_date)
     }
 
     override fun describeContents(): Int {

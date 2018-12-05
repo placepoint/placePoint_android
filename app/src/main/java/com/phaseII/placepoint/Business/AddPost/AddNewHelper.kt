@@ -30,11 +30,16 @@ interface AddNewHelper {
     fun getTime(): String
     abstract fun getNowStatus(): String
     abstract fun getCategory(): String
-    fun clearPrefsall(now_status: String)
+    fun clearPrefsall(now_status: String, ftype: String)
     fun showError(s: String)
     fun showScheduleScreen()
     fun getEditTime(): String
     fun getEditDay(): String
     fun getEditType(): String
     fun getImageChanged(): String
+    fun isFlashSwitchIsOn(): Boolean
+    fun getMaxFlashValue(): String
+    fun getPersonFlashValue(): String
+    fun getFlashDate(): String
+    fun getFlashTime(): String
 }

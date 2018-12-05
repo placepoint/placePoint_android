@@ -18,8 +18,15 @@ import com.phaseII.placepoint.R
 import com.squareup.otto.Subscribe
 import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
-import com.phaseII.placepoint.Home.BusinessListing.BusinessListingFragment
-import kotlinx.android.synthetic.main.activity_home.*
+import com.onesignal.OneSignal
+import com.phaseII.placepoint.Service
+import okhttp3.ResponseBody
+import org.json.JSONException
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.IOException
 
 
 @Suppress("DEPRECATED_IDENTITY_EQUALS")
@@ -34,6 +41,16 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
+        OneSignal.idsAvailable { userId, registrationId ->
+            //Log.d("debug", "User:$userId")
+            System.out.println("User Id: "+userId)
+            if (registrationId != null)
+            //    Log.d("debug", "registrationId:$registrationId")
+            System.out.println("registrationId Id: "+registrationId)
+        }
+//         val android_id = Settings.Secure.getString(getContentResolver(),
+//                Settings.Secure.ANDROID_ID)
+//        System.out.println("Device Id: "+android_id)
         bottomNavigation = findViewById(R.id.navigationView)
         // viewPager = findViewById(R.id.pager)
         //  setupViewPager(viewPager)
@@ -46,6 +63,50 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
         } catch (e: Exception) {
 
         }
+        var userId=""
+        OneSignal.idsAvailable { userId1, registrationId ->
+            //Log.d("debug", "User:$userId")
+            userId=userId1
+            System.out.println("User Id: "+userId)
+            if (registrationId != null)
+            //    Log.d("debug", "registrationId:$registrationId")
+                System.out.println("registrationId Id: "+registrationId)
+        }
+
+        updateOnesignalidService(Constants.getPrefs(this)!!.getString(Constants.AUTH_CODE,""),userId,Constants.getPrefs(this)!!.getString(Constants.TOWN_ID,""))
+    }
+
+    private fun updateOnesignalidService(auth_code1: String, userId: String, townId: String) {
+
+        val retrofit = Constants.getWebClient()
+        val service = retrofit!!.create(Service::class.java)
+        val call: Call<ResponseBody> = service.updateOnesignalid(auth_code1, userId,townId)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    try {
+                        val res = response.body()!!.string()
+                        val `object` = JSONObject(res)
+                        val status = `object`.optString("status")
+                        if (status.equals("true", ignoreCase = true)) {
+
+                        }
+
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+
+                } else {
+
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+
+            }
+        })
 
     }
 
@@ -79,7 +140,12 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
         }
         if (firstexe == 0) {
             if (showback == "no") {
-                addFragment()
+                var fromWhere=Constants.getPrefs(this)!!.getString("comingFrom", "")
+                if (fromWhere!="addPost") {
+                    addFragment()
+                }else{
+                    Constants.getPrefs(this)?.edit()?.putString("comingFrom", "")?.apply()
+                }
             }
         } else {
             var fromWhere=Constants.getPrefs(this)!!.getString("comingFrom", "")
@@ -99,19 +165,24 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
                     i++
                 }
             }else{
-                positon = 0
-                Constants.getPrefs(this)!!.edit().putString("showLay", "static").apply()
-                val menu = bottomNavigation.getMenu()
-                var i = 0
-                val size = menu.size()
-                our@ while (i < size) {
-                    val item = menu.getItem(i)
-                    if (item.itemId === R.id.nav_home) {
-                        item.isChecked = item.itemId === R.id.nav_home
-                        break@our
+                if (fromWhere=="addPost"){
+
+                }else{
+                    positon = 0
+                    Constants.getPrefs(this)!!.edit().putString("showLay", "static").apply()
+                    val menu = bottomNavigation.getMenu()
+                    var i = 0
+                    val size = menu.size()
+                    our@ while (i < size) {
+                        val item = menu.getItem(i)
+                        if (item.itemId === R.id.nav_home) {
+                            item.isChecked = item.itemId === R.id.nav_home
+                            break@our
+                        }
+                        i++
                     }
-                    i++
                 }
+                Constants.getPrefs(this)?.edit()?.putString("comingFrom", "")?.apply()
             }
 
         }
@@ -341,6 +412,9 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
                             i++
                         }
                     } else {
+                        try {
+
+
                         Constants.getPrefs(this)!!.edit().putString("showBack", "yes").apply()
                         Constants.getPrefs(this)!!.edit().putString("subcategory", "1").apply()
                         positon = 1
@@ -358,7 +432,11 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
                             }
                             i++
                         }
+                        }catch (e:Exception){
+                            e.printStackTrace()
+                        }
                     }
+
                 } else {
                     positon = 0
                     ft = supportFragmentManager.beginTransaction()
@@ -418,26 +496,28 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
 
     @Subscribe
     fun getMessage(event: SwitchToMainCategory) {
-
-        val editor= Constants.getPrefs(this)!!.edit()
-        editor.putString("showLay","main")
-        editor.apply()
-        positon = 1
-        ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.pager, HomeFragment())
-        ft.commit()
-        val menu = bottomNavigation.menu
-        var i = 0
-        val size = menu.size()
-        our@ while (i < size) {
-            val item = menu.getItem(i)
-            if (item.itemId === R.id.nav_category) {
-                item.isChecked = item.itemId === R.id.nav_category
-                break@our
-            }
-            i++
+try {
+    val editor = Constants.getPrefs(this)!!.edit()
+    editor.putString("showLay", "main")
+    editor.apply()
+    positon = 1
+    ft = supportFragmentManager.beginTransaction()
+    ft.replace(R.id.pager, HomeFragment())
+    ft.commit()
+    val menu = bottomNavigation.menu
+    var i = 0
+    val size = menu.size()
+    our@ while (i < size) {
+        val item = menu.getItem(i)
+        if (item.itemId === R.id.nav_category) {
+            item.isChecked = item.itemId === R.id.nav_category
+            break@our
         }
+        i++
+    }
+}catch (e:Exception){
 
+}
     }
 
     @Subscribe

@@ -21,9 +21,16 @@ import com.phaseII.placepoint.ConstantClass.MySpannable
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.Home.ModelHome
 import com.phaseII.placepoint.R
-import kotlinx.android.synthetic.main.main_item.view.*
 import android.support.v7.app.AlertDialog
 import android.webkit.URLUtil
+import android.widget.EditText
+import android.widget.Toast
+import com.phaseII.placepoint.BusEvents.ClaimPost
+import com.phaseII.placepoint.Home.ModelClainService
+import kotlinx.android.synthetic.main.flash_main_item.view.*
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 
@@ -34,7 +41,7 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
          val inflater = LayoutInflater.from(context)
-        return ViewHolder(inflater.inflate(R.layout.main_item, parent, false))
+        return ViewHolder(inflater.inflate(R.layout.flash_main_item, parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -129,7 +136,123 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
             }
 
         }
+
+        if(modelData.ftype=="1"){
+            holder.itemView.header.visibility=View.VISIBLE
+            if (modelData.expired=="1"){
+                holder.itemView.relativeLayout2.visibility = View.GONE
+                holder.itemView.claimButton.visibility = View.GONE
+                holder.itemView.header.text = "***Expired***"
+                holder.itemView.validityText.text = ""
+                holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.dark_red))
+            }else{
+                holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.colorPrimary))
+                holder.itemView.relativeLayout2.visibility=View.VISIBLE
+                holder.itemView.header.text="***Flash Alert Sale***"
+                val left:Int=modelData.max_redemption.toInt()-modelData.redeemed.toInt()
+                if (left == 0) {
+                    holder.itemView.relativeLayout2.visibility = View.GONE
+                    holder.itemView.claimButton.visibility = View.GONE
+                    holder.itemView.header.text = "***Expired***"
+                    holder.itemView.validityText.text = ""
+                    holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.dark_red))
+                } else {
+                    holder.itemView.claimButton.visibility = View.VISIBLE
+                    holder.itemView.validityText.text = "Hurry Expires in " + findExpirey(modelData.validity_date) + " - Only " + left + " left"
+                }
+
+            }
+
+        }else{
+            holder.itemView.header.visibility=View.GONE
+            holder.itemView.relativeLayout2.visibility=View.GONE
+        }
+
+        holder.itemView.claimButton.setOnClickListener{
+            dialogForClaim(modelData,position)
+        }
+        if (modelData.redeemed.toInt()>0) {
+            holder.itemView.desc.visibility=View.VISIBLE
+            holder.itemView.desc.setText(modelData.redeemed + " Offers successfully Claimed. To redeem visit the business and mention your name and email address.")
+        }else{
+            holder.itemView.desc.visibility=View.GONE
+        }
    }
+    private fun findExpirey(validity_date: String): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd kk:mm:ss")
+        val cal = Calendar.getInstance()
+        System.out.println("time => " + dateFormat.format(cal.time))
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd kk:mm:ss")
+        val date = sdf.parse(validity_date)
+        val date2 = sdf.parse(dateFormat.format(cal.time))
+        val diff = date.time - date2.time
+        if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toString() == "0") {
+            if (TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS).toString() == "0") {
+                return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS).toString() + "min"
+            } else {
+                return TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS).toString() + "hrs " + (TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS) - 60 * TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)).toString() + "min"
+            }
+        }
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toString() + "d "+( TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)- 24 * TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)).toString() + "hrs"
+    }
+    private fun dialogForClaim(modelData: ModelHome, position: Int) {
+        val mDialogView = LayoutInflater.from(context).inflate(R.layout.claim_layout, null)
+        //AlertDialogBuilder
+        val mBuilder = AlertDialog.Builder(context)
+                .setView(mDialogView)
+                .setTitle("Enter Details")
+        //show dialog
+        val  mAlertDialog = mBuilder.show()
+        //login button click of custom layout
+        val done=mAlertDialog.findViewById<TextView>(R.id.done)
+        val cancel=mAlertDialog.findViewById<TextView>(R.id.cancel)
+        val name=mAlertDialog.findViewById<EditText>(R.id.name)
+        val email=mAlertDialog.findViewById<EditText>(R.id.emailClaim)
+        done!!.setOnClickListener {
+            //dismiss dialog
+            if (name!!.text.toString().isEmpty()||email!!.text.toString().isEmpty()){
+                Toast.makeText(context,"Please enter details", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
+            val emailEntered=email!!.text.toString()
+            if(!isEmailValid(emailEntered)){
+                Toast.makeText(context,"Please enter valid email.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            //update.claimPostService(modelData,name!!.text.toString(),email!!.text.toString())
+            var modelc= ModelClainService()
+            modelc.postId=modelData.id
+            modelc.name=name!!.text.toString()
+            modelc.email=email!!.text.toString()
+            modelc.position=position.toString()
+            Constants.getBus().post(ClaimPost(modelc))
+            mAlertDialog.dismiss()
+            //get text from EditTexts of custom layout
+
+        }
+        //cancel button click of custom layout
+        cancel!!.setOnClickListener {
+            //dismiss dialog
+            mAlertDialog.dismiss()
+        }
+
+    }
+
+    fun isEmailValid(email: String): Boolean {
+        var isValid = false
+
+        val expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$"
+
+        val pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE)
+        val matcher = pattern.matcher(email)
+        if (matcher.matches()) {
+            isValid = true
+        }
+        return isValid
+    }
+
     fun extractYoutubeVideoId(ytUrl: String): String {
 
         var vId: String = ""

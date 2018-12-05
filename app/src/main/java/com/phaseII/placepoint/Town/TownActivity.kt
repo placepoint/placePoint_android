@@ -17,6 +17,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.gms.location.*
+import com.onesignal.OneSignal
 import com.phaseII.placepoint.ConstantClass.GpsTracker
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.R
@@ -97,12 +98,22 @@ class TownActivity : AppCompatActivity(), TownHelper {
         toolbarArrow.visibility = View.GONE
         setSupportActionBar(toolbar)
         title = ""
+        var userId=""
+        OneSignal.idsAvailable { userId1, registrationId ->
+            //Log.d("debug", "User:$userId")
+            userId=userId1
+            System.out.println("User Id: "+userId)
+            if (registrationId != null)
+            //    Log.d("debug", "registrationId:$registrationId")
+                System.out.println("registrationId Id: "+registrationId)
+        }
         if (intent.getStringExtra("from") == "false") {
             supportActionBar!!.setDisplayShowTitleEnabled(false)
-            mPresenter.prepareDataForAdapter("1")
+
+            mPresenter.prepareDataForAdapter("1",userId)
 
         } else {
-            mPresenter.prepareDataForAdapter("0")
+            mPresenter.prepareDataForAdapter("0", userId)
             supportActionBar!!.setDisplayShowTitleEnabled(true)
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         }

@@ -12,7 +12,7 @@ import retrofit2.Response
 import java.io.IOException
 
 class TownPresenter(val view: TownHelper) {
-    fun prepareDataForAdapter(from: String) {
+    fun prepareDataForAdapter(from: String, userId: String) {
         view.showLoader()
         val retrofit = Constants.getWebClient()
         val service = retrofit!!.create(Service::class.java)

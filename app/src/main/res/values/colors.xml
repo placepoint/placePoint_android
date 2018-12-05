@@ -25,5 +25,6 @@
     <color name="light_blue">#34b0f2</color>
     <color name="lignt_green">#55ca76</color>
     <color name="lignt_red">#ea8985</color>
+    <color name="dark_red">#CC2D2D</color>
     <color name="blur">#66393939</color>
 </resources>
