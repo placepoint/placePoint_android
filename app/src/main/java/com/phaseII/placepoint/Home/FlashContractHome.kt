@@ -8,7 +8,7 @@ class FlashContractHome {
         fun showNetworkError(server_error: Int)
         fun setAdapter(data: String)
         fun showToast(optString: String?)
-        fun updateModeldata(position: String)
+        fun updateModeldata(position: String, claimed: String)
 
 
     }

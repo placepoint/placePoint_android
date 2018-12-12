@@ -51,7 +51,7 @@ class HomeFragment : Fragment(), FlashContractHome.View {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.activity_home, container, false)
         init(view)
-        mPresenter=FlashPresenterHome(this)
+        mPresenter = FlashPresenterHome(this)
         Constants.getSSlCertificate(activity!!)
         setToolBar(view)
         setHasOptionsMenu(true)
@@ -85,12 +85,12 @@ class HomeFragment : Fragment(), FlashContractHome.View {
             staticLay.visibility = View.VISIBLE
 
             //----------------------------Getting FlashPosts---------------------------------
-            val auth_code=Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE,"")
-            val town_id=Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_ID,"")
-            val category_id=Constants.getPrefs(activity!!)!!.getString(Constants.CATEGORY_IDS,"")
-            mPresenter.getFlashPost(auth_code,town_id,category_id,"20","0")
+            val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
+            val town_id = Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_ID, "")
+            val category_id = Constants.getPrefs(activity!!)!!.getString(Constants.CATEGORY_IDS, "")
+            mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0")
             pullToRefresh.setOnRefreshListener {
-                mPresenter.getFlashPost(auth_code,town_id,category_id,"20","0")
+                mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0")
                 pullToRefresh.isRefreshing = false
             }
             //-------------------------------------------------------------------------------
@@ -110,31 +110,29 @@ class HomeFragment : Fragment(), FlashContractHome.View {
     }
 
 
-
-
     override fun setAdapter(data: String) {
 
         if (!data.isEmpty()) {
             val list = Constants.getHomeFeedData(data)
-            flashLish=list
-            if (list.size>0) {
+            flashLish = list
+            if (list.size > 0) {
                 try {
-                    flashAdapter=FlashHomeAdapter(activity!!, flashLish)
+                    flashAdapter = FlashHomeAdapter(activity!!, flashLish)
                     noFlashData.visibility = View.GONE
-                    flashPostList.visibility=View.VISIBLE
+                    flashPostList.visibility = View.VISIBLE
                     flashPostList.layoutManager = LinearLayoutManager(activity!!)
                     flashPostList.adapter = flashAdapter
-                }catch (e:Exception){
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
-            }else{
-                flashPostList.visibility=View.GONE
-                noFlashData.visibility=View.VISIBLE
+            } else {
+                flashPostList.visibility = View.GONE
+                noFlashData.visibility = View.VISIBLE
             }
 
-        }else{
-            flashPostList.visibility=View.GONE
-            noFlashData.visibility=View.VISIBLE
+        } else {
+            flashPostList.visibility = View.GONE
+            noFlashData.visibility = View.VISIBLE
         }
     }
 
@@ -174,7 +172,7 @@ class HomeFragment : Fragment(), FlashContractHome.View {
         back.setOnClickListener {
             try {
                 Constants.getBus().post(DoBackActionInDashBoard("value"))
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -407,22 +405,22 @@ class HomeFragment : Fragment(), FlashContractHome.View {
     }
 
     override fun showProgress() {
-        progressFlashHome.visibility=View.VISIBLE
+        progressFlashHome.visibility = View.VISIBLE
     }
 
     override fun hideProgress() {
-        progressFlashHome.visibility=View.GONE
+        progressFlashHome.visibility = View.GONE
     }
 
     override fun noData() {
-        flashPostList.visibility=View.GONE
-        noFlashData.visibility=View.VISIBLE
+        flashPostList.visibility = View.GONE
+        noFlashData.visibility = View.VISIBLE
     }
 
     override fun showNetworkError(server_error: Int) {
-        try{
-            Toast.makeText(activity,getString(server_error),Toast.LENGTH_LONG).show()
-        }catch (e:Exception){
+        try {
+            Toast.makeText(activity, getString(server_error), Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -430,19 +428,20 @@ class HomeFragment : Fragment(), FlashContractHome.View {
     @Subscribe
     fun getEventValue(event: ClaimPost) {
 
-        val auth_code=Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE,"")
-        mPresenter.claimPostCall(auth_code,event.model.postId,event.model.name,event.model.email,event.model.position)
+        val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
+        mPresenter.claimPostCall(auth_code, event.model.postId, event.model.name, event.model.email, event.model.position)
     }
 
-    override fun updateModeldata(position: String) {
-       val rr= flashLish.get(position.toInt())
-        val countRe=rr.redeemed.toInt()+1
-        rr.redeemed=countRe.toString()
-        flashLish.set(position.toInt(),rr)
+    override fun updateModeldata(position: String, claimed: String) {
+        val rr = flashLish[position.toInt()]
+        val countRe = rr.redeemed.toInt() + 1
+        rr.redeemed = countRe.toString()
+        rr.personRedeem = claimed
+        flashLish.set(position.toInt(), rr)
         flashAdapter.notifyDataSetChanged()
     }
 
     override fun showToast(optString: String?) {
-        Toast.makeText(activity,optString,Toast.LENGTH_LONG).show()
+        Toast.makeText(activity, optString, Toast.LENGTH_LONG).show()
     }
 }

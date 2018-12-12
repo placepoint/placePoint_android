@@ -69,13 +69,15 @@ class FlashPresenterHome(var view: FlashContractHome.View) {
                         val res = response.body()!!.string()
                         val `object` = JSONObject(res)
                         val status = `object`.optString("status")
+
                         if (status == "true") {
-                            view.updateModeldata(position)
+                            val claimed = `object`.optString("claimed")
+                           // Constants.getBus().post(ClaimRedeem(claimed))
+                            view.updateModeldata(position,claimed)
+                            view.showToast(`object`.optString("msg"))
+                        } else {
                             view.showToast(`object`.optString("msg"))
                         }
-//                        else {
-//                            view.showToast(`object`.optString("msg"))
-//                        }
 
                     } catch (e: IOException) {
                         e.printStackTrace()

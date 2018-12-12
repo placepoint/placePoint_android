@@ -22,7 +22,7 @@ class ModelHome() : Parcelable {
     lateinit var max_redemption: String
     lateinit var per_person_redemption: String
     lateinit var validity_date: String
-
+    var personRedeem: String = "0"
 
     constructor(parcel: Parcel) : this() {
         id = parcel.readString()
@@ -43,6 +43,7 @@ class ModelHome() : Parcelable {
         max_redemption = parcel.readString()
         per_person_redemption = parcel.readString()
         validity_date = parcel.readString()
+        personRedeem = parcel.readString()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -64,6 +65,7 @@ class ModelHome() : Parcelable {
         parcel.writeString(max_redemption)
         parcel.writeString(per_person_redemption)
         parcel.writeString(validity_date)
+        parcel.writeString(personRedeem)
     }
 
     override fun describeContents(): Int {

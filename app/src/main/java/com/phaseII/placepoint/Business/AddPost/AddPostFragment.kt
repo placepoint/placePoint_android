@@ -72,6 +72,7 @@ class AddPostFragment : Fragment(), AddNewHelper
     var filePath: String = ""
     lateinit var camera: ImageView
     lateinit var editText: EditText
+    lateinit var sLayout: ConstraintLayout
     lateinit var croppedImage: DynamicImageView
     lateinit var gallery: ImageView
     lateinit var cancel: ImageView
@@ -82,6 +83,7 @@ class AddPostFragment : Fragment(), AddNewHelper
     lateinit var specificDayLay: LinearLayout
     lateinit var flashHiddenLayout: LinearLayout
     lateinit var flashClick: RelativeLayout
+    lateinit var mainLayout: RelativeLayout
     lateinit var monthLay: LinearLayout
     lateinit var dayLay: LinearLayout
 
@@ -142,7 +144,7 @@ class AddPostFragment : Fragment(), AddNewHelper
     private lateinit var imagePath: String
     private var maxChecked: String = ""
     private var maxCheckedPos: Int = 0
-    private var flashCheckedPos: Int = 0
+    private var flashCheckedPos: Int = -1
     private var maxPersonValue: String = ""
     private var flashPersonValue: String = ""
 
@@ -180,6 +182,8 @@ class AddPostFragment : Fragment(), AddNewHelper
 
         camera = view.findViewById(R.id.camera)
         editText = view.findViewById(R.id.editText)
+        mainLayout = view.findViewById(R.id.mainLay)
+        sLayout = view.findViewById(R.id.slayout)
         gallery = view.findViewById(R.id.gallery)
         profileText = view.findViewById(R.id.profileText)
         selectCategory = view.findViewById(R.id.selectCategory)
@@ -195,8 +199,8 @@ class AddPostFragment : Fragment(), AddNewHelper
         flashdayTime = view.findViewById(R.id.flashdayTime)
 
         nowCheck.isChecked = false
-        editText.imeOptions = EditorInfo.IME_ACTION_DONE
-        editText.setRawInputType(InputType.TYPE_CLASS_TEXT)
+       // editText.imeOptions = EditorInfo.IME_ACTION_DONE
+      //  editText.setRawInputType(InputType.TYPE_CLASS_TEXT)
         editText.addTextChangedListener(mTextEditorWatcher)
         // setToolBar(view)
         // croppedImage.visibility = View.GONE
@@ -228,6 +232,17 @@ class AddPostFragment : Fragment(), AddNewHelper
         camera.setOnClickListener {
             mPresenter.openCamera()
         }
+
+
+        mainLayout.setOnClickListener {
+            hideKeyboard(editText)
+            editText.clearFocus()
+        }
+
+        sLayout.setOnClickListener {
+            editText.clearFocus()
+            hideKeyboard(editText)
+        }
         upgrade.setOnClickListener {
             val intent = Intent(context, SubscriptionActivity::class.java)
             activity!!.startActivity(intent)
@@ -252,6 +267,35 @@ class AddPostFragment : Fragment(), AddNewHelper
         if (s != null) {
             profileText.text = s
         }
+
+       /* editText.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                editText.clearFocus()
+
+                hideKeyboard(editText)
+                return@OnEditorActionListener true
+            }
+            false
+        })*/
+        /*  editText.setOnKeyListener(object : View.OnKeyListener {
+              override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean {
+
+              *//*    if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER))
+                {
+                    // Perform action on Enter key press
+                    txtUserid.clearFocus();
+                    txtUserPasword.requestFocus();
+                    return true;
+                }*//*
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    Toast.makeText(activity, "test", Toast.LENGTH_SHORT).show()
+                    return true
+                }
+                return false
+            }
+        })
+*/
         editText.setOnClickListener {
             editText.isFocusableInTouchMode = true
             editText.isFocusable = true
@@ -348,7 +392,7 @@ class AddPostFragment : Fragment(), AddNewHelper
             lateinit var dialog: AlertDialog
             val array = arrayOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
             val builder = AlertDialog.Builder(activity!!)
-            builder.setTitle("Select")
+            builder.setTitle("Click the max number of offers to be redeemed per person")
             builder.setSingleChoiceItems(array, flashCheckedPos) { _, which ->
                 flashPersonValue = array[which]
                 flashPerPerson.text = flashPersonValue
@@ -1507,7 +1551,7 @@ class AddPostFragment : Fragment(), AddNewHelper
     }
 
     override fun getPersonFlashValue(): String {
-        maxPersonValue=flashMax.text.toString()
+        maxPersonValue = flashMax.text.toString()
         return maxPersonValue
     }
 
@@ -1539,6 +1583,12 @@ class AddPostFragment : Fragment(), AddNewHelper
         }
 
         return str
+    }
+
+    private fun hideKeyboard(activity: View) {
+
+        val imm = context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(activity.windowToken, 0)
     }
 }
 

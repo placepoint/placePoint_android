@@ -29,6 +29,7 @@ import com.phaseII.placepoint.Constants
 import kotlinx.android.synthetic.main.flash_main_item.view.*
 import java.util.regex.Pattern
 import com.phaseII.placepoint.R
+import com.squareup.otto.Subscribe
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -93,7 +94,7 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
         }
 
         holder.itemView.claimButton.setOnClickListener {
-            dialogForClaim(modelData,position)
+            dialogForClaim(modelData, position)
         }
 
         if (context != null) {
@@ -101,7 +102,7 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
                     .apply(RequestOptions()
                             .override(180, 100).dontAnimate())
                     .into(holder.itemView.postImage)*/
-            if (modelData.image_url.equals("")) {
+            if (modelData.image_url == "") {
                 holder.itemView.postImage.visibility = View.GONE
             } else {
                 holder.itemView.postImage.visibility = View.VISIBLE
@@ -113,7 +114,7 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
                         .into(holder.postImage)
             }
 
-            if (modelData.video_link.equals("")) {
+            if (modelData.video_link == "") {
                 holder.itemView.videoLayout.visibility = View.GONE
             } else {
                 holder.itemView.videoLayout.visibility = View.VISIBLE
@@ -144,9 +145,13 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
         if (modelData.expired == "1") {
             holder.itemView.relativeLayout2.visibility = View.GONE
             holder.itemView.claimButton.visibility = View.GONE
-            holder.itemView.header.text = "***Expired***"
+            if (modelData.redeemed.isEmpty() || modelData.redeemed == "0") {
+                holder.itemView.header.text = "***Expired***"
+            } else {
+                holder.itemView.header.text = "***Expired ${modelData.redeemed} offer(s) claimed***"
+            }
             holder.itemView.validityText.text = ""
-            holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.dark_red))
+            holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.expire_red))
         } else {
             val name = modelData.business_name
             holder.itemView.relativeLayout2.visibility = View.VISIBLE
@@ -158,20 +163,27 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
             if (left == 0) {
                 holder.itemView.relativeLayout2.visibility = View.GONE
                 holder.itemView.claimButton.visibility = View.GONE
-                holder.itemView.header.text = "***Expired***"
+                if (modelData.redeemed.isEmpty() || modelData.redeemed == "0") {
+                    holder.itemView.header.text = "***Expired***"
+                } else {
+                    holder.itemView.header.text = "***Expired ${modelData.redeemed} offer(s) claimed***"
+                }
                 holder.itemView.validityText.text = ""
-                holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.dark_red))
+                holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.expire_red))
             } else {
                 holder.itemView.claimButton.visibility = View.VISIBLE
                 holder.itemView.validityText.text = "Hurry Expires in " + findExpirey(modelData.validity_date) + " - Only " + left + " left"
             }
 
         }
-        if (modelData.redeemed.toInt()>0) {
-            holder.itemView.desc.visibility=View.VISIBLE
-            holder.itemView.desc.setText(modelData.redeemed + " Offers successfully Claimed. To redeem visit the business and mention your name and email address.")
-        }else{
-            holder.itemView.desc.visibility=View.GONE
+        if (modelData.personRedeem.toInt() > 0) {
+            holder.itemView.desc.visibility = View.VISIBLE
+
+            holder.itemView.desc.visibility = View.VISIBLE
+            holder.itemView.desc.text = modelData.personRedeem + " Offers successfully Claimed. To redeem visit the business and mention your name and email address."
+
+        } else {
+            holder.itemView.desc.visibility = View.GONE
         }
     }
 
@@ -188,12 +200,12 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
             if (TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS).toString() == "0") {
                 return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS).toString() + "min"
             } else {
-               val m = (TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS) ).toString()
-               val p= 60 * TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)
+                val m = (TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS)).toString()
+                val p = 60 * TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)
                 return TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS).toString() + "hrs " + (TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS) - 60 * TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)).toString() + "min"
             }
         }
-        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toString() + "d " +( TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)- 24 * TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)).toString() + "hrs"
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toString() + "d " + (TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS) - 24 * TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)).toString() + "hrs"
     }
 
     fun parseDateToddMMyyyy2(time: String): String {
@@ -217,6 +229,9 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
         return str!!
     }
 
+    private var emailClaim: String = ""
+    var countClaim: Int = 0
+
     private fun dialogForClaim(modelData: ModelHome, position: Int) {
         val mDialogView = LayoutInflater.from(context).inflate(R.layout.claim_layout, null)
         //AlertDialogBuilder
@@ -237,21 +252,26 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
                 return@setOnClickListener
             }
             val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
-            val emailEntered = email!!.text.toString()
+            val emailEntered = email.text.toString()
             if (!isEmailValid(emailEntered)) {
                 Toast.makeText(context, "Please enter valid email.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
             //update.claimPostService(modelData,name!!.text.toString(),email!!.text.toString())
+            if (emailClaim != email.text.toString()) {
+                countClaim = 0
+            }
+
             var modelc = ModelClainService()
             modelc.postId = modelData.id
-            modelc.name = name!!.text.toString()
-            modelc.email = email!!.text.toString()
+            modelc.name = name.text.toString()
+            modelc.email = email.text.toString()
             modelc.position = position.toString()
+            emailClaim = email.text.toString()
+            countClaim += 1
             Constants.getBus().post(ClaimPost(modelc))
             mAlertDialog.dismiss()
             //get text from EditTexts of custom layout
-
         }
         //cancel button click of custom layout
         cancel!!.setOnClickListener {

@@ -142,9 +142,13 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
             if (modelData.expired=="1"){
                 holder.itemView.relativeLayout2.visibility = View.GONE
                 holder.itemView.claimButton.visibility = View.GONE
-                holder.itemView.header.text = "***Expired***"
+                if (modelData.redeemed.isEmpty() || modelData.redeemed == "0") {
+                    holder.itemView.header.text = "***Expired***"
+                } else {
+                    holder.itemView.header.text = "***Expired ${modelData.redeemed} offer(s) claimed***"
+                }
                 holder.itemView.validityText.text = ""
-                holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.dark_red))
+                holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.expire_red))
             }else{
                 holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.colorPrimary))
                 holder.itemView.relativeLayout2.visibility=View.VISIBLE
@@ -153,9 +157,13 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
                 if (left == 0) {
                     holder.itemView.relativeLayout2.visibility = View.GONE
                     holder.itemView.claimButton.visibility = View.GONE
-                    holder.itemView.header.text = "***Expired***"
+                    if (modelData.redeemed.isEmpty() || modelData.redeemed == "0") {
+                        holder.itemView.header.text = "***Expired***"
+                    } else {
+                        holder.itemView.header.text = "***Expired ${modelData.redeemed} offer(s) claimed***"
+                    }
                     holder.itemView.validityText.text = ""
-                    holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.dark_red))
+                    holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.expire_red))
                 } else {
                     holder.itemView.claimButton.visibility = View.VISIBLE
                     holder.itemView.validityText.text = "Hurry Expires in " + findExpirey(modelData.validity_date) + " - Only " + left + " left"
