@@ -82,6 +82,7 @@ class Constants {
         val LOCATION_ACCESS: String = "access"
         private var retrofit: Retrofit? = null
 
+
         private var bus: Bus? = null
         val LOGIN: String = "login"
         const val ID = "id"
