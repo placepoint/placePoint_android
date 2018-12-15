@@ -54,7 +54,7 @@
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/shape_light_green"
             android:gravity="center"
             android:padding="8dp"
             android:text="***Flash Alert Sale***"

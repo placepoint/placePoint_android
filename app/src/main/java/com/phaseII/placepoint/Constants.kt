@@ -53,7 +53,7 @@ class Constants {
     companion object {
         //Live----------------------------
 
-       // const val BASE_URL = "http://34.254.213.227/webservices/data_v1/"
+        // const val BASE_URL = "http://34.254.213.227/webservices/data_v1/"
 //       const val BASE_URL = "https://www.placepoint.ie/webservices/data_v1/"
 //        const val STRIPE_KEY = "pk_live_kt0mTsSnlapCVN44Ilfy7snQ"
 
@@ -61,8 +61,9 @@ class Constants {
         //=================================
 
         //Test---------------------------
-       const val BASE_URL = "http://cloudart.com.au/projects/Placepoint/index.php/webservices/data_v1/"
-  const val STRIPE_KEY = "pk_test_IWmxeaTtErjZDGj3Dcu2oJw0"
+        //  const val BASE_URL = "http://cloudart.com.au/projects/Placepoint/index.php/webservices/data_v1/"
+        const val BASE_URL = "https://www.placepoint.ie/webservices/data_v1/"
+        const val STRIPE_KEY = "pk_test_IWmxeaTtErjZDGj3Dcu2oJw0"
 
 
         const val TOKEN = "token"
@@ -119,7 +120,6 @@ class Constants {
         const val USERTYPE: String = "usertype"
         const val CATEGORY_IDSUB: String = "busListCat"
         const val MYBUSINESS_ID: String = "mybusId"
-
 
 
         fun getBus(): Bus {
@@ -461,8 +461,8 @@ class Constants {
 
         @SuppressLint("SimpleDateFormat")
         fun findingOpenWhen(modelBusiness: ModelBusiness, dayValue: Int): String {
-            var weekDay=-1
-            var checkday=dayValue
+            var weekDay = -1
+            var checkday = dayValue
             val openingDayTime = ArrayList<String>()
             val array = modelBusiness.opening_time
             val arr = JSONArray(array)
@@ -492,7 +492,7 @@ class Constants {
                 } else {
                     dayValue
                 }
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
 
@@ -505,28 +505,28 @@ class Constants {
                     val jsonObject = arr.getJSONObject(checkday)
                     val startFrom = jsonObject.optString("startFrom")
                     val startTo = jsonObject.optString("startTo")
-                    if (startFrom == "12:00 AM"&&startTo == "12:00 AM") {
+                    if (startFrom == "12:00 AM" && startTo == "12:00 AM") {
                         openingtime = ""
-                    }else{
-                        if (checkday==0){
+                    } else {
+                        if (checkday == 0) {
                             openingtime = "$startFrom Monday"
                         }
-                        if (checkday==1){
+                        if (checkday == 1) {
                             openingtime = "$startFrom Tuesday"
                         }
-                        if (checkday==2){
+                        if (checkday == 2) {
                             openingtime = "$startFrom Wednesday"
                         }
-                        if (checkday==3){
+                        if (checkday == 3) {
                             openingtime = "$startFrom Thursday"
                         }
-                        if (checkday==4){
+                        if (checkday == 4) {
                             openingtime = "$startFrom Friday"
                         }
-                        if (checkday==5){
+                        if (checkday == 5) {
                             openingtime = "$startFrom Saturday"
                         }
-                        if (checkday==6){
+                        if (checkday == 6) {
                             openingtime = "$startFrom Sunday"
                         }
                         break@outer
@@ -544,8 +544,8 @@ class Constants {
 
         }
 
-         @SuppressLint("SimpleDateFormat")
-         fun getCurrentTime(): String {
+        @SuppressLint("SimpleDateFormat")
+        fun getCurrentTime(): String {
             val sdf = SimpleDateFormat("hh:mm a")
             return sdf.format(Date())
         }
@@ -553,8 +553,8 @@ class Constants {
         @SuppressLint("SimpleDateFormat")
         fun findingOpenWhen2(modelBusiness: SingleBusinessModel, dayValue1: Int): String {
 
-            var checkday=dayValue1
-            var weekDay=-1
+            var checkday = dayValue1
+            var weekDay = -1
             val openingDayTime = ArrayList<String>()
             val array = modelBusiness.opening_time
             val arr = JSONArray(array)
@@ -583,7 +583,7 @@ class Constants {
                 } else {
                     dayValue1
                 }
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
             var openingtime = ""
@@ -595,29 +595,29 @@ class Constants {
                     val jsonObject = arr.getJSONObject(checkday)
                     val startFrom = jsonObject.optString("startFrom")
                     val startTo = jsonObject.optString("startTo")
-                    if (startFrom == "12:00 AM"&&startTo == "12:00 AM") {
+                    if (startFrom == "12:00 AM" && startTo == "12:00 AM") {
                         openingtime = ""
-                    }else{
-                        weekDay=checkday
-                        if (checkday==0){
+                    } else {
+                        weekDay = checkday
+                        if (checkday == 0) {
                             openingtime = "$startFrom Monday"
                         }
-                       if (checkday==1){
+                        if (checkday == 1) {
                             openingtime = "$startFrom Tuesday"
                         }
-                       if (checkday==2){
+                        if (checkday == 2) {
                             openingtime = "$startFrom Wednesday"
                         }
-                       if (checkday==3){
+                        if (checkday == 3) {
                             openingtime = "$startFrom Thursday"
                         }
-                       if (checkday==4){
+                        if (checkday == 4) {
                             openingtime = "$startFrom Friday"
                         }
-                       if (checkday==5){
+                        if (checkday == 5) {
                             openingtime = "$startFrom Saturday"
                         }
-                       if (checkday==6){
+                        if (checkday == 6) {
                             openingtime = "$startFrom Sunday"
                         }
                         break@outer
@@ -636,8 +636,8 @@ class Constants {
 
         fun findDistanceFromCurrentPosition(currentLatitude: Double, currentLongitude: Double, toDouble: Double, toDouble1: Double): Double {
 
-           return  findDistance(currentLatitude, currentLongitude
-                        ,toDouble, toDouble1)
+            return findDistance(currentLatitude, currentLongitude
+                    , toDouble, toDouble1)
         }
 
         private fun findDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
@@ -659,7 +659,7 @@ class Constants {
                 val sslContext: SSLContext = SSLContext.getInstance("TLSv1.2")
                 sslContext.init(null, null, null)
                 sslContext.createSSLEngine()
-            } catch (e:Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }

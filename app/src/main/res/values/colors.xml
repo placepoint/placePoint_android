@@ -28,4 +28,6 @@
     <color name="dark_red">#CC2D2D</color>
     <color name="expire_red">#cc4141</color>
     <color name="blur">#66393939</color>
+    <color name="lightGreen">#78c140</color>
+    <color name="darkGreen">#629f35</color>
 </resources>

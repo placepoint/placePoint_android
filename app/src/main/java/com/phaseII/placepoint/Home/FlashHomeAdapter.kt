@@ -155,7 +155,8 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
         } else {
             val name = modelData.business_name
             holder.itemView.relativeLayout2.visibility = View.VISIBLE
-            holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.colorPrimary))
+            //  holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.lightGreen))
+            holder.itemView.header.background = context.resources.getDrawable(R.drawable.shape_light_green)
 
             holder.itemView.header.text = "***Flash Alert Sale***"
 

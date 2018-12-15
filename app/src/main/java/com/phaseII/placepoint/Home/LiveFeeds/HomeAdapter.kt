@@ -150,7 +150,9 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
                 holder.itemView.validityText.text = ""
                 holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.expire_red))
             }else{
-                holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.colorPrimary))
+                //holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.lightGreen))
+                holder.itemView.header.background=context.resources.getDrawable(R.drawable.shape_light_green)
+
                 holder.itemView.relativeLayout2.visibility=View.VISIBLE
                 holder.itemView.header.text="***Flash Alert Sale***"
                 val left:Int=modelData.max_redemption.toInt()-modelData.redeemed.toInt()
