@@ -66,6 +66,7 @@ class Constants {
         const val STRIPE_KEY = "pk_test_IWmxeaTtErjZDGj3Dcu2oJw0"
 
 
+        var isAppOpenedFirstTime=false
         const val TOKEN = "token"
         const val DEVICE_TYPE = "Android"
         val closedList: ArrayList<Boolean> = arrayListOf()

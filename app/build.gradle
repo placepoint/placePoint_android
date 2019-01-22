@@ -20,13 +20,13 @@ android {
         applicationId "com.user24.placepoint"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 17
-        versionName "1.0.16"
+        versionCode 18
+        versionName "1.0.17"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         manifestPlaceholders = [
                 onesignal_app_id: '465f4f78-03a9-469e-a04f-da5f35c649d0',
-                // Project number pulled from dashboard, local value is ignored.
+
                 onesignal_google_project_number: '643287937740'
         ]
     }
@@ -76,6 +76,7 @@ dependencies {
     implementation 'com.github.florent37:tutoshowcase:1.0.1'
     implementation 'com.google.firebase:firebase-core:16.0.1'
     implementation 'com.onesignal:OneSignal:[3.9.1, 3.99.99]'
+
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'

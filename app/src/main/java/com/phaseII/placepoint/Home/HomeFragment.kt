@@ -26,6 +26,10 @@ import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
 import com.phaseII.placepoint.Town.TownActivity
 import com.squareup.otto.Subscribe
 import java.util.ArrayList
+import android.content.DialogInterface
+import com.phaseII.placepoint.AboutBusiness.BusinessDetails.DetailFragment.setTitle
+import android.os.Build
+import android.support.v7.app.AlertDialog
 
 
 class HomeFragment : Fragment(), FlashContractHome.View {
@@ -69,6 +73,12 @@ class HomeFragment : Fragment(), FlashContractHome.View {
     @SuppressLint("SetTextI18n")
     override fun onResume() {
         super.onResume()
+
+        if (!Constants.isAppOpenedFirstTime){
+            Constants.isAppOpenedFirstTime=true
+            showAlert()
+        }
+
         Constants.getBus().register(this)
         Constants.getPrefs(activity!!)!!.edit().putString(Constants.SHOW_ALL_POST, "yes").apply()
         Constants.getPrefs(activity!!)!!.edit().putString(Constants.FROMINTENT, "home").apply()
@@ -109,6 +119,25 @@ class HomeFragment : Fragment(), FlashContractHome.View {
 
     }
 
+    private fun showAlert() {
+
+        val builder: AlertDialog.Builder
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = AlertDialog.Builder(activity!!)
+        } else {
+            builder = AlertDialog.Builder(activity!!)
+        }
+
+        builder.setTitle("Alert")
+                .setMessage("PlacePoint is launching in Athlone on the 1st of February. Please note the current data being shown is only test data. Make sure you keep the app installed to ensure you get notifications of new special offers as we have over €1,000 in giveaways and promotions from February the 1st.")
+                .setPositiveButton("Ok", DialogInterface.OnClickListener { dialog, which ->
+                    // continue with delete
+                })
+
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show()
+    }
+
 
     override fun setAdapter(data: String) {
 
@@ -120,7 +149,7 @@ class HomeFragment : Fragment(), FlashContractHome.View {
                     flashAdapter = FlashHomeAdapter(activity!!, flashLish)
                     noFlashData.visibility = View.GONE
                     flashPostList.visibility = View.VISIBLE
-                    flashPostList.layoutManager = LinearLayoutManager(activity!!)
+                    flashPostList.layoutManager = LinearLayoutManager(activity!!) as RecyclerView.LayoutManager?
                     flashPostList.adapter = flashAdapter
                 } catch (e: Exception) {
                     e.printStackTrace()

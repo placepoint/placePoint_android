@@ -89,7 +89,7 @@
                     android:id="@+id/noFlashData"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="No flash posts available at the moment"
+                    android:text="@string/noDataHomeFlash"
                     android:gravity="center"
                     android:textSize="18sp"
                     android:textColor="@color/black"
