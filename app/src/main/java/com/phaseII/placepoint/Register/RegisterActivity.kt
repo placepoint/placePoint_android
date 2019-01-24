@@ -81,6 +81,10 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
         bus_cat.error = null
 
         register.setOnClickListener {
+
+            /////// //here user set to free user by default on registration//////////////////
+            Constants.getPrefs(this)!!.edit().putString(Constants.USERTYPE, "3").apply()
+            //////////////////////////////////////////////////////
             val userType = Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "")
             if (userType.isEmpty()) {
 
@@ -88,13 +92,7 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
                 return@setOnClickListener
             }
 
-//            if (!couponId.text.trim().isEmpty()) {
-//                mPresenter.CheckCouponValidity(couponId.text.trim().toString(), userType, "0")
-//            } else {
-                mPresenter.getRegisterData(userType, couponId.text.trim().toString())
-//            }
-
-
+            mPresenter.getRegisterData(userType, couponId.text.trim().toString())
         }
         back_arrow.setOnClickListener {
             onBackPressed()
@@ -125,8 +123,7 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
             choosedPlan.text = "Standard  € 150/year"
         } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "1") {
             choosedPlan.text = "Premium  € 300/year"
-        }
-else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
+        } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
             choosedPlan.text = "Admin"
         }
 
@@ -181,19 +178,19 @@ else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
             if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "3") {
                 choosedPlan.text = "Free  € 0/year"
                 couponId.setText("")
-                coupon_layout.visibility=View.GONE
+                coupon_layout.visibility = View.GONE
             } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "2") {
                 choosedPlan.text = "Standard  € 150/year"
                 couponId.setText("")
-                coupon_layout.visibility=View.VISIBLE
+                coupon_layout.visibility = View.VISIBLE
             } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "1") {
                 choosedPlan.text = "Premium  € 300/year"
                 couponId.setText("")
-                coupon_layout.visibility=View.VISIBLE
+                coupon_layout.visibility = View.VISIBLE
             } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
                 choosedPlan.text = "Admin"
                 couponId.setText("")
-                coupon_layout.visibility=View.GONE
+                coupon_layout.visibility = View.GONE
             }
             dialog.dismiss()
         })
@@ -277,15 +274,10 @@ else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
     private fun showCategoryChooser() {
 
         val mRecyclerView: RecyclerView
-//        val cancel: TextView
-//        val ok: TextView
         val builder = AlertDialog.Builder(this)
-        val optionDialog = builder.create()
         val inflater = LayoutInflater.from(this)
         val content = inflater.inflate(R.layout.custom_dialog, null)
         builder.setView(content)
-//        cancel = content.findViewById<View>(R.id.cancel) as TextView
-//        ok = content.findViewById<View>(R.id.ok) as TextView
         mRecyclerView = content.findViewById<View>(R.id.my_recycler_view) as RecyclerView
         val array = getAllUniqueValues((cat_list))
         var sortedList = array.sortedWith(compareBy { it.name })
@@ -305,78 +297,6 @@ else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
 
         builder.show()
 
-//        bus_cat.text =  ""
-//        val items1 = cat_name.toTypedArray()
-//        val items =  items1.distinct().toTypedArray()
-//        val value = arrayOfNulls<String>(1)
-//
-//        val len=items.size
-//        val arrayChecked = BooleanArray(len)
-//        for (i in 0 until items.size-1) {
-//            arrayChecked[i] = false
-//        }
-//        var dialog:AlertDialog
-//        val builder = AlertDialog.Builder(this)
-//        builder.setMultiChoiceItems(cat_list.distinct().toTypedArray(), arrayChecked) { dialog, which, isChecked->
-//            // Update the clicitemsked item checked status
-//            arrayChecked[which] = isChecked
-//
-//            // Get the clicked item
-//            val color = items[which]
-//
-//        }
-//
-//
-//        // Set the positive/yes button click listener
-//        builder.setPositiveButton("OK") { _, _ ->
-//            // Do something when click positive button
-//            cat_id=""
-//            for (i in 0 until items.size) {
-//                val checked = arrayChecked[i]
-//                if (checked) {
-//
-//                    cat_id = if (cat_id.isEmpty()){
-//                        bus_cat.text =  cat_list[i].name
-//                        cat_list[i].id
-//                    }else {
-//                        cat_id + "," +  cat_list[i].id
-//                    }
-//                }
-//            }
-//
-//        }
-//        builder.setNegativeButton("Cancel"){ _, _ ->
-//            // Do something when click positive button
-//
-//        }
-//
-//        // Initialize the AlertDialog using builder object
-//        dialog = builder.create()
-//
-//        // Finally, display the alert dialog
-//        dialog.show()
-
-
-//        val builder = AlertDialog.Builder(this@RegisterActivity)
-//                .setSingleChoiceItems(items, -1) { dialog, which -> value[0] = items[which] }
-//                .setPositiveButton("Ok") { dialog, which ->
-//                    try {
-//                        val lw = (dialog as AlertDialog).listView
-//                        val checkedItem = lw.adapter.getItem(lw.checkedItemPosition)
-//                        selectedCategory = checkedItem.toString()
-//                        bus_cat.text = selectedCategory
-//                        val pos = lw.checkedItemPosition
-//                        cat_id = cat_list[pos].id
-//                        dialog.dismiss()
-//                    } catch (e: Exception) {
-//                        e.printStackTrace()
-//                    }
-//
-//                    // dialog.dismiss()
-//                }
-//                .setNegativeButton("Cancel"
-//                ) { dialog, which -> dialog.dismiss() }.create()
-//        builder.show()
     }
 
 
@@ -487,18 +407,18 @@ else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
     }
 
     override fun openPayment(email: String, pass: String, bName: String, bLoc: String, bCat: String, auth_code: String, type: String, coupon: String) {
-        if (type == "3"||type=="4") {
+        if (type == "3" || type == "4") {
             val userType = Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "")
             mPresenter.getRegisterService(userType, couponId.text.trim().toString())
-        }else{
-            if (coupon.isEmpty()){
+        } else {
+            if (coupon.isEmpty()) {
                 if (pass.length > 4) {
-                var amount = "300"
-                if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "1") == "1") {
-                    amount = "300"
-                } else {
-                    amount = "150"
-                }
+                    var amount = "300"
+                    if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "1") == "1") {
+                        amount = "300"
+                    } else {
+                        amount = "150"
+                    }
                     var intent = Intent(this, PaymentActivity::class.java)
                     intent.putExtra("email", email)
                     intent.putExtra("pass", pass)
@@ -516,7 +436,7 @@ else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
 
                     Toast.makeText(this, R.string.error_invalid_password, Toast.LENGTH_LONG).show()
                 }
-            }else{
+            } else {
                 val userType = Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "")
                 mPresenter.CheckCouponValidity(couponId.text.trim().toString(), userType, "1")
 
@@ -528,30 +448,25 @@ else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
 
     override fun hitRegisterApi(email: String, pass: String, bName: String, bCat: String, bLoc: String, type: String, from: String, amount: String, auth_code: String) {
 
-            if (pass.length > 4) {
-//                var amount = "300"
-//                if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "1") == "1") {
-//                    amount = "300"
-//                } else {
-//                    amount = "150"
-//                }
-                var intent = Intent(this, PaymentActivity::class.java)
-                intent.putExtra("email", email)
-                intent.putExtra("pass", pass)
-                intent.putExtra("bName", bName)
-                intent.putExtra("bLoc", bLoc)
-                intent.putExtra("bCat", bCat)
-                intent.putExtra("auth_code", auth_code)
-                intent.putExtra("type", type)
-                intent.putExtra("catId", cat_id)
-                intent.putExtra("from", "Register")
-                intent.putExtra("amount_payable", amount)
-                intent.putExtra("coupon", couponId.text.toString().trim())
-                startActivity(intent)
-            } else {
+        if (pass.length > 4) {
 
-                Toast.makeText(this, R.string.error_invalid_password, Toast.LENGTH_LONG).show()
-            }
+            var intent = Intent(this, PaymentActivity::class.java)
+            intent.putExtra("email", email)
+            intent.putExtra("pass", pass)
+            intent.putExtra("bName", bName)
+            intent.putExtra("bLoc", bLoc)
+            intent.putExtra("bCat", bCat)
+            intent.putExtra("auth_code", auth_code)
+            intent.putExtra("type", type)
+            intent.putExtra("catId", cat_id)
+            intent.putExtra("from", "Register")
+            intent.putExtra("amount_payable", amount)
+            intent.putExtra("coupon", couponId.text.toString().trim())
+            startActivity(intent)
+        } else {
+
+            Toast.makeText(this, R.string.error_invalid_password, Toast.LENGTH_LONG).show()
+        }
 
     }
 
@@ -568,30 +483,25 @@ else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
                     dialog.dismiss()
                     val userType = Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "")
 
-                        if (pass.length > 4) {
-//                var amount = "300"
-//                if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "1") == "1") {
-//                    amount = "300"
-//                } else {
-//                    amount = "150"
-//                }
-                            var intent = Intent(this, PaymentActivity::class.java)
-                            intent.putExtra("email", email)
-                            intent.putExtra("pass", pass)
-                            intent.putExtra("bName", bName)
-                            intent.putExtra("bLoc", bLoc)
-                            intent.putExtra("bCat", bCat)
-                            intent.putExtra("auth_code", auth_code)
-                            intent.putExtra("type", type)
-                            intent.putExtra("catId", cat_id)
-                            intent.putExtra("from", "Register")
-                            intent.putExtra("amount_payable", amount)
-                            intent.putExtra("coupon", couponId.text.toString().trim())
-                            startActivity(intent)
-                        } else {
+                    if (pass.length > 4) {
 
-                            Toast.makeText(this, R.string.error_invalid_password, Toast.LENGTH_LONG).show()
-                        }
+                        var intent = Intent(this, PaymentActivity::class.java)
+                        intent.putExtra("email", email)
+                        intent.putExtra("pass", pass)
+                        intent.putExtra("bName", bName)
+                        intent.putExtra("bLoc", bLoc)
+                        intent.putExtra("bCat", bCat)
+                        intent.putExtra("auth_code", auth_code)
+                        intent.putExtra("type", type)
+                        intent.putExtra("catId", cat_id)
+                        intent.putExtra("from", "Register")
+                        intent.putExtra("amount_payable", amount)
+                        intent.putExtra("coupon", couponId.text.toString().trim())
+                        startActivity(intent)
+                    } else {
+
+                        Toast.makeText(this, R.string.error_invalid_password, Toast.LENGTH_LONG).show()
+                    }
 
                 }.setNegativeButton("No", null).show()
     }

@@ -90,7 +90,10 @@ class BusinessFragment : Fragment() {
                     Constants.getBus().post(EmptyFields("empty"))
                     if(Constants.getPrefs(activity!!)!!.getString("showALiveYes","no")=="no") {
                         Constants.getPrefs(activity!!)!!.edit().putString("showALiveYes", "yes").apply()
-                        showCase()
+                       if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE,"") != "3"){
+                           showCase()
+                        }
+
                     }
 
                 }

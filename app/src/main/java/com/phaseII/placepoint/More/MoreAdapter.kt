@@ -81,7 +81,7 @@ class MoreAdapter(var context: Context, var items: ArrayList<String>) : Recycler
                 Constants.getPrefs(context)?.edit()?.putString(Constants.CATEGORY_LIST, catList)?.apply()
                 Constants.getPrefs(context)?.edit()?.putString(Constants.TAXI_TOWNID, taxitownid)?.apply()
                 Constants.getPrefs(context)?.edit()?.putString(Constants.TAXI_SUB_ID, taxiSubid)?.apply()
-
+                Constants.getPrefs(context!!)!!.edit().putString("showHLiveYes", "yes").apply()
                 Constants.getBus().post(LogoutEvent(getauth))
                 //logoutApi(getauth)
 
