@@ -92,4 +92,47 @@ class HomePresenter(val view: HomeHelper) {
         })
     }
 
+    fun claimPostCall(auth_code: String, postId: String, name: String,
+                      email: String, position: String) {
+        view.showLoader()
+
+        val retrofit = Constants.getWebClient()
+        val service = retrofit!!.create(Service::class.java)
+        val call: Call<ResponseBody> = service.claimPost(auth_code, postId, name, email)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                view.hideLoader()
+                if (response.isSuccessful) {
+                    try {
+                        val res = response.body()!!.string()
+                        val `object` = JSONObject(res)
+                        val status = `object`.optString("status")
+
+                        if (status == "true") {
+                            val claimed = `object`.optString("claimed")
+                            // Constants.getBus().post(ClaimRedeem(claimed))
+                            view.updateModeldata(position,claimed)
+                            view.showToast(`object`.optString("msg"))
+                        } else {
+                            view.showToast(`object`.optString("msg"))
+                        }
+
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+
+                } else {
+                    view.showNetworkError(R.string.server_error)
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                view.hideLoader()
+                view.showNetworkError(R.string.network_error)
+            }
+        })
+    }
+
 }

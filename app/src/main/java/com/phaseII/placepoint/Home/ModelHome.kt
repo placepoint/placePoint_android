@@ -22,6 +22,7 @@ class ModelHome() : Parcelable {
     lateinit var max_redemption: String
     lateinit var per_person_redemption: String
     lateinit var validity_date: String
+    lateinit var created_by: String
     var personRedeem: String = "0"
 
     constructor(parcel: Parcel) : this() {
@@ -43,6 +44,7 @@ class ModelHome() : Parcelable {
         max_redemption = parcel.readString()
         per_person_redemption = parcel.readString()
         validity_date = parcel.readString()
+        created_by = parcel.readString()
         personRedeem = parcel.readString()
     }
 
@@ -65,6 +67,7 @@ class ModelHome() : Parcelable {
         parcel.writeString(max_redemption)
         parcel.writeString(per_person_redemption)
         parcel.writeString(validity_date)
+        parcel.writeString(created_by)
         parcel.writeString(personRedeem)
     }
 

@@ -11,5 +11,7 @@ interface HomeHelper {
     fun showMsg(msg: String?)
     fun saveBusId(business_id: String?)
     fun getTaxiID(): String
+    fun updateModeldata(position: String, claimed: String)
+    fun showToast(optString: String?)
 
 }

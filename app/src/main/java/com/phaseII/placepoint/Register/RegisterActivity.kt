@@ -83,7 +83,7 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
         register.setOnClickListener {
 
             /////// //here user set to free user by default on registration//////////////////
-            Constants.getPrefs(this)!!.edit().putString(Constants.USERTYPE, "3").apply()
+            Constants.getPrefs(this)!!.edit().putString(Constants.USERTYPE, "4").apply()
             //////////////////////////////////////////////////////
             val userType = Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "")
             if (userType.isEmpty()) {

@@ -108,10 +108,10 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
                 e.printStackTrace()
             }
 
-            if (modelBusiness.contact_no==null||modelBusiness.contact_no.isEmpty()){
-                holder.itemView.freeCall.visibility=View.GONE
-            }else{
-                holder.itemView.freeCall.visibility=View.VISIBLE
+            if (modelBusiness.contact_no == null || modelBusiness.contact_no.isEmpty()) {
+                holder.itemView.freeCall.visibility = View.GONE
+            } else {
+                holder.itemView.freeCall.visibility = View.VISIBLE
             }
             holder.itemView.freeCall.setOnClickListener {
                 // Constants.getBus().post(CALL_EVENT(modelBusiness.contact_no))
@@ -258,10 +258,10 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
                     e.printStackTrace()
                 }
             }
-            if (modelBusiness.contact_no==null||modelBusiness.contact_no.isEmpty()){
-                holder.itemView.callImage.visibility=View.GONE
-            }else{
-                holder.itemView.callImage.visibility=View.VISIBLE
+            if (modelBusiness.contact_no == null || modelBusiness.contact_no.isEmpty()) {
+                holder.itemView.callImage.visibility = View.GONE
+            } else {
+                holder.itemView.callImage.visibility = View.VISIBLE
             }
             holder.itemView.callImage.setOnClickListener {
                 // Constants.getBus().post(CALL_EVENT(modelBusiness.contact_no))
@@ -376,23 +376,20 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
 
     private fun checkPreviousDayClosingHours(jsonObject: JSONObject, dayValue: Int, timing: TextView, modelBusiness: ModelBusiness, currentTime: String,
                                              statusLay: LinearLayout, openAt: TextView) {
-        var startTo = jsonObject.optString("startTo")
-        var startFrom = jsonObject.optString("startFrom")
-        var curr: String = ""
-        val inFormat = SimpleDateFormat("hh:mm aa")
-        val inFormat1 = SimpleDateFormat("hh:mm:ss aa")
-        val outFormat = SimpleDateFormat("HH:mm")
 
-        val time24 = outFormat.format(inFormat.parse(startTo))
-        val time245 = outFormat.format(inFormat.parse(startFrom))
         try {
+            val startTo = jsonObject.optString("startTo")
+            val startFrom = jsonObject.optString("startFrom")
+            var curr: String = ""
+            val inFormat = SimpleDateFormat("hh:mm aa")
+            val inFormat1 = SimpleDateFormat("hh:mm:ss aa")
+            val outFormat = SimpleDateFormat("HH:mm")
+
+            val time24 = outFormat.format(inFormat.parse(startTo))
+            val time245 = outFormat.format(inFormat.parse(startFrom))
+
             curr = outFormat.format(inFormat1.parse(currentTime))
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
 
-
-        try {
             val start = outFormat.parse(time245)
             val end = outFormat.parse(time24)
             val curr2 = outFormat.parse(curr)
@@ -717,7 +714,7 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
     }
 
     fun refreshApaper(sortedList: List<ModelBusiness>) {
-        list=sortedList
+        list = sortedList
         notifyDataSetChanged()
     }
 
@@ -726,7 +723,6 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
     class ViewHolder0(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     class ViewHolder2(itemView: View) : RecyclerView.ViewHolder(itemView)
-
 
 
 }

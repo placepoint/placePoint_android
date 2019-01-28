@@ -51,9 +51,13 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val modelData = list.get(position)
-        holder.itemView.name.text = modelData.business_name
+        if (modelData.created_by=="1"){
+            holder.itemView.name.text = modelData.business_name
+        }else{
+            holder.itemView.name.text = "Posted on behalf of "+modelData.business_name
+        }
         holder.itemView.postText.text = modelData.description
-        holder.itemView.dateTime.text = Constants.getDate(modelData.updated_at)
+        holder.itemView.dateTime.text = Constants.getDate2(modelData.updated_at)
         if (!list[position].video_link.trim().isEmpty()) {
             holder.itemView.videoUrl.visibility = View.GONE
             holder.itemView.videoUrl.text = Html.fromHtml("<u>" + list[position].video_link + "</u>")

@@ -14,6 +14,8 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import com.phaseII.placepoint.BusEvents.ClaimPost
+import com.phaseII.placepoint.BusEvents.ClaimPostLiveFeed
 import com.phaseII.placepoint.BusEvents.LiveFeedTaxiEvent
 import com.phaseII.placepoint.BusEvents.LiveListingBackEvent
 import com.phaseII.placepoint.Constants
@@ -29,6 +31,9 @@ class LiveFeedFragment : Fragment(), HomeHelper {
     lateinit var progressBar: ProgressBar
     lateinit var refreshLay: RelativeLayout
     var c = 0
+     var list= ArrayList<ModelHome>()
+    lateinit var adapter:HomeAdapter
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_home, container, false)
@@ -66,7 +71,7 @@ class LiveFeedFragment : Fragment(), HomeHelper {
             e.printStackTrace()
         }
         if (!data.isEmpty()) {
-            var list = Constants.getHomeFeedData(data)
+             list = Constants.getHomeFeedData(data)
             val listTemp = arrayListOf<ModelHome>()
             if (list != null && list.size > 0) {
 
@@ -91,7 +96,8 @@ class LiveFeedFragment : Fragment(), HomeHelper {
                         noPosts.visibility = View.GONE
                         recyclerView.visibility = View.VISIBLE
                         recyclerView.layoutManager = LinearLayoutManager(activity!!)
-                        recyclerView.adapter = HomeAdapter(activity!!, list)
+                       adapter = HomeAdapter(activity!!, list)
+                        recyclerView.adapter=adapter
                         Constants.getPrefs(activity!!)!!.edit().putString("showTLive","yes").apply()
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -197,11 +203,34 @@ class LiveFeedFragment : Fragment(), HomeHelper {
         mPresenter.prepareData("Taxi")
 
     }
+    @Subscribe
+    fun getEventValue(event: ClaimPostLiveFeed) {
 
+        val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
+        mPresenter.claimPostCall(auth_code, event.model.postId, event.model.name, event.model.email, event.model.position)
+    }
     @Subscribe
     fun getEventValue(event: LiveListingBackEvent) {
 
         mPresenter.prepareData("home")
 
+    }
+
+    override fun updateModeldata(position: String, claimed: String) {
+
+        try {
+            val rr = list[position.toInt()]
+            val countRe = rr.redeemed.toInt() + 1
+            rr.redeemed = countRe.toString()
+            rr.personRedeem = claimed
+            list.set(position.toInt(), rr)
+            adapter.notifyDataSetChanged()
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+    }
+
+    override fun showToast(optString: String?) {
+        Toast.makeText(activity, optString, Toast.LENGTH_LONG).show()
     }
 }

@@ -4,23 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="4dp"
+    android:layout_marginTop="16dp"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:layout_marginRight="16dp"
+    android:layout_marginLeft="16dp">
 
     <android.support.constraint.ConstraintLayout
+
         android:id="@+id/view_foreground"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:background="@drawable/roundcorners">
 
 
         <com.phaseII.placepoint.CustomViews.RoundedCornerImageView
             android:id="@+id/imageView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_margin="8dp"
+
             android:background="@mipmap/placeholder"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="2:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -71,9 +75,8 @@
             android:layout_width="0dp"
             android:clickable="true"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
-            android:background="@color/colorTrans"
-            android:padding="4dp"
+            android:background="@drawable/roundbottoms"
+android:padding="4dp"
             app:layout_constraintBottom_toBottomOf="@+id/imageView"
             app:layout_constraintEnd_toEndOf="@+id/imageView"
             app:layout_constraintStart_toStartOf="@+id/imageView">
@@ -171,6 +174,7 @@
         </android.support.constraint.ConstraintLayout>
 
         <View
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginEnd="8dp"
@@ -189,12 +193,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp">
+
+        android:background="@drawable/roundlight"
+        android:layout_marginTop="8dp">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/roundlight"
+
             android:orientation="vertical"
             android:padding="1dp">
 
@@ -202,7 +208,7 @@
                 android:id="@+id/constraintLayout4"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:background="@color/white"
+                android:background="@drawable/righttopround"
                 app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -258,13 +264,14 @@
                 android:id="@+id/title1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:background="@drawable/leftround"
                 android:drawableLeft="@drawable/ic_location_listing"
                 android:elevation="4dp"
                 android:fontFamily="@font/bold"
                 android:padding="8dp"
                 android:text="title"
-                android:textAllCaps="true"
+                android:maxLines="3"
+                android:textAllCaps="false"
                 android:textColor="@color/colorPrimary"
                 app:layout_constraintEnd_toStartOf="@+id/constraintLayout4"
                 app:layout_constraintStart_toStartOf="parent"
@@ -332,7 +339,7 @@
 
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="6dp"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -375,7 +382,7 @@
                     android:id="@+id/freeImage"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="2dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/roundlight"

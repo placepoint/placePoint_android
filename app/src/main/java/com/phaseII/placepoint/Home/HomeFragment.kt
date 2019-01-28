@@ -462,12 +462,16 @@ class HomeFragment : Fragment(), FlashContractHome.View {
     }
 
     override fun updateModeldata(position: String, claimed: String) {
-        val rr = flashLish[position.toInt()]
-        val countRe = rr.redeemed.toInt() + 1
-        rr.redeemed = countRe.toString()
-        rr.personRedeem = claimed
-        flashLish.set(position.toInt(), rr)
-        flashAdapter.notifyDataSetChanged()
+       try {
+           val rr = flashLish[position.toInt()]
+           val countRe = rr.redeemed.toInt() + 1
+           rr.redeemed = countRe.toString()
+           rr.personRedeem = claimed
+           flashLish.set(position.toInt(), rr)
+           flashAdapter.notifyDataSetChanged()
+       }catch (e:Exception){
+           e.printStackTrace()
+       }
     }
 
     override fun showToast(optString: String?) {

@@ -167,7 +167,7 @@ class Constants {
                     for (i in 0 until menuView.childCount) {
                         val item = menuView.getChildAt(i) as BottomNavigationItemView
 
-                        item.setShiftingMode(false)
+                       // item.setShiftingMode(false)
                         // set once again checked value, so view will be updated
 
                         item.setChecked(item.itemData.isChecked)
@@ -291,6 +291,27 @@ class Constants {
             return str
         }
 //-----------------------------------------------------------------------------
+ //-------------------------------------------------------------------------
+        @SuppressLint("SimpleDateFormat")
+        fun getDate2(updated_at: String): String {
+            val inputPattern = "yyyy-MM-dd h:mm:ss"
+            val outputPattern = "MMM dd, h:mm a"
+            val inputFormat = SimpleDateFormat(inputPattern)
+            val outputFormat = SimpleDateFormat(outputPattern)
+
+            var date: Date? = null
+            var str = ""
+
+            try {
+                date = inputFormat.parse(updated_at)
+                str = outputFormat.format(date)
+            } catch (e: ParseException) {
+                e.printStackTrace()
+            }
+
+            return str
+        }
+//-----------------------------------------------------------------------------
 
         fun getScheduleList(data: String): java.util.ArrayList<ModelSchdule>? {
             try {
@@ -325,6 +346,7 @@ class Constants {
             val matches = context.packageManager.queryIntentActivities(intent, 0)
             for (info in matches) {
                 if (info.activityInfo.packageName.toLowerCase().startsWith("com.facebook.katana")) {
+              //  if (info.activityInfo.packageName.toLowerCase().equals("com.facebook.katana")) {
                     intent.setPackage(info.activityInfo.packageName)
                     facebookAppFound = true
                     break

@@ -26,6 +26,7 @@ import android.webkit.URLUtil
 import android.widget.EditText
 import android.widget.Toast
 import com.phaseII.placepoint.BusEvents.ClaimPost
+import com.phaseII.placepoint.BusEvents.ClaimPostLiveFeed
 import com.phaseII.placepoint.Home.ModelClainService
 import kotlinx.android.synthetic.main.flash_main_item.view.*
 import java.text.SimpleDateFormat
@@ -50,9 +51,14 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val modelData = list.get(position)
-        holder.itemView.name.text = modelData.business_name
+        if (modelData.created_by=="1"){
+            holder.itemView.name.text = modelData.business_name
+        }else{
+            holder.itemView.name.text = "Posted on behalf of "+modelData.business_name
+        }
+        //holder.itemView.name.text = modelData.business_name
         holder.itemView.postText.text = modelData.description
-        holder.itemView.dateTime.text = Constants.getDate(modelData.updated_at)
+        holder.itemView.dateTime.text = Constants.getDate2(modelData.updated_at)
         if (!list[position].video_link.trim().isEmpty()){
             holder.itemView.videoUrl.visibility=View.GONE
             holder.itemView.videoUrl.text=Html.fromHtml("<u>"+list[position].video_link+"</u>")
@@ -226,7 +232,7 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
                 return@setOnClickListener
             }
             val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
-            val emailEntered=email!!.text.toString()
+            val emailEntered= email.text.toString()
             if(!isEmailValid(emailEntered)){
                 Toast.makeText(context,"Please enter valid email.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
@@ -234,10 +240,10 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
             //update.claimPostService(modelData,name!!.text.toString(),email!!.text.toString())
             var modelc= ModelClainService()
             modelc.postId=modelData.id
-            modelc.name=name!!.text.toString()
-            modelc.email=email!!.text.toString()
+            modelc.name= name.text.toString()
+            modelc.email= email.text.toString()
             modelc.position=position.toString()
-            Constants.getBus().post(ClaimPost(modelc))
+            Constants.getBus().post(ClaimPostLiveFeed(modelc))
             mAlertDialog.dismiss()
             //get text from EditTexts of custom layout
 

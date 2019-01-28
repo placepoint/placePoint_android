@@ -226,10 +226,14 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
             activity!!.finish()
         }
         navigationImage.setOnClickListener {
-            var gmmIntentUri = Uri.parse("google.navigation:q=${Constants.getPrefs(activity!!)!!.getString("lati", "")},${Constants.getPrefs(activity!!)!!.getString("longi", "")}")
-            var mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-            mapIntent.setPackage("com.google.android.apps.maps")
-            activity!!.startActivity(mapIntent)
+            try {
+                val gmmIntentUri = Uri.parse("google.navigation:q=${Constants.getPrefs(activity!!)!!.getString("lati", "")},${Constants.getPrefs(activity!!)!!.getString("longi", "")}")
+                val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                mapIntent.setPackage("com.google.android.apps.maps")
+                activity!!.startActivity(mapIntent)
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
         }
         openMap.setOnClickListener {
             val tracker = GpsTracker(activity)

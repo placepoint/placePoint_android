@@ -32,6 +32,7 @@ import android.support.v7.app.AlertDialog
 import android.widget.*
 import com.github.florent37.tutoshowcase.TutoShowcase
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationListener
 import com.phaseII.placepoint.ConstantClass.GpsTracker
 import kotlinx.android.synthetic.main.filter_dialog.view.*
 import java.util.*
