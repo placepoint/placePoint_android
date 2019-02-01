@@ -3,10 +3,12 @@ package com.phaseII.placepoint.Categories
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.phaseII.placepoint.AlphabetiComparator
 import com.phaseII.placepoint.BusEvents.ShowHomeButton
 import com.phaseII.placepoint.BusEvents.ShowMainLayout
@@ -47,7 +49,11 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
 
         holder.itemView.setOnClickListener {
 
-
+           var  mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+            val bundle = Bundle()
+            bundle.putString("town",Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,""))
+            bundle.putString("Category",parentList[position].name)
+            mFirebaseAnalytics.logEvent("Selected_Category", bundle)
             if (froms == "cat") {
                 val intent = Intent(context, SubCategoriesActivity::class.java)
                 intent.putExtra("catId", parentList[position].id)
@@ -127,7 +133,7 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
 
                         // (context as Activity).finish()
                     } else {
-                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
+                        Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, parentList[position].id).apply()
                         Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
                         Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, parentList[position].name).apply()
                         Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDSUB, parentList[position].id).apply()

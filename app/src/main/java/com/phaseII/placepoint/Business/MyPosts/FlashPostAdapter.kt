@@ -47,7 +47,7 @@ class FlashPostAdapter (private val context: Context, private val list: ArrayLis
         val modelData = list[position]
         val name = Constants.getPrefs(context)?.getString(Constants.MY_BUSINESS_NAME, "")!!
         val inFormat1 = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-        val inFormat = SimpleDateFormat("MMM, dd yyyy hh:mm aa")
+        val inFormat = SimpleDateFormat("MMM dd, hh:mm aa")
         val newDate = inFormat1.parse(modelData.created_at)
 
         if(modelData.ftype=="0"){

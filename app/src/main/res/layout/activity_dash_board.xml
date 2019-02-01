@@ -39,6 +39,9 @@
         app:layout_constraintRight_toRightOf="parent"
         app:itemBackground="@color/colorPrimary"
         android:fitsSystemWindows="true"
+        app:labelVisibilityMode="labeled"
+        android:animateLayoutChanges="false"
+        android:splitMotionEvents="false"
         app:itemIconTint="@drawable/bottom_nav_icon_color_selector"
         app:itemTextColor="@drawable/bottom_nav_icon_color_selector"
         app:menu="@menu/navigation"/>

@@ -242,6 +242,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/videoLayout">
 
                 <TextView
+
                     android:id="@+id/desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

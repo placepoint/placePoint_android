@@ -1,10 +1,14 @@
 package com.phaseII.placepoint.AboutBusiness
 
+import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
@@ -15,6 +19,9 @@ import android.widget.TextView
 import com.phaseII.placepoint.AboutBusiness.BusinessDetails.DetailFragment
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.R
+import android.support.v4.view.ViewPager.OnPageChangeListener
+
+
 
 
 class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
@@ -27,6 +34,8 @@ class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
     private lateinit var viewPager: ViewPager
     private lateinit var toolbar: Toolbar
     private lateinit var mText: TextView
+    private lateinit var clainIcon: TextView
+
     var fromFreeListing="no"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +80,18 @@ class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
         }
         setToolBar()
         init()
+        viewPager.addOnPageChangeListener(object : OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
+            override fun onPageSelected(position: Int) {
+               if(position==0){
+                   clainIcon.visibility = View.VISIBLE
+               }else{
+                   clainIcon.visibility = View.GONE
+               }
+            }
+        })
     }
 
     private fun setToolBar() {
@@ -81,9 +101,33 @@ class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
         //supportActionBar!!.setDisplayShowTitleEnabled(false)
         mText = toolbar.findViewById(R.id.toolbar_title) as TextView
         val mArrow = toolbar.findViewById(R.id.arrow_down) as ImageView
+         clainIcon = toolbar.findViewById(R.id.claim) as TextView
         mArrow.visibility = View.GONE
+        clainIcon.visibility = View.VISIBLE
         // mText.text = "Name"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        clainIcon.setOnClickListener{
+            showAlertForFaceBook()
+        }
+    }
+
+    private fun showAlertForFaceBook() {
+        val dialog = AlertDialog.Builder(this)
+        dialog.setCancelable(false)
+        dialog.setTitle("Alert")
+        dialog.setMessage("To claim this business, click the claim button below and you will be taken to the PlacePoint Facebook page where you can PM us to request ownership. Please specify the email account you want to claim ownership with.")
+        dialog.setPositiveButton("Claim", DialogInterface.OnClickListener { dialog, id ->
+          //  Constants.shareOnFaceBook("text","https://www.facebook.com/placepoint.ireland",this);
+            val i = Intent(Intent.ACTION_VIEW)
+            i.data = Uri.parse("https://www.facebook.com/placepoint.ireland")
+            startActivity(i)
+        })
+                .setNegativeButton("Cancel ", DialogInterface.OnClickListener { dialog, which ->
+                    dialog.dismiss()
+                })
+
+        val alert = dialog.create()
+        alert.show()
     }
 
     private fun init() {

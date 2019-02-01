@@ -76,7 +76,7 @@ class HomeFragment : Fragment(), FlashContractHome.View {
 
         if (!Constants.isAppOpenedFirstTime){
             Constants.isAppOpenedFirstTime=true
-            showAlert()
+           // showAlert()
         }
 
         Constants.getBus().register(this)

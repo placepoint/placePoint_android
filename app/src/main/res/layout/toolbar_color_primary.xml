@@ -11,74 +11,111 @@
     app:contentInsetStart="0dp"
     app:theme="@style/ToolbarStyle"
     app:titleTextColor="@android:color/white">
-<ImageView
-    android:visibility="gone"
-    android:id="@+id/back"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:src="@drawable/ic_backbutton"
-    android:layout_marginLeft="16dp"/>
-    <TextView
-        android:fontFamily="@font/bold"
-        android:id="@+id/toolbar_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:ellipsize="marquee"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:freezesText="true"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:text="@string/toolbar_title"
-        android:textAppearance="@android:style/TextAppearance.Medium"
-        android:textColor="@color/white" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="4"
+            android:src="@drawable/ic_backbutton"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/back"
+            android:layout_toLeftOf="@+id/imageLay"
+            android:id="@+id/toolbar_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:fontFamily="@font/bold"
+            android:freezesText="true"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text=""
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:textColor="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/imageLay"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/arrow_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_arrow_down"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="16dp"
+                android:fontFamily="@font/bold"
+                android:text="DONE"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/dots"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/ic_settings"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/ic_filter"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/sendMail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/ic_mail"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/claim"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Claim"
+android:textColor="@color/white"
+                android:layout_marginRight="16dp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </RelativeLayout>
 
 
-    <ImageView
-        android:id="@+id/arrow_down"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="8dp"
-        android:src="@drawable/ic_arrow_down"
-        android:visibility="gone" />
-
-    <TextView
-        android:fontFamily="@font/bold"
-        android:id="@+id/done"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginRight="16dp"
-        android:text="DONE"
-        android:textColor="@color/white"
-        android:visibility="gone" />
-    <ImageView
-        android:visibility="gone"
-        android:id="@+id/dots"
-        android:layout_gravity="right"
-        android:layout_marginRight="16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_settings"/>
- <ImageView
-      android:visibility="gone"
-        android:id="@+id/filter"
-        android:layout_gravity="right"
-        android:layout_marginRight="16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_filter"/>
-<ImageView
-      android:visibility="gone"
-        android:id="@+id/sendMail"
-        android:layout_gravity="right"
-        android:layout_marginRight="16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_mail"/>
 </android.support.v7.widget.Toolbar>
 
 

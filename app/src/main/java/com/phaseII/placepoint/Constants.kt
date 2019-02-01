@@ -66,7 +66,7 @@ class Constants {
         const val STRIPE_KEY = "pk_test_IWmxeaTtErjZDGj3Dcu2oJw0"
 
 
-        var isAppOpenedFirstTime=false
+        var isAppOpenedFirstTime = false
         const val TOKEN = "token"
         const val DEVICE_TYPE = "Android"
         val closedList: ArrayList<Boolean> = arrayListOf()
@@ -167,7 +167,7 @@ class Constants {
                     for (i in 0 until menuView.childCount) {
                         val item = menuView.getChildAt(i) as BottomNavigationItemView
 
-                       // item.setShiftingMode(false)
+                        // item.setShiftingMode(false)
                         // set once again checked value, so view will be updated
 
                         item.setChecked(item.itemData.isChecked)
@@ -290,8 +290,9 @@ class Constants {
 
             return str
         }
-//-----------------------------------------------------------------------------
- //-------------------------------------------------------------------------
+
+        //-----------------------------------------------------------------------------
+        //-------------------------------------------------------------------------
         @SuppressLint("SimpleDateFormat")
         fun getDate2(updated_at: String): String {
             val inputPattern = "yyyy-MM-dd h:mm:ss"
@@ -346,14 +347,18 @@ class Constants {
             val matches = context.packageManager.queryIntentActivities(intent, 0)
             for (info in matches) {
                 if (info.activityInfo.packageName.toLowerCase().startsWith("com.facebook.katana")) {
-              //  if (info.activityInfo.packageName.toLowerCase().equals("com.facebook.katana")) {
+                    //  if (info.activityInfo.packageName.toLowerCase().equals("com.facebook.katana")) {
                     intent.setPackage(info.activityInfo.packageName)
                     facebookAppFound = true
                     break
                 }
             }
             if (!facebookAppFound) {
-                Toast.makeText(context, "Facebook app not found.", Toast.LENGTH_LONG).show()
+                val i = Intent(Intent.ACTION_VIEW)
+                i.data = Uri.parse(link)
+                context.startActivity(i)
+                return
+                // Toast.makeText(context, "Facebook app not found.", Toast.LENGTH_LONG).show()
             }
             context.startActivity(intent)
         }

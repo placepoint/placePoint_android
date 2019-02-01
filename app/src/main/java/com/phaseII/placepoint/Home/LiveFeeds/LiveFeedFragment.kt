@@ -142,7 +142,7 @@ class LiveFeedFragment : Fragment(), HomeHelper {
 
     override fun getCatId(): String {
         if (activity != null && isAdded) {
-            if (Constants.getPrefs(activity!!)?.getString(Constants.FROMINTENT, "") == "profile") {
+           if (Constants.getPrefs(activity!!)?.getString(Constants.FROMINTENT, "") == "profile") {
                 val id = Constants.getPrefs(activity!!)?.getString(Constants.MAIN_CATEGORY, "")!!
                 val result: List<String> = id.split(",").map { it.trim() }
                 return if (result.size > 1) {

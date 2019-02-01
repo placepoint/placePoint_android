@@ -17,7 +17,10 @@ import com.phaseII.placepoint.More.MoreFragment
 import com.phaseII.placepoint.R
 import com.squareup.otto.Subscribe
 import android.content.DialogInterface
+import android.support.design.internal.BottomNavigationItemView
+import android.support.design.internal.BottomNavigationMenuView
 import android.support.v7.app.AlertDialog
+import android.util.Log
 import com.onesignal.OneSignal
 import com.phaseII.placepoint.Service
 import okhttp3.ResponseBody
@@ -52,8 +55,8 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
 //                Settings.Secure.ANDROID_ID)
 //        System.out.println("Device Id: "+android_id)
         bottomNavigation = findViewById(R.id.navigationView)
-        // viewPager = findViewById(R.id.pager)
-        //  setupViewPager(viewPager)
+        bottomNavigation.disableShiftMode()
+       // BottomNavigationViewHelper.removeShiftMode(bottomNavigation)
         addHomeFragment()
         onBottomNavigationClicks()
         Constants.getPrefs(this)!!.edit().putString("showBackYesOrNo", "home").apply()
@@ -74,6 +77,27 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
         }
 
         updateOnesignalidService(Constants.getPrefs(this)!!.getString(Constants.AUTH_CODE,""),userId,Constants.getPrefs(this)!!.getString(Constants.TOWN_ID,""))
+    }
+    @SuppressLint("RestrictedApi")
+    fun BottomNavigationView.disableShiftMode() {
+        val menuView = getChildAt(0) as BottomNavigationMenuView
+        try {
+            val shiftingMode = menuView::class.java.getDeclaredField("mShiftingMode")
+            shiftingMode.isAccessible = true
+            shiftingMode.setBoolean(menuView, false)
+            shiftingMode.isAccessible = false
+            for (i in 0 until menuView.childCount) {
+                val item = menuView.getChildAt(i) as BottomNavigationItemView
+                item.setShifting(false)
+                // set once again checked value, so view will be updated
+                item.setChecked(item.itemData.isChecked)
+            }
+        } catch (e: NoSuchFieldException) {
+            Log.e("", "Unable to get shift mode field", e)
+        } catch (e: IllegalStateException) {
+            Log.e("", "Unable to change value of shift mode", e)
+
+        }
     }
 
     private fun updateOnesignalidService(auth_code1: String, userId: String, townId: String) {
