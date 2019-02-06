@@ -112,6 +112,8 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
         recyclerViewReedeem = findViewById(R.id.recyclerViewReedeem)
         Claimed = findViewById(R.id.Claimed)
         ReedeemedLay = findViewById(R.id.ReedeemedLay)
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerViewReedeem.setNestedScrollingEnabled(false);
         setSearchView()
     }
 
@@ -180,6 +182,7 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
                             val linear = LinearLayoutManager(applicationContext)
                             recyclerViewReedeem.adapter = adapter
                             recyclerViewReedeem.layoutManager = linear
+
                         } else {
 
                             ReedeemedLay.visibility = View.GONE

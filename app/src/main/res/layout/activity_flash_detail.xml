@@ -28,16 +28,21 @@
         android:fontFamily="@font/regular"
         android:iconifiedByDefault="false"
         app:queryHint="Search" />
-
+<ScrollView
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@+id/redeemButtonF"
+    android:layout_below="@+id/searchView">
     <LinearLayout
-        android:layout_marginTop="16dp"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/redeemButtonF"
-        android:layout_below="@+id/searchView"
         android:orientation="vertical">
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/Claimed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,6 +54,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:text="Claimed"
+                android:textSize="18sp"
                 android:textColor="@color/colorPrimaryDark"
                 android:textStyle="bold"/>
 
@@ -56,16 +62,18 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp" />
+                />
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/ReedeemedLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
+                android:textSize="18sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -78,18 +86,18 @@
                 android:id="@+id/recyclerViewReedeem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp" />
+                />
         </LinearLayout>
     </LinearLayout>
-
+</ScrollView>
     <TextView
         android:id="@+id/redeemButtonF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@color/colorPrimaryDark"
         android:fontFamily="@font/bold"
         android:gravity="center"

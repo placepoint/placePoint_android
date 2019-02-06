@@ -13,6 +13,7 @@
         android:id="@+id/line"
         android:layout_width="0.5dp"
         android:layout_height="0dp"
+        android:layout_marginTop="8dp"
         android:background="@color/colorText"
         app:layout_constraintBottom_toBottomOf="@+id/layout"
         app:layout_constraintEnd_toStartOf="@+id/arrow"
@@ -65,11 +66,10 @@
 
             <TextView
                 android:id="@+id/header"
-                android:layout_weight="1"
-                android:layout_toLeftOf="@+id/imageLay"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/shape_light_green"
+                android:layout_toLeftOf="@+id/imageLay"
+                android:layout_weight="1"
                 android:gravity="center"
                 android:text="***Flash Alert Sale***"
                 android:textColor="@color/white" />
