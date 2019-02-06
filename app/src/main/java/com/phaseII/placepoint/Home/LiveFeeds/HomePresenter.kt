@@ -92,13 +92,13 @@ class HomePresenter(val view: HomeHelper) {
         })
     }
 
-    fun claimPostCall(auth_code: String, postId: String, name: String,
+    fun claimPostCall(auth_code: String, postId: String, name: String, phone_no: String,
                       email: String, position: String) {
         view.showLoader()
 
         val retrofit = Constants.getWebClient()
         val service = retrofit!!.create(Service::class.java)
-        val call: Call<ResponseBody> = service.claimPost(auth_code, postId, name, email)
+        val call: Call<ResponseBody> = service.claimPost(auth_code, postId, name,phone_no, email)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 view.hideLoader()

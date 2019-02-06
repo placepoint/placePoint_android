@@ -9,22 +9,19 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.R
-import android.widget.ImageView
-import com.phaseII.placepoint.R.id.searchView
-import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
-import com.phaseII.placepoint.AboutBusiness.BusinessDetails.DetailFragment.setTitle
+import android.widget.*
 
 
 class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
 
     lateinit var msearchView: SearchView
     lateinit var recyclerView: RecyclerView
+    lateinit var recyclerViewReedeem: RecyclerView
+    lateinit var Claimed: LinearLayout
+    lateinit var ReedeemedLay: LinearLayout
     lateinit var redeemButton: TextView
     lateinit var noDataFlash: TextView
     lateinit var progressBarFlash: ProgressBar
@@ -33,7 +30,10 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
     private lateinit var sendMail: ImageView
     private lateinit var mPresenter: FlashDetailPresenter
     private var claimedList = ArrayList<ModelFDetail>()
+    private var claimedListRedeemed = ArrayList<ModelFDetail>()
+    private var claimedListUnRedeemed = ArrayList<ModelFDetail>()
     private lateinit var adapter: FlashDetailAdapter
+    private lateinit var adapterC: FlashDetailAdapterClaim
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,9 +86,9 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
 
     private fun clicks() {
         redeemButton.setOnClickListener {
-            if (claimedList.size > 0) {
-                if (adapter != null) {
-                    val ids: String = adapter.getSectedIds()
+            if (claimedListUnRedeemed.size > 0) {
+                if (adapterC != null) {
+                    val ids: String = adapterC.getSectedIds()
                     if (ids.isEmpty()) {
                         Toast.makeText(this, "Please select to redeem", Toast.LENGTH_LONG).show()
                     } else {
@@ -109,6 +109,9 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
         msearchView = findViewById(R.id.searchView)
         recyclerView = findViewById(R.id.recyclerView)
         redeemButton = findViewById(R.id.redeemButtonF)
+        recyclerViewReedeem = findViewById(R.id.recyclerViewReedeem)
+        Claimed = findViewById(R.id.Claimed)
+        ReedeemedLay = findViewById(R.id.ReedeemedLay)
         setSearchView()
     }
 
@@ -142,32 +145,67 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
             override fun onQueryTextChange(newText: String): Boolean {
                 //closeButton.setVisibility(View.VISIBLE);
                 var newList = ArrayList<ModelFDetail>()
+                var newList2 = ArrayList<ModelFDetail>()
                 if (newText.trim { it <= ' ' } == "") {
 
-                    if (claimedList.size > 0) {
-                        noDataFlash.visibility = View.GONE
-                        recyclerView.visibility = View.VISIBLE
-                        adapter = FlashDetailAdapter(applicationContext, claimedList)
+                    if (claimedListRedeemed.size > 0) {
+                        //noDataFlash.visibility = View.GONE
+                        ReedeemedLay.visibility = View.VISIBLE
+                        adapter = FlashDetailAdapter(applicationContext, claimedListRedeemed)
                         val linear = LinearLayoutManager(applicationContext)
-                        recyclerView.adapter = adapter
-                        recyclerView.layoutManager = linear
+                        recyclerViewReedeem.adapter = adapter
+                        recyclerViewReedeem.layoutManager = linear
                     } else {
-                        noDataFlash.visibility = View.VISIBLE
-                        recyclerView.visibility = View.GONE
+                       // noDataFlash.visibility = View.VISIBLE
+                        ReedeemedLay.visibility = View.GONE
+                    }
+                 if (claimedListUnRedeemed.size > 0) {
+                        //noDataFlash.visibility = View.GONE
+                        Claimed.visibility = View.VISIBLE
+                        adapterC = FlashDetailAdapterClaim(applicationContext, claimedListUnRedeemed)
+                        val linear = LinearLayoutManager(applicationContext)
+                     recyclerView.adapter = adapterC
+                     recyclerView.layoutManager = linear
+                    } else {
+                       // noDataFlash.visibility = View.VISIBLE
+                     Claimed.visibility = View.GONE
                     }
                 } else {
-                    newList = adapter.getSelectedItems(newText)
-                    if (newList.size > 0) {
-                        noDataFlash.visibility = View.GONE
-                        recyclerView.visibility = View.VISIBLE
-                        adapter = FlashDetailAdapter(applicationContext, newList)
-                        val linear = LinearLayoutManager(applicationContext)
-                        recyclerView.adapter = adapter
-                        recyclerView.layoutManager = linear
-                    } else {
+                    if (adapter!=null) {
+                        newList = adapter.getSelectedItems(newText)
+                        if (newList.size > 0) {
+                            ReedeemedLay.visibility = View.VISIBLE
 
-                        noDataFlash.visibility = View.VISIBLE
-                        recyclerView.visibility = View.GONE
+                            adapter = FlashDetailAdapter(applicationContext, newList)
+                            val linear = LinearLayoutManager(applicationContext)
+                            recyclerViewReedeem.adapter = adapter
+                            recyclerViewReedeem.layoutManager = linear
+                        } else {
+
+                            ReedeemedLay.visibility = View.GONE
+
+                        }
+                    }
+                    if (adapterC!=null) {
+                        newList2 = adapterC.getSelectedItems(newText)
+                        if (newList2.size > 0) {
+                            Claimed.visibility = View.VISIBLE
+
+                            adapterC = FlashDetailAdapterClaim(applicationContext, newList2)
+                            val linear = LinearLayoutManager(applicationContext)
+                            recyclerView.adapter = adapterC
+                            recyclerView.layoutManager = linear
+                        } else {
+
+                            Claimed.visibility = View.GONE
+
+                        }
+                    }
+
+                    if (newList.size==0&&newList2.size==0){
+                        noDataFlash.visibility=View.VISIBLE
+                    }else{
+                        noDataFlash.visibility=View.GONE
                     }
                 }
                 return false
@@ -194,7 +232,7 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
 
     override fun noData() {
         noDataFlash.visibility = View.VISIBLE
-        recyclerView.visibility=View.GONE
+        //recyclerView.visibility=View.GONE
     }
 
     override fun showToast(optString: String) {
@@ -204,15 +242,46 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
 
     override fun setAdapter(list: ArrayList<ModelFDetail>) {
         claimedList = list
-        if (list.size > 0) {
-            recyclerView.visibility=View.VISIBLE
-            noDataFlash.visibility = View.GONE
-            adapter = FlashDetailAdapter(this, list)
-            val linear = LinearLayoutManager(this)
-            recyclerView.adapter = adapter
-            recyclerView.layoutManager = linear
+        claimedListUnRedeemed.clear()
+        claimedListRedeemed.clear()
+        for(i in 0 until list.size){
+            if (list[i].status=="0"){
+                claimedListUnRedeemed.add(list[i])
+
+            }else{
+                claimedListRedeemed.add(list[i])
+            }
+        }
+        adapterC = FlashDetailAdapterClaim(this, claimedListUnRedeemed)
+        adapter = FlashDetailAdapter(this, claimedListRedeemed)
+        if (claimedListRedeemed.size > 0||claimedListUnRedeemed.size>0) {
+            if (claimedListUnRedeemed.size>0){
+                Claimed.visibility=View.VISIBLE
+                recyclerView.visibility=View.VISIBLE
+                noDataFlash.visibility = View.GONE
+
+                val linear = LinearLayoutManager(this)
+                recyclerView.adapter = adapterC
+                recyclerView.layoutManager = linear
+            }else{
+                Claimed.visibility=View.GONE
+            }
+            if (claimedListRedeemed.size>0){
+                ReedeemedLay.visibility=View.VISIBLE
+                recyclerViewReedeem.visibility=View.VISIBLE
+                noDataFlash.visibility = View.GONE
+
+                val linear = LinearLayoutManager(this)
+                recyclerViewReedeem.adapter = adapter
+                recyclerViewReedeem.layoutManager = linear
+            }else{
+                ReedeemedLay.visibility=View.GONE
+
+            }
+
         } else {
-            recyclerView.visibility=View.GONE
+            Claimed.visibility=View.GONE
+            ReedeemedLay.visibility=View.GONE
             noDataFlash.visibility = View.VISIBLE
         }
 

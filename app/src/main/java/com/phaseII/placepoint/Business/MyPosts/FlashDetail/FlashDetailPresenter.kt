@@ -12,9 +12,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
 
-class FlashDetailPresenter (var view:FlashDetailContract.View){
-    fun getDetails(auth_code1: String,postId: String) {
-          view.showProgress()
+class FlashDetailPresenter(var view: FlashDetailContract.View) {
+    fun getDetails(auth_code1: String, postId: String) {
+        view.showProgress()
 
         val retrofit = Constants.getWebClient()
         val service = retrofit!!.create(Service::class.java)
@@ -27,11 +27,11 @@ class FlashDetailPresenter (var view:FlashDetailContract.View){
                         val res = response.body()!!.string()
                         val `object` = JSONObject(res)
                         val status = `object`.optString("status")
-                        if (status=="true") {
-                      view.setAdapter(parseData(`object`.optJSONArray("data")))
-                     }else{
-view.noData()
-    }
+                        if (status == "true") {
+                            view.setAdapter(parseData(`object`.optJSONArray("data")))
+                        } else {
+                            view.noData()
+                        }
 
                     } catch (e: IOException) {
                         e.printStackTrace()
@@ -52,26 +52,26 @@ view.noData()
     }
 
     private fun parseData(optJSONArray: JSONArray?): ArrayList<ModelFDetail> {
-var list= ArrayList<ModelFDetail>()
-        if (optJSONArray != null&&optJSONArray.length()>0) {
-            for (i in 0 until optJSONArray.length()){
-                val dataObject= optJSONArray.optJSONObject(i)
+        var list = ArrayList<ModelFDetail>()
+        if (optJSONArray != null && optJSONArray.length() > 0) {
+            for (i in 0 until optJSONArray.length()) {
+                val dataObject = optJSONArray.optJSONObject(i)
 
-                val model=ModelFDetail()
-                model.id=dataObject.optString("id")
-                model.post_id=dataObject.optString("post_id")
-                model.name=dataObject.optString("name")
-                model.email=dataObject.optString("email")
-                model.status=dataObject.optString("status")
-                model.created_at=dataObject.optString("created_at")
-                model.updated_at=dataObject.optString("updated_at")
-                if (model.status=="0"){
+                val model = ModelFDetail()
+                model.id = dataObject.optString("id")
+                model.post_id = dataObject.optString("post_id")
+                model.name = dataObject.optString("name")
+                model.email = dataObject.optString("email")
+                model.status = dataObject.optString("status")
+                model.created_at = dataObject.optString("created_at")
+                model.updated_at = dataObject.optString("updated_at")
+               // if (model.status == "0") {
                     list.add(model)
-                }
+                //}
             }
-                //return
+            //return
         }
-       return list
+        return list
     }
 
     fun deleteEmails(auth_code1: String, s: String, postId: String) {
@@ -80,7 +80,7 @@ var list= ArrayList<ModelFDetail>()
 
         val retrofit = Constants.getWebClient()
         val service = retrofit!!.create(Service::class.java)
-        val call: Call<ResponseBody> = service.changeFlashPostStatus(auth_code1,s, postId)
+        val call: Call<ResponseBody> = service.changeFlashPostStatus(auth_code1, s, postId)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 view.hideProgress()
@@ -89,9 +89,9 @@ var list= ArrayList<ModelFDetail>()
                         val res = response.body()!!.string()
                         val `object` = JSONObject(res)
                         val status = `object`.optString("status")
-                        if (status=="true") {
-                            getDetails(auth_code1,postId)
-                        }else{
+                        if (status == "true") {
+                            getDetails(auth_code1, postId)
+                        } else {
                             view.noData()
                         }
 
@@ -129,7 +129,7 @@ var list= ArrayList<ModelFDetail>()
                         val `object` = JSONObject(res)
                         val status = `object`.optString("status")
                         //if (status=="true") {
-                            view.showToast(`object`.optString("msg"))
+                        view.showToast(`object`.optString("msg"))
 //                        }else{
 //
 //                        }

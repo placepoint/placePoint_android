@@ -230,10 +230,8 @@ interface Service {
     @FormUrlEncoded
     @POST("updatePassword")
     fun updatePassword(@Field("auth_code") auth_code: String,
-                       @Field("email") email: String,
-                       @Field("current") current: String,
-                       @Field("new") new: String,
-                       @Field("confirm") confirm: String): Call<ResponseBody>
+                       @Field("old_password") new: String,
+                       @Field("new_password") confirm: String): Call<ResponseBody>
 
     @FormUrlEncoded
     @POST("getSchedulePost")
@@ -282,6 +280,7 @@ interface Service {
     fun claimPost(@Field("auth_code") auth_code: String,
                             @Field("post_id") town_id: String,
                             @Field("name") name: String,
+                            @Field("phone_no") phone_no: String,
                             @Field("email") email: String): Call<ResponseBody>
 @FormUrlEncoded
     @POST("getClaimedFlashPostList")

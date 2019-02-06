@@ -50,12 +50,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/arrow"
         app:layout_constraintTop_toTopOf="parent">
-        <RelativeLayout
+        <LinearLayout
+            android:orientation="horizontal"
             android:id="@+id/headerLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/shape_light_green"
             android:gravity="center"
+            android:padding="8dp"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -63,35 +65,31 @@
 
             <TextView
                 android:id="@+id/header"
+                android:layout_weight="1"
                 android:layout_toLeftOf="@+id/imageLay"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="@drawable/shape_light_green"
                 android:gravity="center"
-                android:layout_margin="8dp"
                 android:text="***Flash Alert Sale***"
                 android:textColor="@color/white" />
             <RelativeLayout
-                android:layout_alignParentRight="true"
                 android:id="@+id/imageLay"
-                android:layout_centerVertical="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="9">
 
                 <ImageView
                     android:id="@+id/flashImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
+                    android:layout_centerInParent="true"
                     android:layout_marginStart="0dp"
                     android:layout_marginLeft="0dp"
                     app:srcCompat="@drawable/white_dots"
                     tools:ignore="VectorDrawableCompat" />
             </RelativeLayout>
-        </RelativeLayout>
+        </LinearLayout>
 
 
         <android.support.constraint.ConstraintLayout

@@ -49,11 +49,6 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
 
         holder.itemView.setOnClickListener {
 
-           var  mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
-            val bundle = Bundle()
-            bundle.putString("town",Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,""))
-            bundle.putString("Category",parentList[position].name)
-            mFirebaseAnalytics.logEvent("Selected_Category", bundle)
             if (froms == "cat") {
                 val intent = Intent(context, SubCategoriesActivity::class.java)
                 intent.putExtra("catId", parentList[position].id)
@@ -68,6 +63,13 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
 
                 var inSubCategory = Constants.getPrefs(context)!!.getString("subcategory", "0");
                 if (inSubCategory == "0") {
+                    var  mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+                    val bundle = Bundle()
+                    bundle.putString("town",Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,""))
+                    bundle.putString("Category",parentList[position].name)
+                    mFirebaseAnalytics.logEvent(Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,"")+" - "+parentList[position].name, bundle)
+
+
                     val stringBuilder = StringBuilder("")
                     var prefix = ""
                     for (i in 0 until parentList.size) {
@@ -110,7 +112,13 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
                     }
 
                 } else {
-                     Constants.getPrefs(context)!!.edit().putString("subcategory", "2").apply()
+                    var  mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+                    val bundle = Bundle()
+                    bundle.putString("town",Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,""))
+                    bundle.putString("Category",parentList[position].name)
+                    mFirebaseAnalytics.logEvent(Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,"")+" - "+parentList[position].name, bundle)
+
+                    Constants.getPrefs(context)!!.edit().putString("subcategory", "2").apply()
                     val stringBuilder = StringBuilder("")
                     var prefix = ""
                     for (i in 0 until parentList.size) {

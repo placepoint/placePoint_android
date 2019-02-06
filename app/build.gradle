@@ -23,12 +23,12 @@ android {
         applicationId "com.user24.placepoint"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 24
-        versionName "1.0.23"
+        versionCode 26
+        versionName "1.0.25"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         manifestPlaceholders = [
-                onesignal_app_id: '465f4f78-03a9-469e-a04f-da5f35c649d0',
+                onesignal_app_id               : '465f4f78-03a9-469e-a04f-da5f35c649d0',
                 onesignal_google_project_number: '643287937740'
         ]
     }

@@ -12,10 +12,16 @@ import com.phaseII.placepoint.R
 import com.phaseII.placepoint.Town.TownActivity
 import kotlinx.android.synthetic.main.more_item.view.*
 import android.app.Activity
+import android.support.v7.app.AlertDialog
+import android.widget.EditText
+import android.widget.TextView
+import com.phaseII.placepoint.BusEvents.ClaimPostLiveFeed
 import com.phaseII.placepoint.BusEvents.LogoutEvent
 import com.phaseII.placepoint.DashBoard.DashBoardActivity
+import com.phaseII.placepoint.Home.ModelClainService
 import com.phaseII.placepoint.PrivacyPolicy.PrivacyPolicyActivity
 import com.phaseII.placepoint.Service
+import com.phaseII.placepoint.UpdatePassword.UpdatePasswordActivity
 import okhttp3.ResponseBody
 import org.json.JSONException
 import org.json.JSONObject
@@ -55,7 +61,11 @@ class MoreAdapter(var context: Context, var items: ArrayList<String>) : Recycler
                 intent.putExtra("from", "true")
                 context.startActivity(intent)
             }
-            if (position == 3) {
+             if (position ==3) {
+                 val intent = Intent(context, UpdatePasswordActivity::class.java)
+                 context.startActivity(intent)
+            }
+            if (position == 4) {
                 val cat = Constants.getPrefs(context)!!.getString(Constants.CATEGORY_IDS, "")
                 val townId = Constants.getPrefs(context)!!.getString(Constants.TOWN_ID, "")
                 val townName = Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME, "")
@@ -88,6 +98,8 @@ class MoreAdapter(var context: Context, var items: ArrayList<String>) : Recycler
             }
         }
     }
+
+
 
     private fun logoutApi(auth_code: String) {
 

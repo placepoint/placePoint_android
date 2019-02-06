@@ -458,7 +458,7 @@ class HomeFragment : Fragment(), FlashContractHome.View {
     fun getEventValue(event: ClaimPost) {
 
         val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
-        mPresenter.claimPostCall(auth_code, event.model.postId, event.model.name, event.model.email, event.model.position)
+        mPresenter.claimPostCall(auth_code, event.model.postId, event.model.name, event.model.phoneNo, event.model.email, event.model.position)
     }
 
     override fun updateModeldata(position: String, claimed: String) {

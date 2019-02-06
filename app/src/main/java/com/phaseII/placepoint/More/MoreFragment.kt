@@ -62,6 +62,7 @@ class MoreFragment : Fragment(){
             items.add("Privacy Policy")
             items.add("Terms and conditions")
             items.add("Choose Town")
+            items.add("Reset Password")
             items.add("Logout")
         }else{
             items.add("Privacy Policy")

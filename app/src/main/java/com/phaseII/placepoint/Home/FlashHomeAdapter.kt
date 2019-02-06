@@ -250,6 +250,7 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
         val cancel = mAlertDialog.findViewById<TextView>(R.id.cancel)
         val name = mAlertDialog.findViewById<EditText>(R.id.name)
         val email = mAlertDialog.findViewById<EditText>(R.id.emailClaim)
+        val phoneNo = mAlertDialog.findViewById<EditText>(R.id.phoneNo)
         done!!.setOnClickListener {
             //dismiss dialog
             if (name!!.text.toString().isEmpty() || email!!.text.toString().isEmpty()) {
@@ -262,6 +263,12 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
                 Toast.makeText(context, "Please enter valid email.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
+            if (phoneNo != null) {
+                if (phoneNo.text.toString().trim().isEmpty()||phoneNo.text.toString().length<10) {
+                    Toast.makeText(context, "Please enter 10 digit Phone Number.", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+            }
             //update.claimPostService(modelData,name!!.text.toString(),email!!.text.toString())
             if (emailClaim != email.text.toString()) {
                 countClaim = 0
@@ -272,6 +279,7 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
             modelc.name = name.text.toString()
             modelc.email = email.text.toString()
             modelc.position = position.toString()
+            modelc.phoneNo = phoneNo!!.text.toString()
             emailClaim = email.text.toString()
             countClaim += 1
             Constants.getBus().post(ClaimPost(modelc))

@@ -207,7 +207,7 @@ class LiveFeedFragment : Fragment(), HomeHelper {
     fun getEventValue(event: ClaimPostLiveFeed) {
 
         val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
-        mPresenter.claimPostCall(auth_code, event.model.postId, event.model.name, event.model.email, event.model.position)
+        mPresenter.claimPostCall(auth_code, event.model.postId, event.model.name, event.model.phoneNo, event.model.email, event.model.position)
     }
     @Subscribe
     fun getEventValue(event: LiveListingBackEvent) {

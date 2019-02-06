@@ -54,13 +54,13 @@ class FlashPresenterHome(var view: FlashContractHome.View) {
         })
     }
 
-    fun claimPostCall(auth_code: String, postId: String, name: String,
+    fun claimPostCall(auth_code: String, postId: String, name: String, phoneNo: String,
                       email: String, position: String) {
         view.showProgress()
 
         val retrofit = Constants.getWebClient()
         val service = retrofit!!.create(Service::class.java)
-        val call: Call<ResponseBody> = service.claimPost(auth_code, postId, name, email)
+        val call: Call<ResponseBody> = service.claimPost(auth_code, postId, name,phoneNo, email)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 view.hideProgress()

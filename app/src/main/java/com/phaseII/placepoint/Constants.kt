@@ -157,8 +157,9 @@ class Constants {
         //-----Disable Dashboard bottom navigation scroll----------------
         @SuppressLint("RestrictedApi")
         fun disableShiftMode(view: BottomNavigationView) {
-            val menuView = view.getChildAt(0) as BottomNavigationMenuView
+
             try {
+                val menuView = view.getChildAt(0) as BottomNavigationMenuView
                 val shiftingMode = menuView.javaClass.getDeclaredField("mShiftingMode")
                 shiftingMode.isAccessible = true
                 shiftingMode.setBoolean(menuView, false)

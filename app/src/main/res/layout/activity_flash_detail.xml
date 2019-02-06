@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/background"
+    android:orientation="vertical"
     tools:context="com.phaseII.placepoint.Business.MyPosts.FlashDetail.FlashDetailActivity">
+
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar_color_primary"
@@ -15,55 +16,105 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.SearchView
-        android:layout_below="@+id/toolbar"
         android:id="@+id/searchView"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        app:queryHint="Search"
-        android:clickable="true"
-        android:iconifiedByDefault="false"
-        android:fontFamily="@font/regular"
-        android:background="@drawable/roundcorner_search"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_below="@+id/searchView"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/roundcorner_search"
+        android:clickable="true"
+        android:fontFamily="@font/regular"
+        android:iconifiedByDefault="false"
+        app:queryHint="Search" />
+
+    <LinearLayout
+        android:layout_marginTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/redeemButtonF"/>
+        android:layout_above="@+id/redeemButtonF"
+        android:layout_below="@+id/searchView"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/Claimed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="Claimed"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="bold"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ReedeemedLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="Redeemed"
+                android:textColor="@color/colorPrimaryDark"
+               android:textStyle="bold" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerViewReedeem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+
     <TextView
         android:id="@+id/redeemButtonF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:background="@color/colorPrimaryDark"
-        android:textColor="@color/white"
-        android:text="Redeem"
-        android:fontFamily="@font/bold"
+        android:layout_alignParentBottom="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
+        android:background="@color/colorPrimaryDark"
+        android:fontFamily="@font/bold"
+        android:gravity="center"
         android:padding="16dp"
-        android:layout_alignParentBottom="true"/>
+        android:text="Redeem"
+        android:textColor="@color/white" />
+
     <ProgressBar
-        android:visibility="gone"
+        android:id="@+id/progressBarFlash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/progressBarFlash"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/noDataFlash"
-        android:visibility="gone"
-        android:layout_below="@+id/searchView"
         android:layout_width="match_parent"
-        android:gravity="center"
-        android:background="@color/white"
-        android:textColor="@color/black"
-        android:text="No Data"
-        android:fontFamily="@font/bold"
         android:layout_height="match_parent"
-        android:layout_above="@+id/redeemButtonF"/>
+        android:layout_above="@+id/redeemButtonF"
+        android:layout_below="@+id/searchView"
+        android:background="@color/white"
+        android:fontFamily="@font/bold"
+        android:gravity="center"
+        android:text="No Data"
+        android:textColor="@color/black"
+        android:visibility="gone" />
 
 </RelativeLayout>

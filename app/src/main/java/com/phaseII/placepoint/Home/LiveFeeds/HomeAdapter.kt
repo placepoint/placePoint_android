@@ -2,6 +2,7 @@ package com.phaseII.placepoint.Home.LiveFeeds
 
 import android.content.*
 import android.net.Uri
+import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.text.Html
 import android.text.SpannableStringBuilder
@@ -25,6 +26,7 @@ import android.support.v7.app.AlertDialog
 import android.webkit.URLUtil
 import android.widget.EditText
 import android.widget.Toast
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.phaseII.placepoint.BusEvents.ClaimPost
 import com.phaseII.placepoint.BusEvents.ClaimPostLiveFeed
 import com.phaseII.placepoint.Home.ModelClainService
@@ -76,6 +78,13 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
 
         }
         holder.itemView.name.setOnClickListener {
+
+            var  mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+            val bundle = Bundle()
+            bundle.putString("town",Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,""))
+            bundle.putString("Category",modelData.business_name)
+            mFirebaseAnalytics.logEvent(Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,"")+" - "+modelData.business_name, bundle)
+
             val click=Constants.getPrefs(context!!)!!.getString(Constants.STOPCLICK,"")
             if (click=="no") {
                 val intent = Intent(context, AboutBusinessActivity::class.java)
@@ -225,6 +234,7 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
         val cancel=mAlertDialog.findViewById<TextView>(R.id.cancel)
         val name=mAlertDialog.findViewById<EditText>(R.id.name)
         val email=mAlertDialog.findViewById<EditText>(R.id.emailClaim)
+        val phoneNo=mAlertDialog.findViewById<EditText>(R.id.phoneNo)
         done!!.setOnClickListener {
             //dismiss dialog
             if (name!!.text.toString().isEmpty()||email!!.text.toString().isEmpty()){
@@ -237,11 +247,16 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
                 Toast.makeText(context,"Please enter valid email.", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
+           if(phoneNo!!.text.toString().isEmpty()||phoneNo!!.text.toString().length<10){
+                Toast.makeText(context,"Please enter 10 digit phone number.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
             //update.claimPostService(modelData,name!!.text.toString(),email!!.text.toString())
             var modelc= ModelClainService()
             modelc.postId=modelData.id
             modelc.name= name.text.toString()
             modelc.email= email.text.toString()
+            modelc.phoneNo= phoneNo!!.text.toString()
             modelc.position=position.toString()
             Constants.getBus().post(ClaimPostLiveFeed(modelc))
             mAlertDialog.dismiss()

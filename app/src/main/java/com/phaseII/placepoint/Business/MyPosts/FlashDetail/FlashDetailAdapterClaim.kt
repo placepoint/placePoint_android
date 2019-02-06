@@ -7,15 +7,16 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.CompoundButton
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.phaseII.placepoint.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
-
-class FlashDetailAdapter(private var context: Context, private val list: ArrayList<ModelFDetail>) : RecyclerView.Adapter<FlashDetailAdapter.ViewHolder>() {
+class FlashDetailAdapterClaim(private var context: Context, private val list: ArrayList<ModelFDetail>) : RecyclerView.Adapter<FlashDetailAdapterClaim.ViewHolder>() {
 
     private var inflater = LayoutInflater.from(context)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -39,7 +40,7 @@ class FlashDetailAdapter(private var context: Context, private val list: ArrayLi
         holder.dateTextFlash.text = parseDateToddMMyyyy2(modelData.created_at)
         holder.cardView.setCardBackgroundColor(context.resources.getColor(R.color.white))
 
-            holder.checkBoxFlash.visibility=View.INVISIBLE
+            holder.checkBoxFlash.visibility= View.VISIBLE
 
     }
 
@@ -74,7 +75,7 @@ class FlashDetailAdapter(private var context: Context, private val list: ArrayLi
 
     fun parseDateToddMMyyyy2(time: String): String? {
         val inputPattern = "yyyy-MM-dd hh:mm:ss"
-         val outputPattern = "dd MM yyyy"
+        val outputPattern = "dd MM yyyy"
         //val outputPattern = "hh:mm a"
         val inputFormat = SimpleDateFormat(inputPattern)
         val outputFormat = SimpleDateFormat(outputPattern)
