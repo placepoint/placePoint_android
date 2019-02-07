@@ -23,8 +23,8 @@ android {
         applicationId "com.user24.placepoint"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 26
-        versionName "1.0.25"
+        versionCode 27
+        versionName "1.0.26"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         manifestPlaceholders = [

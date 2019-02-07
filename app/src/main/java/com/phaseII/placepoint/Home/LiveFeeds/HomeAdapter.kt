@@ -79,11 +79,12 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
         }
         holder.itemView.name.setOnClickListener {
 
+            var townName=Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,"")
             var  mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
             val bundle = Bundle()
             bundle.putString("town",Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,""))
             bundle.putString("Category",modelData.business_name)
-            mFirebaseAnalytics.logEvent(Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,"")+" - "+modelData.business_name, bundle)
+            mFirebaseAnalytics.logEvent(townName+" - "+modelData.business_name, bundle)
 
             val click=Constants.getPrefs(context!!)!!.getString(Constants.STOPCLICK,"")
             if (click=="no") {
