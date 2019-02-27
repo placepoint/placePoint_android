@@ -6,51 +6,71 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.*
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import android.support.constraint.ConstraintLayout
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.Home.ModelHome
 import com.phaseII.placepoint.R
 import com.phaseII.placepoint.SubscriptionPlan.SubscriptionActivity
 import com.phaseII.placepoint.Town.ModelTown
-import kotlinx.android.synthetic.main.fragment_my_timeline.*
 import java.util.ArrayList
 import java.util.HashSet
 
 
-class MyPostsFragment : Fragment(), MyTimelineHelper {
+
+
+
+
+
+
+
+
+
+class MyPostsFragment : Fragment(), MyTimelineHelper, MyTimelineAdapter.BumpPost {
 
     private lateinit var mAdapter: MyTimelineAdapter
     lateinit var progressBar: ProgressBar
     lateinit var upgrade: Button
     private lateinit var mPresenter: MyTimelinePresenter
+    private lateinit var noSubLay: ConstraintLayout
 
+    private lateinit var mainLay: ConstraintLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var noPosts: TextView
     private val POSTCODE: Int = 111
+    var firstPos=0
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val v = inflater.inflate(R.layout.fragment_my_timeline, container, false)
-        Constants.getSSlCertificate(activity!!)
-        mPresenter = MyTimelinePresenter(this)
-        upgrade = v.findViewById(R.id.upgrade)
-        noPosts = v.findViewById(R.id.noPosts)
-        recyclerView = v.findViewById(R.id.recyclerView)
-        progressBar = v.findViewById(R.id.progressBar)
-        recyclerView.stopNestedScroll()
-        recyclerView.setHasFixedSize(true)
-        mPresenter.prepareData()
-        setHasOptionsMenu(true)
-        upgrade.setOnClickListener {
-            val intent = Intent(context, SubscriptionActivity::class.java)
-            activity!!.startActivity(intent)
+        try {
+            val v = inflater.inflate(R.layout.fragment_my_timeline, container, false)
+            Constants.getSSlCertificate(activity!!)
+            mPresenter = MyTimelinePresenter(this)
+            mainLay = v.findViewById(R.id.mainLay)
+            noSubLay = v.findViewById(R.id.noSubLay)
+            upgrade = v.findViewById(R.id.upgrade)
+            noPosts = v.findViewById(R.id.noPosts)
+            recyclerView = v.findViewById(R.id.recyclerView)
+            progressBar = v.findViewById(R.id.progressBar)
+            recyclerView.stopNestedScroll()
+            recyclerView.setHasFixedSize(true)
+            mPresenter.prepareData()
+            setHasOptionsMenu(true)
+            upgrade.setOnClickListener {
+                val intent = Intent(context, SubscriptionActivity::class.java)
+                activity!!.startActivity(intent)
+            }
+
+            return v
+        }catch (e:Exception){
+            e.printStackTrace()
         }
-        return v
+        return null
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -77,7 +97,7 @@ class MyPostsFragment : Fragment(), MyTimelineHelper {
                         noPosts.visibility = View.GONE
 
                         recyclerView.layoutManager = LinearLayoutManager(activity)
-                        mAdapter = MyTimelineAdapter(this.context!!, postList)
+                        mAdapter = MyTimelineAdapter(activity!!, postList)
                         recyclerView.adapter = mAdapter
                     } else {
                         noPosts.visibility = View.VISIBLE
@@ -188,5 +208,9 @@ class MyPostsFragment : Fragment(), MyTimelineHelper {
             noSubLay.visibility=View.GONE
             mainLay.visibility=View.VISIBLE
         }
+    }
+
+    override fun applyBumpPost(id: String) {
+        mPresenter.apiForBump(id)
     }
 }

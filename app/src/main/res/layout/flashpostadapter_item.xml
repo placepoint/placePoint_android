@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="4dp"
     android:layout_marginStart="4dp"
+    android:layout_marginLeft="4dp"
     android:orientation="vertical">
 
     <View
@@ -44,20 +44,21 @@
         android:id="@+id/layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
         android:background="@drawable/post_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/arrow"
         app:layout_constraintTop_toTopOf="parent">
+
         <LinearLayout
-            android:orientation="horizontal"
             android:id="@+id/headerLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/shape_light_green"
             android:gravity="center"
+            android:orientation="horizontal"
             android:padding="8dp"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
@@ -73,6 +74,7 @@
                 android:gravity="center"
                 android:text="***Flash Alert Sale***"
                 android:textColor="@color/white" />
+
             <RelativeLayout
                 android:id="@+id/imageLay"
                 android:layout_width="match_parent"
@@ -118,9 +120,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:fontFamily="@font/bold"
                 android:text="Name"
                 android:textColor="@color/colorText"
@@ -167,7 +167,7 @@
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/dateTime"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/name"
                 app:layout_constraintTop_toBottomOf="@+id/dateTime"
                 app:layout_constraintVertical_bias="0.0" />
 
@@ -232,44 +232,105 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/nameLayout"
             app:layout_constraintTop_toBottomOf="@+id/nameLayout" />
+
         <RelativeLayout
-            android:visibility="gone"
+
             android:id="@+id/videoLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="8dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/postImage"
             app:layout_constraintTop_toBottomOf="@+id/postImage">
+
             <com.phaseII.placepoint.DynamicImageView
                 android:id="@+id/videoImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
+                android:visibility="gone" />
+
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_youtube_play_button"/>
-        </RelativeLayout>
+                android:src="@drawable/ic_youtube_play_button"
+                android:visibility="gone" />
 
+
+            <com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView
+                android:id="@+id/youtube_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <TextView
+
+                android:id="@+id/textFb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:id="@+id/youLay"
+                android:layout_width="match_parent"
+                android:layout_height="180dp" />
+
+            <RelativeLayout
+                android:id="@+id/myVideoLay"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:background="@color/black">
+
+
+                <VideoView
+                    android:id="@+id/myVideo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/thumbNail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone" />
+
+                <ImageView
+
+                    android:id="@+id/play"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_play" />
+
+                <ImageView
+                    android:id="@+id/pause"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_pause"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+
+            <!--<include-->
+            <!--layout="@layout/mk_player"-->
+            <!--android:visibility="gone"-->
+            <!--android:id="@+id/myVideo"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="8dp" />-->
+        </RelativeLayout>
 
 
     </android.support.constraint.ConstraintLayout>

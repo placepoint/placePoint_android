@@ -1,7 +1,7 @@
 package com.phaseII.placepoint
 
 import android.content.Context
-import android.support.constraint.ConstraintLayout
+
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
 import android.support.v4.view.PagerAdapter
@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.support.constraint.ConstraintLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 

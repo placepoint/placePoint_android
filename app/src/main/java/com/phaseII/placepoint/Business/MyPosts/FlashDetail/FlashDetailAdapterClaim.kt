@@ -1,9 +1,15 @@
 package com.phaseII.placepoint.Business.MyPosts.FlashDetail
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
-import android.support.v7.widget.CardView
-import android.support.v7.widget.RecyclerView
+import android.content.DialogInterface
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.support.v4.app.ActivityCompat
+import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +17,8 @@ import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.support.v7.widget.CardView
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -37,12 +45,46 @@ class FlashDetailAdapterClaim(private var context: Context, private val list: Ar
         }
         holder.emailTextFlash.text = modelData.email
         holder.nameTextFlash.text = modelData.name
+        holder.phoneTextFlash.text = modelData.phone_no
         holder.dateTextFlash.text = parseDateToddMMyyyy2(modelData.created_at)
         holder.cardView.setCardBackgroundColor(context.resources.getColor(R.color.white))
 
             holder.checkBoxFlash.visibility= View.VISIBLE
-
+        holder.phoneTextFlash.setOnClickListener{
+            if (!modelData.phone_no.trim().isEmpty()){
+                showDialog(modelData.phone_no)
+            }
+        }
     }
+
+    private fun showDialog(phoneNo: String) {
+
+        val dialog = AlertDialog.Builder(context)
+        dialog.setCancelable(false)
+        dialog.setTitle("Make a call")
+        dialog.setMessage(phoneNo)
+        dialog.setPositiveButton("Call", DialogInterface.OnClickListener { dialog, id ->
+            //            val callIntent = Intent(Intent.ACTION_CALL)
+//            callIntent.data = Uri.parse(phoneNo)
+//            startActivity(callIntent)
+            val callIntent = Intent(Intent.ACTION_CALL)
+            callIntent.data = Uri.parse("tel:$phoneNo")
+            if (ActivityCompat.checkSelfPermission(context,
+                            Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.CALL_PHONE), 1)
+                return@OnClickListener
+            }
+
+            context.startActivity(callIntent)
+        })
+                .setNegativeButton("Cancel ", DialogInterface.OnClickListener { dialog, which ->
+                    //Action for "Cancel".
+                })
+
+        val alert = dialog.create()
+        alert.show()
+    }
+
 
     fun getSectedIds(): String {
 
@@ -99,6 +141,7 @@ class FlashDetailAdapterClaim(private var context: Context, private val list: Ar
         var nameTextFlash: TextView = itemView.findViewById(R.id.nameTextFlash)
         var dateTextFlash: TextView = itemView.findViewById(R.id.dateTextFlash)
         var cardView: CardView = itemView.findViewById(R.id.cardView)
+        var phoneTextFlash: TextView = itemView.findViewById(R.id.phoneTextFlash)
         var cardLay: LinearLayout = itemView.findViewById(R.id.cardLay)
     }
 

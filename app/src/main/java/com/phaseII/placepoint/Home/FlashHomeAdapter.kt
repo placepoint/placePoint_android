@@ -4,22 +4,20 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.media.MediaPlayer
 import android.net.Uri
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.RecyclerView
-import android.text.Html
-import android.text.SpannableStringBuilder
-import android.text.Spanned
 import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.support.v7.widget.RecyclerView
+import android.text.*
+import android.text.style.AbsoluteSizeSpan
 import android.webkit.URLUtil
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.phaseII.placepoint.AboutBusiness.AboutBusinessActivity
@@ -29,7 +27,10 @@ import com.phaseII.placepoint.Constants
 import kotlinx.android.synthetic.main.flash_main_item.view.*
 import java.util.regex.Pattern
 import com.phaseII.placepoint.R
-import com.squareup.otto.Subscribe
+import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer
+import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerInitListener
+import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerListener
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -38,6 +39,16 @@ import java.util.concurrent.TimeUnit
 
 class FlashHomeAdapter(private val context: Context, private val list: ArrayList<ModelHome>) : RecyclerView.Adapter<FlashHomeAdapter.ViewHolder>() {
 
+    var release = 0
+    var state = 0
+    var myPlay = 0
+    var from="none"
+    var pos=0
+    var youtuber: YouTubePlayer? = null
+    private var stopPosition: Int=0
+    private var youPause: Int=0
+    var pause = 0
+    var pos2 = -99
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(context)
@@ -54,9 +65,21 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
         if (modelData.created_by=="1"){
             holder.itemView.name.text = modelData.business_name
         }else{
-            holder.itemView.name.text = "Posted on behalf of "+modelData.business_name
+           // holder.itemView.name.text = "Posted on behalf of "+modelData.business_name
+            var text2 = "(shared)"
+            var span1 = SpannableString(modelData.business_name);
+            span1.setSpan(AbsoluteSizeSpan(32), 0, modelData.business_name.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
+            var span2 = SpannableString(text2);
+            span2.setSpan(AbsoluteSizeSpan(22), 0, text2.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
+// let's put both spans together with a separator and all
+            var finalText = TextUtils.concat(span1, " ", span2)
+            holder.itemView.name.text = finalText
+
         }
         holder.itemView.postText.text = modelData.description
+        Linkify.addLinks(holder.itemView.postText, Linkify.WEB_URLS)
         holder.itemView.dateTime.text = Constants.getDate2(modelData.updated_at)
         if (!list[position].video_link.trim().isEmpty()) {
             holder.itemView.videoUrl.visibility = View.GONE
@@ -70,7 +93,7 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
 
         }
         holder.itemView.shareFaceBook.setOnClickListener {
-            setClipboard(context, modelData.description, modelData)
+            setClipboard(context, list[position].description, list[position])
 
 
         }
@@ -112,38 +135,275 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
                 holder.itemView.postImage.visibility = View.VISIBLE
                 Glide.with(context)
                         .load(modelData.image_url)
-                        .apply(RequestOptions()
 
-                                .placeholder(R.mipmap.placeholder))
+
                         .into(holder.postImage)
-            }
 
-            if (modelData.video_link == "") {
+            }
+            holder.postImage.setOnClickListener {
+
+                Constants.showImagePreview(list[position].image_url, context)
+            }
+            if (modelData.video_link.equals("")) {
                 holder.itemView.videoLayout.visibility = View.GONE
+                // holder.itemView.youLay.visibility = View.GONE
             } else {
                 holder.itemView.videoLayout.visibility = View.VISIBLE
+//                var videoId = extractYoutubeVideoId(modelData.video_link)
+//                if(videoId.contains("frameborder")){
+//                    val split = videoId.split("frameborder")
+//                    videoId = split[0]
+//
+//                }
+//                Glide.with(context)
+//                        .load("https://img.youtube.com/vi/$videoId/0.jpg")
+//                        .apply(RequestOptions()
+//
+//                                .placeholder(R.mipmap.placeholder))
+//                        .into(holder.videoImage)
+                //   Toast.makeText(context,""+Constants.getPrefs(context!!)!!.getString("sposition","0"),Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context,""+position,Toast.LENGTH_SHORT).show()
+
+
+                var thumb: Long = (position * 1000).toLong()
+                var options = RequestOptions().frame(thumb);
+                Glide.with(context).load(modelData.video_link).apply(options).into(holder.itemView.thumbNail);
+//                Glide.with(context)
+//                        .load(ThumbnailUtils.createVideoThumbnail(modelData.video_link, MediaStore.Video.Thumbnails.MINI_KIND))
+//                        .apply(RequestOptions()
+//
+//                                .placeholder(R.mipmap.placeholder))
+//                        .into(holder.itemView.play)
+
                 var videoId = extractYoutubeVideoId(modelData.video_link)
+                if (videoId.contains("frameborder")) {
+                    val split = videoId.split("frameborder")
+                    videoId = split[0]
+
+                }
+
                 Glide.with(context)
-                        .load("https://img.youtube.com/vi/" + videoId + "/0.jpg")
+                        .load("https://img.youtube.com/vi/$videoId/0.jpg")
                         .apply(RequestOptions()
 
                                 .placeholder(R.mipmap.placeholder))
                         .into(holder.videoImage)
-            }
-            holder.itemView.videoLayout.setOnClickListener {
-                var text = holder.itemView.videoUrl.text.toString()
-                if (URLUtil.isValidUrl(text)) {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(modelData.video_link)))
-                    // startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=cxLG2wtE7TM")))
+                //---------------------------------------------------------------------------
+
+
+//                if (pos2 == -99) {
+//                    intializeYoutube(holder, getVideoId(list[position].video_link), 0)// for(i in 0 until list.size){
+//                }
+                if (pos2 == position) {
+                    holder.itemView.textFb.visibility = View.GONE
+                    if (list[position].video_link.contains("yout")) {
+                        pause = 0
+                        holder.itemView.youtube_view.visibility = View.VISIBLE
+                        holder.myVideo.visibility = View.GONE
+                        holder.itemView.myVideoLay.visibility = View.GONE
+
+                        if (youtuber != null && youPause != 1) {
+                            if (youPause == 2) {
+                                youtuber!!.pause()
+                                youPause = 1
+                            } else {
+                                youPause = 2
+                                intializeYoutube(holder, getVideoId(list[position].video_link), 1)
+                            }
+                        } else if (youtuber != null && youPause == 1) {
+                            youPause = 2
+
+                            youtuber!!.play()
+                        } else {
+                            //if (from == "you") {
+                            youPause = 2
+                            intializeYoutube(holder, getVideoId(list[position].video_link), 1)
+                            // }
+                        }
+
+
+                    } else {
+                        youPause = 0
+                        intializeYoutube(holder, getVideoId(list[position].video_link), 0)
+                        try {
+                            if (youtuber != null) {
+                                youtuber!!.setVolume(0)
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                        youtuber = null
+
+                        holder.itemView.youtube_view.visibility = View.GONE
+                        holder.itemView.thumbNail.visibility = View.GONE
+                        holder.myVideo.visibility = View.VISIBLE
+                        holder.itemView.myVideoLay.visibility = View.VISIBLE
+
+                        holder.itemView.play.visibility = View.GONE
+                        pause = 1
+                        var LINK = list[position].video_link
+                        //  holder.itemView.myVideo.setVideoPath(LINK)
+                        var uri = Uri.parse(list[position].video_link)
+                        holder.myVideo.setVideoURI(uri)
+                        holder.myVideo.requestFocus();
+                        holder.myVideo.start()
+                        holder.myVideo.setOnCompletionListener(MediaPlayer.OnCompletionListener() {
+                            holder.itemView.play.visibility = View.VISIBLE
+                            holder.itemView.thumbNail.visibility = View.VISIBLE
+                            pause = 0
+                        })
+
+                    }
+                    holder.myVideo.setOnErrorListener { mediaPlayer: MediaPlayer, i: Int, i1: Int ->
+                        holder.itemView.play.visibility = View.VISIBLE
+
+                        true
+                    };
+
+                } else {
+                    if (list[position].video_link.contains("yout")) {
+                        intializeYoutube(holder, getVideoId(list[position].video_link), 0)
+                        holder.itemView.youtube_view.visibility = View.VISIBLE
+                        holder.myVideo.visibility = View.GONE
+                        holder.itemView.textFb.visibility = View.GONE
+                        holder.itemView.myVideoLay.visibility = View.GONE
+                        try {
+                            if (youtuber != null) {
+                                youtuber!!.pause()
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+
+                    } else {
+                        holder.itemView.youtube_view.visibility = View.GONE
+                        holder.myVideo.visibility = View.VISIBLE
+                        holder.itemView.myVideoLay.visibility = View.VISIBLE
+                        holder.itemView.textFb.visibility = View.GONE
+                        holder.myVideo.pause()
+
+                        holder.itemView.thumbNail.visibility = View.VISIBLE
+                        holder.itemView.play.visibility = View.VISIBLE
+
+                        if (list[position].video_link.contains(".MOV")
+                                || list[position].video_link.contains(".flv")
+                                || list[position].video_link.contains(".wmv")
+                                || list[position].video_link.contains("facebook")) {
+                            holder.itemView.textFb.visibility = View.VISIBLE
+                            holder.itemView.textFb.text = modelData.video_link
+                            holder.itemView.myVideoLay.visibility = View.GONE
+                            holder.myVideo.visibility = View.GONE
+                            holder.itemView.thumbNail.visibility = View.GONE
+                            holder.itemView.youLay.visibility = View.GONE
+                            holder.itemView.play.visibility = View.GONE
+                            Linkify.addLinks(holder.itemView.textFb, Linkify.WEB_URLS)
+                        } else {
+                            holder.itemView.textFb.visibility = View.GONE
+                            holder.itemView.myVideoLay.visibility = View.VISIBLE
+                            holder.myVideo.visibility = View.VISIBLE
+                            holder.itemView.thumbNail.visibility = View.VISIBLE
+                            holder.itemView.play.visibility = View.VISIBLE
+                            holder.itemView.youLay.visibility = View.VISIBLE
+                        }
+                    }
                 }
 
 
+
+                holder.itemView.youLay.setOnClickListener {
+
+
+                    if (list[position].video_link.contains("yout")) {
+
+                        from = "you"
+
+                        if (pos2 != position) {
+                            youPause = 0
+                            youtuber = null
+                        }
+                        pos2 = position
+                    } else {
+                        if (list[position].video_link.contains(".MOV")
+                                || list[position].video_link.contains(".flv")
+                                || list[position].video_link.contains(".wmv")
+                                || list[position].video_link.contains("facebook")) {
+                            val text = holder.itemView.videoUrl.text.toString()
+                            if (URLUtil.isValidUrl(text)) {
+                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(list[position].video_link)))
+                            }
+                        } else {
+                            from = "my"
+                            if (pos2 == position) {
+
+                                holder.itemView.youtube_view.visibility = View.GONE
+                                holder.myVideo.visibility = View.VISIBLE
+                                holder.itemView.myVideoLay.visibility = View.VISIBLE
+                                if (pause == 1) {
+                                    holder.myVideo.pause()
+                                    holder.itemView.play.visibility = View.VISIBLE
+                                    stopPosition = holder.myVideo.getCurrentPosition();
+                                    pause = 2
+                                } else if (pause == 2) {
+                                    pause = 1
+                                    holder.itemView.play.visibility = View.GONE
+                                    holder.itemView.thumbNail.visibility = View.GONE
+                                    holder.itemView.pause.visibility = View.GONE
+                                    holder.myVideo.seekTo(stopPosition);
+                                    holder.myVideo.start();
+                                } else {
+                                    holder.itemView.play.visibility = View.GONE
+                                    holder.itemView.thumbNail.visibility = View.GONE
+                                    pause = 1
+                                    var LINK = list[position].video_link
+                                    //  holder.itemView.myVideo.setVideoPath(LINK)
+                                    var uri = Uri.parse(list[position].video_link)
+                                    holder.myVideo.setVideoURI(uri)
+                                    holder.myVideo.requestFocus();
+                                    holder.myVideo.start()
+
+
+                                }
+                                holder.myVideo.setOnCompletionListener(MediaPlayer.OnCompletionListener() {
+                                    holder.itemView.play.visibility = View.VISIBLE
+                                    holder.itemView.thumbNail.visibility = View.VISIBLE
+                                    pause = 0
+
+                                })
+                                holder.myVideo.setOnErrorListener { mediaPlayer: MediaPlayer, i: Int, i1: Int ->
+                                    holder.itemView.play.visibility = View.VISIBLE
+                                    holder.itemView.thumbNail.visibility = View.VISIBLE
+
+                                    true
+                                };
+
+                            } else {
+                                pos2 = position
+                                notifyDataSetChanged()
+                            }
+                        }
+                    }
+
+                    if (from == "my") {
+
+                    } else {
+                        notifyDataSetChanged()
+                    }
+
+                }
+
+            }
+            holder.itemView.videoLayout.setOnClickListener {
+                //                val text = holder.itemView.videoUrl.text.toString()
+//                if (URLUtil.isValidUrl(text)) {
+//                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(modelData.video_link)))
+//                }
+            }
 //            val intent = Intent(context, VideoLinkPlayerActivity::class.java)
 //            intent.putExtra("link",modelData.video_link)
 //            context.startActivity(intent)
             }
 
-        }
+
 
 
         if (modelData.expired == "1") {
@@ -152,7 +412,9 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
             if (modelData.redeemed.isEmpty() || modelData.redeemed == "0") {
                 holder.itemView.header.text = "***Expired***"
             } else {
-                holder.itemView.header.text = "***Expired ${modelData.redeemed} offer(s) claimed***"
+                //holder.itemView.header.text = "***Expired ${modelData.redeemed} offer(s) claimed***"
+                holder.itemView.header.text = "*Expired ${modelData.redeemed} offer(s) claimed* "+findExpirey2(modelData.validity_date).replace("-","")+" ago"
+
             }
             holder.itemView.validityText.text = ""
             holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.expire_red))
@@ -171,7 +433,8 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
                 if (modelData.redeemed.isEmpty() || modelData.redeemed == "0") {
                     holder.itemView.header.text = "***Expired***"
                 } else {
-                    holder.itemView.header.text = "***Expired ${modelData.redeemed} offer(s) claimed***"
+                  //  holder.itemView.header.text = "***Expired ${modelData.redeemed} offer(s) claimed***"
+                    holder.itemView.header.text = "*Expired ${modelData.redeemed} offer(s) claimed* "+findExpirey2(modelData.validity_date).replace("-","")+" ago"
                 }
                 holder.itemView.validityText.text = ""
                 holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.expire_red))
@@ -190,6 +453,105 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
         } else {
             holder.itemView.desc.visibility = View.GONE
         }
+    }
+
+    public fun getVideoId(videoUrl: String): String {
+        var reg = "(?:youtube(?:-nocookie)?\\.com\\/(?:[^\\/\\n\\s]+\\/\\S+\\/|(?:v|e(?:mbed)?)\\/|\\S*?[?&]v=)|youtu\\.be\\/)([a-zA-Z0-9_-]{11})"
+        var pattern = Pattern.compile(reg, Pattern.CASE_INSENSITIVE)
+        var matcher = pattern.matcher(videoUrl)
+
+        if (matcher.find())
+            return matcher.group(1)
+        return ""
+    }
+
+    private fun intializeYoutube(holder: ViewHolder, videoId: String, i: Int) {
+
+        holder.itemView.youtube_view.initialize(YouTubePlayerInitListener {
+            it.addListener(object : AbstractYouTubePlayerListener(), YouTubePlayerListener {
+                override fun onApiChange() {
+                    //it.loadVideo("S0Q4gqBUs7c",0f)
+                }
+
+                override fun onCurrentSecond(second: Float) {
+                    //   it.loadVideo(getVideoId("https://www.youtube.com/watch?v=2gLq4Ze0Jq4"),second)
+                }
+
+                override fun onError(error: Int) {
+                    //it.loadVideo("S0Q4gqBUs7c",0f)
+                }
+
+                override fun onPlaybackQualityChange(playbackQuality: String) {
+                    // it.loadVideo("S0Q4gqBUs7c",0f)
+                }
+
+                override fun onPlaybackRateChange(playbackRate: String) {
+                    Toast.makeText(context, playbackRate, Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onStateChange(stateofVideo: Int) {
+                    //Toast.makeText(context,""+Constants.getPrefs(activity!!)!!.getString("sposition","0"),Toast.LENGTH_SHORT).show()
+                    //it.loadVideo("S0Q4gqBUs7c",0f)
+//                    Toast.makeText(context, "State= " + stateofVideo.toString(), Toast.LENGTH_SHORT).show()
+                    state = stateofVideo
+//                    if (state == 2) {
+//
+//                        release = 0
+//                    } else if (stateofVideo == 1) {
+//
+//                        holder.itemView.play.visibility = View.VISIBLE
+//
+//                        holder.myVideo.stopPlayback()
+//                        holder.myVideo.seekTo(0)
+//                        holder.myVideo.pause()
+//
+//                        holder.myVideo.stopPlayback()
+//                    }
+                }
+//                                override fun onStateChange(@NonNull  youTubePlayer: YouTubePlayer, @NonNull  state: PlayerConstants.PlayerState) {
+//
+//                                }
+
+                override fun onVideoDuration(duration: Float) {
+                    // it.loadVideo(getVideoId("https://www.youtube.com/watch?v=2gLq4Ze0Jq4"),duration)
+                }
+
+                override fun onVideoId(videoId: String) {
+                    // it.loadVideo(videoId,0f)
+                }
+
+                override fun onVideoLoadedFraction(loadedFraction: Float) {
+                    //   it.loadVideo(getVideoId("https://www.youtube.com/watch?v=2gLq4Ze0Jq4"),loadedFraction)
+                }
+
+                override fun onReady() {
+                    // it.loadVideo(getVideoId(modelData.video_link),0f)
+//                                    if ((release==0)&&Constants.getPrefs(context)!!.getString("sposition", "0").toInt() == position) {
+
+                    if (i == 1) {
+                        youtuber = it
+
+
+//                if (state==0) {
+//
+                        it.loadVideo(videoId, 0f)
+                        // }
+
+                    } else {
+                        it.cueVideo(videoId, 0f)
+                    }
+//                                    } else{
+//                                        holder.itemView.youtube_view.release()
+//                                         release = 0
+//                                    }
+                    // it.loadVideo("2gLq4Ze0Jq4",0f)
+
+
+                }
+
+            })
+        }, true)
+
     }
 
     private fun findExpirey(validity_date: String): String {
@@ -211,6 +573,26 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
             }
         }
         return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toString() + "d " + (TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS) - 24 * TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)).toString() + "hrs"
+    }
+private fun findExpirey2(validity_date: String): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd kk:mm:ss")
+        val cal = Calendar.getInstance()
+        System.out.println("time => " + dateFormat.format(cal.time))
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd kk:mm:ss")
+        val date = sdf.parse(validity_date)
+        val date2 = sdf.parse(dateFormat.format(cal.time))
+        val diff =  date2.time-date.time
+    if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toString() == "0") {
+            if (TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS).toString() == "0") {
+                return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS).toString() + "m"
+            } else {
+                val m = (TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS)).toString()
+                val p = 60 * TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)
+                return TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS).toString() + "h " + (TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS) - 60 * TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)).toString() + "m"
+            }
+        }
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toString() + "d " + (TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS) - 24 * TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)).toString() + "h"
     }
 
     fun parseDateToddMMyyyy2(time: String): String {
@@ -326,6 +708,7 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val postImage = itemView.findViewById<ImageView>(R.id.postImage)
         val videoImage = itemView.findViewById<ImageView>(R.id.videoImage)
+        var myVideo: VideoView = itemView.findViewById(R.id.myVideo)
     }
 
     private fun setClipboard(context: Context, text: String, modelData: ModelHome) {

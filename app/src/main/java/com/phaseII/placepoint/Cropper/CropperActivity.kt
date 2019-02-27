@@ -11,8 +11,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.widget.Toast
 import com.naver.android.helloyako.imagecrop.view.ImageCropView
 import java.io.File
@@ -20,6 +18,8 @@ import java.io.FileOutputStream
 import java.util.*
 import com.phaseII.placepoint.R
 import android.provider.MediaStore.Images
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.Constants
 import java.io.ByteArrayOutputStream
 

@@ -10,9 +10,10 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.support.design.widget.FloatingActionButton
+
+import android.widget.Toast
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.widget.Toast
 import com.naver.android.helloyako.imagecrop.util.BitmapLoadUtils
 import com.phaseII.placepoint.Cropper.BaseActivity
 import com.phaseII.placepoint.Cropper.CropperHelper

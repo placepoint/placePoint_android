@@ -5,13 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.Toast
+import android.widget.*
+import android.support.constraint.ConstraintLayout
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.BusEvents.DeleteScheduleEvent
 import com.phaseII.placepoint.Constants
 
@@ -27,15 +26,21 @@ class ScheduledFragment : Fragment(), ScheduleContract {
     lateinit var list2: ArrayList<ModelSchdule>
     lateinit var scheduleList: RecyclerView
     lateinit var progressBar: ProgressBar
+    lateinit var noData: TextView
     lateinit var upgrade: Button
     lateinit var adapter: ScheduleAdapter
     var list: ArrayList<ModelSchdule> = arrayListOf()
     private lateinit var mPresenter: SchedulePresenter
+    private lateinit var noSubLay: ConstraintLayout
 
+    private lateinit var mainLay: RelativeLayout
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         val view: View = inflater.inflate(R.layout.fragment_scheduled, container, false)
+        noData = view.findViewById(R.id.noData)
+        mainLay = view.findViewById(R.id.mainLay)
+        noSubLay = view.findViewById(R.id.noSubLay)
         scheduleList = view.findViewById(R.id.scheduleList)
         progressBar = view.findViewById(R.id.progressBar)
         upgrade = view.findViewById(R.id.upgrade)

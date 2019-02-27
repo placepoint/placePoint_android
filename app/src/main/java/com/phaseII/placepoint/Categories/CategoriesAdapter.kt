@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.support.v7.widget.RecyclerView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.phaseII.placepoint.AlphabetiComparator
 import com.phaseII.placepoint.BusEvents.ShowHomeButton
@@ -27,6 +27,7 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
                         var froms: String,
                         var sentTownId: String,
                         var townName: String) : RecyclerView.Adapter<CategoriesAdapter.ViewHolder>() {
+    var nameEvent=""
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater.from(context).inflate(R.layout.inner_category_item, parent, false)
         return ViewHolder(view)
@@ -63,11 +64,12 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
 
                 var inSubCategory = Constants.getPrefs(context)!!.getString("subcategory", "0");
                 if (inSubCategory == "0") {
+                     nameEvent=Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,"")+" - "+parentList[position].name
                     var  mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
                     val bundle = Bundle()
                     bundle.putString("town",Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,""))
                     bundle.putString("Category",parentList[position].name)
-                    mFirebaseAnalytics.logEvent(Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,"")+" - "+parentList[position].name, bundle)
+                    mFirebaseAnalytics.logEvent(nameEvent, bundle)
 
 
                     val stringBuilder = StringBuilder("")
@@ -112,11 +114,12 @@ class CategoriesAdapter(var context: Context, var main: ArrayList<ModelCategoryD
                     }
 
                 } else {
+                    val nameEventS=nameEvent+" - "+parentList[position].name
                     var  mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
                     val bundle = Bundle()
                     bundle.putString("town",Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,""))
                     bundle.putString("Category",parentList[position].name)
-                    mFirebaseAnalytics.logEvent(Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,"")+" - "+parentList[position].name, bundle)
+                    mFirebaseAnalytics.logEvent(nameEventS, bundle)
 
                     Constants.getPrefs(context)!!.edit().putString("subcategory", "2").apply()
                     val stringBuilder = StringBuilder("")

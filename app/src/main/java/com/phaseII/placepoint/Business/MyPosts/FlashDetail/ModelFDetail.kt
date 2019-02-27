@@ -5,6 +5,7 @@ class ModelFDetail {
     lateinit var post_id:String
     lateinit var name:String
     lateinit var email:String
+    lateinit var phone_no:String
     lateinit var status:String
     lateinit var created_at:String
     lateinit var updated_at:String

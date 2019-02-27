@@ -5,13 +5,11 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.view.*
+import android.widget.*
+import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.*
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.Home.ModelHome
 import com.phaseII.placepoint.R
@@ -29,13 +27,17 @@ class FlashPostFragment : Fragment(), MyTimelineHelper {
     private lateinit var mPresenter: MyTimelinePresenter
 
     private lateinit var recyclerView: RecyclerView
+    private lateinit var noSubLay: ConstraintLayout
     private lateinit var noPosts: TextView
+    private lateinit var mainLay: ConstraintLayout
     private val POSTCODE: Int = 111
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_my_timeline, container, false)
         Constants.getSSlCertificate(activity!!)
         mPresenter = MyTimelinePresenter(this)
+        mainLay = v.findViewById(R.id.mainLay)
+        noSubLay = v.findViewById(R.id.noSubLay)
         upgrade = v.findViewById(R.id.upgrade)
         noPosts = v.findViewById(R.id.noPosts)
         recyclerView = v.findViewById(R.id.recyclerView)

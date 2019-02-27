@@ -13,8 +13,6 @@ import android.support.v4.view.ViewPager
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.*
 import android.widget.*
@@ -30,6 +28,8 @@ import android.content.DialogInterface
 import com.phaseII.placepoint.AboutBusiness.BusinessDetails.DetailFragment.setTitle
 import android.os.Build
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 
 
 class HomeFragment : Fragment(), FlashContractHome.View {
@@ -73,50 +73,52 @@ class HomeFragment : Fragment(), FlashContractHome.View {
     @SuppressLint("SetTextI18n")
     override fun onResume() {
         super.onResume()
+if (Constants.getPrefs(activity!!)!!.getString("showImagePre","no").equals("no")) {
+    if (!Constants.isAppOpenedFirstTime) {
+        Constants.isAppOpenedFirstTime = true
+        // showAlert()
+    }
 
-        if (!Constants.isAppOpenedFirstTime){
-            Constants.isAppOpenedFirstTime=true
-           // showAlert()
-        }
+    Constants.getBus().register(this)
+    Constants.getPrefs(activity!!)!!.edit().putString(Constants.SHOW_ALL_POST, "yes").apply()
+    Constants.getPrefs(activity!!)!!.edit().putString(Constants.FROMINTENT, "home").apply()
+    Constants.getPrefs(activity!!)!!.edit().putString(Constants.STOPCLICK, "no").apply()
+    if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
+        taxiWorking()
+    }
 
-        Constants.getBus().register(this)
-        Constants.getPrefs(activity!!)!!.edit().putString(Constants.SHOW_ALL_POST, "yes").apply()
-        Constants.getPrefs(activity!!)!!.edit().putString(Constants.FROMINTENT, "home").apply()
-        Constants.getPrefs(activity!!)!!.edit().putString(Constants.STOPCLICK, "no").apply()
-        if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
-            taxiWorking()
-        }
+    val prefs = Constants.getPrefs(activity!!)
+    val showLay = prefs!!.getString("showLay", "static")
+    if (showLay == "static") {
+        filter.visibility = View.GONE
+        layContainViewPager.visibility = View.GONE
+        staticLay.visibility = View.VISIBLE
 
-        val prefs = Constants.getPrefs(activity!!)
-        val showLay = prefs!!.getString("showLay", "static")
-        if (showLay == "static") {
-            filter.visibility = View.GONE
-            layContainViewPager.visibility = View.GONE
-            staticLay.visibility = View.VISIBLE
-
-            //----------------------------Getting FlashPosts---------------------------------
-            val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
-            val town_id = Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_ID, "")
-            val category_id = Constants.getPrefs(activity!!)!!.getString(Constants.CATEGORY_IDS, "")
+        //----------------------------Getting FlashPosts---------------------------------
+        val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
+        val town_id = Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_ID, "")
+        val category_id = Constants.getPrefs(activity!!)!!.getString(Constants.CATEGORY_IDS, "")
+        mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0")
+        pullToRefresh.setOnRefreshListener {
             mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0")
-            pullToRefresh.setOnRefreshListener {
-                mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0")
-                pullToRefresh.isRefreshing = false
-            }
-            //-------------------------------------------------------------------------------
-            mText.text = "Flash Sales"
-            if (Constants.getPrefs(activity!!)!!.getString("showHLiveYes", "no") == "no") {
-                Constants.getPrefs(activity!!)!!.edit().putString("showHLiveYes", "yes").apply()
-                showCase()
-            }
-
-        } else {
-
-            filter.visibility = View.VISIBLE
-            layContainViewPager.visibility = View.VISIBLE
-            staticLay.visibility = View.GONE
+            pullToRefresh.isRefreshing = false
+        }
+        //-------------------------------------------------------------------------------
+        mText.text = "Flash Sales"
+        if (Constants.getPrefs(activity!!)!!.getString("showHLiveYes", "no") == "no") {
+            Constants.getPrefs(activity!!)!!.edit().putString("showHLiveYes", "yes").apply()
+            showCase()
         }
 
+    } else {
+
+        filter.visibility = View.VISIBLE
+        layContainViewPager.visibility = View.VISIBLE
+        staticLay.visibility = View.GONE
+    }
+}else{
+    Constants.getPrefs(activity!!)!!.edit().putString("showImagePre","no").apply()
+}
     }
 
     private fun showAlert() {

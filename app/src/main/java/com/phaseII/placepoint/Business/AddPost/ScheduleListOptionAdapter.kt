@@ -1,13 +1,13 @@
 package com.phaseII.placepoint.Business.AddPost
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.RadioButton
 import android.widget.TextView
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.R
 
 class ScheduleListOptionAdapter(var context:Context,var list:ArrayList<ModelSelectOption>): RecyclerView.Adapter<ScheduleListOptionAdapter.ViewHolder>() {

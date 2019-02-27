@@ -33,7 +33,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="forgot_password">Forgot Password?</string>
-    <string name="register">Register</string>
+    <string name="register">Business Registration</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>
     <string name="search_here">Search Here</string>
     <string name="toolbar_title"></string>
@@ -74,7 +74,7 @@
     <string name="server_error">Server Error</string>
     <string name="select_five_images">Please Select Five Images</string>
     <string name="enter_email">Enter Email</string>
-    <string name="scheduletext">To schedule a post to run on interval like every saturday or any specific date usind scheduling</string>
+    <string name="scheduletext">To schedule a post to run on interval like every saturday or any specific date using scheduling</string>
     <string name="standardText">    Standard   \u20ac 100/year</string>
     <string name="premiumText">    Premium   \u20ac 150/year</string>
     <string name="freePlan">Free   \u20ac 0/year</string>
@@ -84,5 +84,6 @@
 
     <!--<string name="noDataHomeFlash">No flash posts available at the moment</string>-->
     <string name="noDataHomeFlash">No flash posts available at the moment</string>
+    <string name="addNote"><![CDATA[Rules: Flash Deals MUST be exclusive to PlacePoint & There must be a discount of 20% or higher. There is no charge to run a flash deal and everyone with the PlacePoint app will get a notification on their phone that a deal is available.]]></string>
     <!--<string name="welcome">PlacePoint connects people looking for things to do with the businesses providing those services. The live feed section contains information  directly from the businesses in real time, giving you instant in one central place. In the near future we will be expanding to include many more categories. Please select category from the bottom menu to continue.</string>-->
 </resources>

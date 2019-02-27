@@ -70,4 +70,42 @@ class MyTimelinePresenter(val view: MyTimelineHelper) {
         })
     }
 
+    fun apiForBump(post_id: String) {
+        val auth_code = view.getAuthCode()
+        view.showLoader()
+        val retrofit = Constants.getWebClient()
+        val service = retrofit!!.create(Service::class.java)
+        val call: Call<ResponseBody> = service.bumpPost(auth_code, post_id)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                view.hideLoader()
+                if (response.isSuccessful) {
+                    try {
+                        val res = response.body()!!.string()
+                        val `object` = JSONObject(res)
+                        val status = `object`.optString("status")
+                        if (status.equals("true", ignoreCase = true)) {
+
+
+                        }else{
+
+
+                        }
+
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                view.hideLoader()
+                view.showNetworkError(R.string.network_error)
+            }
+        })
+    }
+
 }

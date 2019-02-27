@@ -17,13 +17,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <CheckBox
-                android:id="@+id/checkBoxFlash"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1.9"
-                android:theme="@style/MyCheckBox"
-                android:buttonTint="@color/black" />
+                android:gravity="center_horizontal">
+
+                <CheckBox
+                    android:id="@+id/checkBoxFlash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:theme="@style/MyCheckBox"
+                    android:buttonTint="@color/black" />
+            </LinearLayout>
+
 
             <LinearLayout
                 android:orientation="vertical"
@@ -46,6 +54,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black" />
+ <TextView
+                    android:singleLine="true"
+                    android:fontFamily="@font/regular"
+                    android:id="@+id/phoneTextFlash"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/light_blue" />
 
             </LinearLayout>
             <TextView

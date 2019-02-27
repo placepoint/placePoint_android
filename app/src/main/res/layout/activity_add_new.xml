@@ -15,11 +15,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
             android:background="@color/light_blue"
             android:fontFamily="@font/bold"
             android:gravity="center"
@@ -43,8 +43,8 @@
                     android:id="@+id/profileText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
                     android:layout_marginTop="16dp"
                     android:fontFamily="@font/bold"
                     android:textColor="@color/black"
@@ -56,18 +56,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:layout_margin="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
                     android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:background="@drawable/outline"
                     android:fontFamily="@font/regular"
                     android:gravity="top"
                     android:hint="Write something here"
                     android:imeOptions=""
-                    android:nextFocusDown="@+id/selectCategory"
                     android:inputType="text|textMultiLine"
                     android:maxLength="1000"
+                    android:nextFocusDown="@+id/selectCategory"
                     android:padding="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -88,9 +88,9 @@
                     android:id="@+id/camera"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginRight="16dp"
-                    android:layout_marginTop="8dp"
                     android:src="@drawable/ic_camera"
                     app:layout_constraintEnd_toStartOf="@+id/gallery"
                     app:layout_constraintTop_toBottomOf="@+id/word_count" />
@@ -99,9 +99,9 @@
                     android:id="@+id/gallery"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginRight="16dp"
-                    android:layout_marginTop="8dp"
                     android:src="@drawable/ic_gallery"
                     app:layout_constraintEnd_toStartOf="@+id/youtube"
                     app:layout_constraintTop_toBottomOf="@+id/word_count" />
@@ -140,6 +140,44 @@
                     app:layout_constraintStart_toStartOf="@+id/selectCategory"
                     app:layout_constraintTop_toBottomOf="@+id/selectCategory" />
 
+                <LinearLayout
+                    android:id="@+id/attachLay"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    app:layout_constraintEnd_toEndOf="@+id/croppedImage"
+                    app:layout_constraintStart_toStartOf="@+id/croppedImage"
+                    app:layout_constraintTop_toBottomOf="@+id/croppedImage">
+
+
+                    <RelativeLayout
+                        android:id="@+id/videoLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/videoName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/videoCancel"
+                            android:fontFamily="@font/regular"
+                            android:hint="Video Attached"
+                            android:textColor="@color/black" />
+
+                        <ImageView
+
+                            android:id="@+id/videoCancel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_cancel" />
+                    </RelativeLayout>
+
+                </LinearLayout>
                 <!--<Button
             android:id="@+id/postButton"
             android:layout_width="150dp"
@@ -182,11 +220,10 @@
                     android:id="@+id/flashPost"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
                     android:drawableRight="@drawable/ic_arrow_down_blue"
                     android:fontFamily="@font/bold"
                     android:orientation="vertical"
@@ -195,7 +232,7 @@
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/selectCategory"
-                    app:layout_constraintTop_toBottomOf="@+id/croppedImage">
+                    app:layout_constraintTop_toBottomOf="@+id/attachLay">
 
                     <RelativeLayout
                         android:id="@+id/flashClick"
@@ -222,15 +259,21 @@
                     </RelativeLayout>
 
                     <LinearLayout
-                        android:visibility="gone"
                         android:id="@+id/flashHiddenLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/addNote" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp">
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -245,13 +288,13 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="40dp"
                                 android:layout_weight="7"
-                                android:inputType="number"
-                                android:textSize="12sp"
                                 android:background="@drawable/shape_edit_white"
                                 android:fontFamily="@font/regular"
                                 android:gravity="center"
                                 android:hint="Max offers"
-                                android:padding="8dp" />
+                                android:inputType="number"
+                                android:padding="8dp"
+                                android:textSize="12sp" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -276,9 +319,9 @@
                                 android:drawableRight="@drawable/ic_arrow_down_grey"
                                 android:fontFamily="@font/regular"
                                 android:gravity="center"
-                                android:textSize="12sp"
                                 android:hint="Select"
-                                android:padding="8dp" />
+                                android:padding="8dp"
+                                android:textSize="12sp" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -313,9 +356,9 @@
                                         android:drawableRight="@drawable/ic_arrow_down_grey"
                                         android:fontFamily="@font/regular"
                                         android:gravity="center"
-                                        android:textSize="12sp"
                                         android:hint="Select"
-                                        android:padding="8dp" />
+                                        android:padding="8dp"
+                                        android:textSize="12sp" />
                                 </LinearLayout>
 
                                 <TextView
@@ -328,10 +371,10 @@
                                     android:fontFamily="@font/regular"
                                     android:gravity="center"
                                     android:padding="8dp"
-                                    android:textSize="12sp"
                                     android:paddingLeft="16dp"
                                     android:paddingRight="16dp"
                                     android:text="Time"
+                                    android:textSize="12sp"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="@+id/selectDay" />
                             </LinearLayout>
@@ -344,8 +387,8 @@
                     android:id="@+id/schedulePost"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
                     android:layout_marginTop="16dp"
                     android:drawableRight="@drawable/ic_arrow_down_blue"
                     android:fontFamily="@font/bold"
@@ -360,10 +403,10 @@
                     android:id="@+id/seText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
                     android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
                     android:fontFamily="@font/regular"
                     android:text="@string/scheduletext"
                     android:textColor="@color/black"
@@ -406,11 +449,11 @@
                     android:id="@+id/hidenLay"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/expandLay"
                     app:layout_constraintStart_toStartOf="@+id/expandLay"
@@ -431,11 +474,11 @@
                             android:id="@+id/everyWeekCheck"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginLeft="8dp"
-                            android:layout_marginRight="8dp"
                             android:layout_marginStart="8dp"
+                            android:layout_marginLeft="8dp"
                             android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginRight="8dp"
                             android:drawableRight="@drawable/ic_arrow_down_grey"
                             android:fontFamily="@font/regular"
                             android:text="Schedule post every week"
@@ -449,9 +492,9 @@
                                 android:id="@+id/selectDay"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:layout_marginTop="16dp"
                                 android:layout_marginEnd="16dp"
                                 android:layout_marginRight="16dp"
-                                android:layout_marginTop="16dp"
                                 android:layout_weight="4"
                                 android:background="@drawable/shape_edit_white"
                                 android:drawableRight="@drawable/ic_arrow_down_grey"
@@ -464,9 +507,9 @@
                                 android:id="@+id/dayTime"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:layout_marginTop="16dp"
                                 android:layout_marginEnd="16dp"
                                 android:layout_marginRight="16dp"
-                                android:layout_marginTop="16dp"
                                 android:layout_weight="6"
                                 android:background="@drawable/shape_edit_white"
                                 android:drawableRight="@drawable/ic_arrow_down_grey"
@@ -497,11 +540,11 @@
                             android:id="@+id/monthCheck"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginLeft="8dp"
-                            android:layout_marginRight="8dp"
                             android:layout_marginStart="8dp"
+                            android:layout_marginLeft="8dp"
                             android:layout_marginTop="16dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginRight="8dp"
                             android:drawableRight="@drawable/ic_arrow_down_grey"
                             android:fontFamily="@font/regular"
                             android:text="Schedule post on a specific day each month"
@@ -515,9 +558,9 @@
                                 android:id="@+id/selectMonth"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:layout_marginTop="16dp"
                                 android:layout_marginEnd="16dp"
                                 android:layout_marginRight="16dp"
-                                android:layout_marginTop="16dp"
                                 android:layout_weight="4"
                                 android:background="@drawable/shape_edit_white"
                                 android:drawableRight="@drawable/ic_arrow_down_grey"
@@ -530,9 +573,9 @@
                                 android:id="@+id/monthTime"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:layout_marginTop="16dp"
                                 android:layout_marginEnd="16dp"
                                 android:layout_marginRight="16dp"
-                                android:layout_marginTop="16dp"
                                 android:layout_weight="6"
                                 android:background="@drawable/shape_edit_white"
                                 android:drawableRight="@drawable/ic_arrow_down_grey"
@@ -563,11 +606,11 @@
                             android:id="@+id/specificCheck"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginLeft="8dp"
-                            android:layout_marginRight="8dp"
                             android:layout_marginStart="8dp"
+                            android:layout_marginLeft="8dp"
                             android:layout_marginTop="16dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginRight="8dp"
                             android:drawableRight="@drawable/ic_arrow_down_grey"
                             android:fontFamily="@font/regular"
                             android:text="Schedule post for a specific day"
@@ -581,9 +624,9 @@
                                 android:id="@+id/specificDay"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:layout_marginTop="16dp"
                                 android:layout_marginEnd="16dp"
                                 android:layout_marginRight="16dp"
-                                android:layout_marginTop="16dp"
                                 android:layout_weight="4"
                                 android:background="@drawable/shape_edit_white"
                                 android:drawableRight="@drawable/ic_arrow_down_grey"
@@ -596,9 +639,9 @@
                                 android:id="@+id/specificTime"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:layout_marginTop="16dp"
                                 android:layout_marginEnd="16dp"
                                 android:layout_marginRight="16dp"
-                                android:layout_marginTop="16dp"
                                 android:layout_weight="6"
                                 android:background="@drawable/shape_edit_white"
                                 android:drawableRight="@drawable/ic_arrow_down_grey"
@@ -618,8 +661,8 @@
                     android:id="@+id/nowCheck"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
                     android:fontFamily="@font/regular"
                     android:text="Also post this now"
                     android:textColor="@color/black"

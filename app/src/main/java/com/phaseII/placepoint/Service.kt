@@ -43,7 +43,7 @@ interface Service {
                       @Field("auth_code") auth_code: String?): Call<ResponseBody>
 
     @Multipart
-    @POST("addpost")
+    @POST("addPostVideo")
     fun addPost(@Part("auth_code") auth_code: RequestBody?,
                 @Part("width") width: RequestBody?,
                 @Part("height") height: RequestBody?,
@@ -61,8 +61,31 @@ interface Service {
                 @Part("max_redemption") max_redemption: RequestBody,
                 @Part("validity_date") validity_date: RequestBody,
                 @Part("validity_time") validity_time: RequestBody,
-                @Part("per_person_redemption") per_person_redemption: RequestBody): Call<ResponseBody>
+                @Part("per_person_redemption") per_person_redemption: RequestBody,
+                @Part upload_video: MultipartBody.Part?): Call<ResponseBody>
 
+// @Multipart
+//    @POST("addpost")
+//    fun addPost(@Part("auth_code") auth_code: RequestBody?,
+//                @Part("width") width: RequestBody?,
+//                @Part("height") height: RequestBody?,
+//                @Part("description") desc: RequestBody?,
+//                @Part("video_link") video_link: RequestBody?,
+//                @Part images: MultipartBody.Part?,
+//                @Part("image_status") image_status: RequestBody?,
+//                @Part("title") title1: RequestBody,
+//                @Part("type") type: RequestBody,
+//                @Part("day") day: RequestBody,
+//                @Part("time") time: RequestBody,
+//                @Part("now_status") now_status: RequestBody,
+//                @Part("category") category: RequestBody,
+//                @Part("ftype") ftype: RequestBody,
+//                @Part("max_redemption") max_redemption: RequestBody,
+//                @Part("validity_date") validity_date: RequestBody,
+//                @Part("validity_time") validity_time: RequestBody,
+//                @Part("per_person_redemption") per_person_redemption: RequestBody,
+//                @Part upload_video: MultipartBody.Part?): Call<ResponseBody>
+//
 
     @Multipart
     @POST("editSchedulePost")
@@ -267,43 +290,48 @@ interface Service {
                             @Field("coupon") couponID: String,
                             @Field("type") userType: String): Call<ResponseBody>
 
-   @FormUrlEncoded
+    @FormUrlEncoded
     @POST("getFlashPost")
     fun getFlashDetail(@Field("auth_code") auth_code: String,
-                            @Field("town_id") town_id: String,
-                            @Field("category_id") category_id: String,
-                            @Field("limit") limit: String,
-                            @Field("page") page: String): Call<ResponseBody>
+                       @Field("town_id") town_id: String,
+                       @Field("category_id") category_id: String,
+                       @Field("limit") limit: String,
+                       @Field("page") page: String): Call<ResponseBody>
 
- @FormUrlEncoded
+    @FormUrlEncoded
     @POST("claimDeal")
     fun claimPost(@Field("auth_code") auth_code: String,
-                            @Field("post_id") town_id: String,
-                            @Field("name") name: String,
-                            @Field("phone_no") phone_no: String,
-                            @Field("email") email: String): Call<ResponseBody>
-@FormUrlEncoded
+                  @Field("post_id") town_id: String,
+                  @Field("name") name: String,
+                  @Field("phone_no") phone_no: String,
+                  @Field("email") email: String): Call<ResponseBody>
+
+    @FormUrlEncoded
     @POST("getClaimedFlashPostList")
     fun getClaimedFlashPostList(@Field("auth_code") auth_code: String,
-                            @Field("post_id") town_id: String): Call<ResponseBody>
+                                @Field("post_id") town_id: String): Call<ResponseBody>
 
-@FormUrlEncoded
+    @FormUrlEncoded
     @POST("changeFlashPostStatus")
     fun changeFlashPostStatus(@Field("auth_code") auth_code: String,
-                            @Field("ids") ids: String,
-                            @Field("post_id") town_id: String): Call<ResponseBody>
+                              @Field("ids") ids: String,
+                              @Field("post_id") town_id: String): Call<ResponseBody>
 
-@FormUrlEncoded
+    @FormUrlEncoded
     @POST("updateOnesignalid")
     fun updateOnesignalid(@Field("auth_code") auth_code: String,
-                            @Field("onesignal_id") onesignal_id: String,
-                            @Field("town_id") town_id: String): Call<ResponseBody>
-@FormUrlEncoded
+                          @Field("onesignal_id") onesignal_id: String,
+                          @Field("town_id") town_id: String): Call<ResponseBody>
+
+    @FormUrlEncoded
     @POST("sendEmail")
     fun sendEmail(@Field("auth_code") auth_code: String,
-                            @Field("post_id") post_id: String): Call<ResponseBody>
+                  @Field("post_id") post_id: String): Call<ResponseBody>
 
-
+    @FormUrlEncoded
+    @POST("bumppost")
+    fun bumpPost(@Field("auth_code") auth_code: String,
+                 @Field("post_id") post_id: String): Call<ResponseBody>
 
 
 }

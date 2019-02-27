@@ -27,16 +27,14 @@
 
     <application
         android:name=".AppClass"
-        android:allowBackup="false"
-        android:fullBackupContent="false"
-        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UpdatePassword.UpdatePasswordActivity"></activity>
+        <activity android:name=".ImagePreview"/>
+        <activity android:name=".UpdatePassword.UpdatePasswordActivity" />
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait">
@@ -118,11 +116,19 @@
         <activity
             android:name=".Business.MyPosts.FlashDetail.FlashDetailActivity"
             android:label=""
-            android:windowSoftInputMode="adjustNothing"/>
+            android:windowSoftInputMode="adjustNothing" />
 
         <meta-data
             android:name="com.onesignal.NotificationOpened.DEFAULT"
             android:value="DISABLE" />
+
+        <receiver
+            android:name="com.appsflyer.SingleInstallBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

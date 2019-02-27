@@ -21,6 +21,8 @@ import android.support.design.internal.BottomNavigationItemView
 import android.support.design.internal.BottomNavigationMenuView
 import android.support.v7.app.AlertDialog
 import android.util.Log
+import com.appsflyer.AppsFlyerConversionListener
+import com.crashlytics.android.Crashlytics
 import com.onesignal.OneSignal
 import com.phaseII.placepoint.Service
 import okhttp3.ResponseBody
@@ -44,6 +46,7 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
+
         OneSignal.idsAvailable { userId, registrationId ->
             //Log.d("debug", "User:$userId")
             System.out.println("User Id: "+userId)
@@ -55,8 +58,7 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
 //                Settings.Secure.ANDROID_ID)
 //        System.out.println("Device Id: "+android_id)
         bottomNavigation = findViewById(R.id.navigationView)
-        bottomNavigation.disableShiftMode()
-       // BottomNavigationViewHelper.removeShiftMode(bottomNavigation)
+        Constants.disableShiftMode(bottomNavigation)
         addHomeFragment()
         onBottomNavigationClicks()
         Constants.getPrefs(this)!!.edit().putString("showBackYesOrNo", "home").apply()
@@ -77,28 +79,12 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
         }
 
         updateOnesignalidService(Constants.getPrefs(this)!!.getString(Constants.AUTH_CODE,""),userId,Constants.getPrefs(this)!!.getString(Constants.TOWN_ID,""))
-    }
-    @SuppressLint("RestrictedApi")
-    fun BottomNavigationView.disableShiftMode() {
-        val menuView = getChildAt(0) as BottomNavigationMenuView
-        try {
-            val shiftingMode = menuView::class.java.getDeclaredField("mShiftingMode")
-            shiftingMode.isAccessible = true
-            shiftingMode.setBoolean(menuView, false)
-            shiftingMode.isAccessible = false
-            for (i in 0 until menuView.childCount) {
-                val item = menuView.getChildAt(i) as BottomNavigationItemView
-                item.setShifting(false)
-                // set once again checked value, so view will be updated
-                item.setChecked(item.itemData.isChecked)
-            }
-        } catch (e: NoSuchFieldException) {
-            Log.e("", "Unable to get shift mode field", e)
-        } catch (e: IllegalStateException) {
-            Log.e("", "Unable to change value of shift mode", e)
 
-        }
+
     }
+
+
+
 
     private fun updateOnesignalidService(auth_code1: String, userId: String, townId: String) {
 
@@ -165,8 +151,11 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
         if (firstexe == 0) {
             if (showback == "no") {
                 var fromWhere=Constants.getPrefs(this)!!.getString("comingFrom", "")
+                var addPostActivity=Constants.getPrefs(this)!!.getString("addPostActivity", "")
                 if (fromWhere!="addPost") {
-                    addFragment()
+                    if(addPostActivity.isEmpty()){
+                        addFragment()
+                    }
                 }else{
                     Constants.getPrefs(this)?.edit()?.putString("comingFrom", "")?.apply()
                 }
@@ -300,12 +289,14 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
     @SuppressLint("CommitTransaction", "ResourceType")
     private fun onBottomNavigationClicks() {
         //----Disable the scrolling BottomNavigation View----------
-        Constants.disableShiftMode(bottomNavigation)
+
         //--------BottomNavigation Clicks
         bottomNavigation.setOnNavigationItemSelectedListener {
             Constants.getPrefs(this)!!.edit().remove("backPress").apply()
             Constants.getPrefs(this)!!.edit().putString("showHomeBackButton", "no").apply()
             Constants.getPrefs(this)!!.edit().putString("comingFrom", "static").apply()
+            Constants.getPrefs(this)!!.edit().putString("addPostActivity", "").apply()
+
 
             when (it.itemId) {
                 R.id.nav_home -> {
@@ -313,7 +304,6 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
                         positon = 0
                         Constants.getPrefs(this)!!.edit().putString("showBackYesOrNo", "home").apply()
                         Constants.getPrefs(this)!!.edit().putString("showLay", "static").apply()
-
                         //viewPager.currentItem = 0
                         //it.itemId=R.id.home
                         ft = supportFragmentManager.beginTransaction()
@@ -339,6 +329,7 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
 
                 }
                 R.id.nav_business -> {
+                    Constants.getPrefs(this)?.edit()?.putString("addPostActivity", "addPost")?.apply()
                     Constants.getPrefs(this)!!.edit().putString("showTaxiAtHome", "no").apply()
                     // viewPager.currentItem = 2
                     val loggedIn = Constants.getPrefs(this@DashBoardActivity)!!.getBoolean(Constants.LOGGED, false)

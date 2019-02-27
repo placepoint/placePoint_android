@@ -3,10 +3,10 @@ package com.phaseII.placepoint.Categories.SubCategories
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.DashBoard.DashBoardActivity
 import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData

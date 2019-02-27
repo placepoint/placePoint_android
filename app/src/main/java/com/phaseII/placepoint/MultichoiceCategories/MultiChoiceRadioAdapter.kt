@@ -1,7 +1,6 @@
 package com.phaseII.placepoint.MultichoiceCategories
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import com.phaseII.placepoint.R
 import kotlinx.android.synthetic.main.choice_radio_item1.view.*
 import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.AboutBusiness.BusinessDetails.DetailFragment.setTitle
 
 

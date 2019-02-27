@@ -25,15 +25,46 @@ import android.app.NotificationManager
 import android.app.NotificationChannel
 import android.app.PendingIntent
 import android.content.Context.NOTIFICATION_SERVICE
+import com.appsflyer.AppsFlyerConversionListener
+import com.appsflyer.AppsFlyerLib
 
 
+class AppClass : Application() ,AppsFlyerConversionListener{
+    override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
+    override fun onAttributionFailure(p0: String?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
+    override fun onInstallConversionDataLoaded(conversionData: MutableMap<String, String>?) {
+        for ( attrName:String in conversionData!!.keys) {
+     Log.d(AppsFlyerLib.LOG_TAG, "attribute: " + attrName + " = " + conversionData.get(attrName));
+   }
+    }
 
-
-
-
-class AppClass : Application() {
+    override fun onInstallConversionFailure(p0: String?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+//    override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
+//
+//
+//    }
+//
+//    override fun onAttributionFailure(p0: String?) {
+//
+//    }
+//
+//    override fun onInstallConversionDataLoaded(conversionData: MutableMap<String, String>?) {
+//for ( attrName:String in conversionData!!.keys) {
+//     Log.d(AppsFlyerLib.LOG_TAG, "attribute: " + attrName + " = " + conversionData.get(attrName));
+//   }
+//
+//    }
+//
+//    override fun onInstallConversionFailure(p0: String?) {
+//    }
 
     var classtatus: Boolean = false
     override fun onCreate() {
@@ -44,6 +75,9 @@ class AppClass : Application() {
                 .setNotificationReceivedHandler(ExampleNotificationOpenedHandler())
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init()
+        val appsFlyerId = AppsFlyerLib.getInstance().getAppsFlyerUID(this)
+        AppsFlyerLib.getInstance().init("LocXuyz85AtUXHXPmF7ttT", this, applicationContext)
+        AppsFlyerLib.getInstance().startTracking(this)
     }
 
     internal inner class ExampleNotificationOpenedHandler : OneSignal.NotificationOpenedHandler,OneSignal.NotificationReceivedHandler {

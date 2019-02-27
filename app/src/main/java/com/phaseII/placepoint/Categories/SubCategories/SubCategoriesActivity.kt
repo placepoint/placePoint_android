@@ -3,12 +3,12 @@ package com.phaseII.placepoint.Categories.SubCategories
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.AlphabetiComparator
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData

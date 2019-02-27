@@ -13,19 +13,22 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
-import android.support.constraint.ConstraintLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+
+
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import android.support.constraint.ConstraintLayout
+import android.support.v7.widget.LinearLayoutManager
+
+import android.support.v7.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.github.vivchar.viewpagerindicator.ViewPagerIndicator
@@ -71,11 +74,17 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     private val requestCode: Int = 1
     //private lateinit var mTitle: TextView
     private lateinit var towns: TextView
+    private lateinit var daysListView: RecyclerView
+    private lateinit var addresss: TextView
+    private lateinit var contact: TextView
+    private lateinit var openStatus: TextView
+    private lateinit var desc1: TextView
     private lateinit var subscriptionType: TextView
     private lateinit var openMap: TextView
     private lateinit var categoryText: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var emailText: TextView
+    private lateinit var cover: ImageView
     private lateinit var title: TextView
     private lateinit var description: TextView
     private lateinit var noTime: TextView
@@ -88,6 +97,8 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     private lateinit var descLayout: RelativeLayout
     private lateinit var label1: TextView
     private lateinit var label33: TextView
+    private lateinit var openCloseLay: LinearLayout
+    private lateinit var openStatusAt: TextView
     private lateinit var constraintLayout2: ConstraintLayout
     private lateinit var model1: ModelBusiness
     //  var busId: String = ""
@@ -138,6 +149,14 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     }
 
     private fun initialise(view: View, showHide: String) {
+        openStatus = view.findViewById(R.id.openStatus)
+        daysListView = view.findViewById(R.id.daysListView)
+        openCloseLay = view.findViewById(R.id.openCloseLay)
+        openStatusAt = view.findViewById(R.id.openStatusAt)
+        cover = view.findViewById(R.id.cover)
+        desc1 = view.findViewById(R.id.desc1)
+        addresss = view.findViewById(R.id.addresss)
+        contact = view.findViewById(R.id.contact)
         label1 = view.findViewById(R.id.label1)
         noTime = view.findViewById(R.id.noTime)
         descLayout = view.findViewById(R.id.descLayout)

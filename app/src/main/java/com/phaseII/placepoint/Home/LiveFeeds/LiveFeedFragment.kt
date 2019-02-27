@@ -2,11 +2,11 @@ package com.phaseII.placepoint.Home.LiveFeeds
 
 
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +14,8 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.BusEvents.ClaimPost
 import com.phaseII.placepoint.BusEvents.ClaimPostLiveFeed
 import com.phaseII.placepoint.BusEvents.LiveFeedTaxiEvent
@@ -22,6 +24,8 @@ import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.Home.ModelHome
 import com.phaseII.placepoint.R
 import com.squareup.otto.Subscribe
+import kotlinx.android.synthetic.main.flash_main_item.view.*
+
 
 class LiveFeedFragment : Fragment(), HomeHelper {
     private lateinit var mPresenter: HomePresenter
@@ -34,6 +38,7 @@ class LiveFeedFragment : Fragment(), HomeHelper {
      var list= ArrayList<ModelHome>()
     lateinit var adapter:HomeAdapter
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_home, container, false)
@@ -52,6 +57,7 @@ class LiveFeedFragment : Fragment(), HomeHelper {
             mPresenter.prepareData(from)
             pullToRefresh.isRefreshing = false
         }
+
         return v
     }
 
@@ -139,6 +145,7 @@ class LiveFeedFragment : Fragment(), HomeHelper {
         }
         return ""
     }
+
 
     override fun getCatId(): String {
         if (activity != null && isAdded) {

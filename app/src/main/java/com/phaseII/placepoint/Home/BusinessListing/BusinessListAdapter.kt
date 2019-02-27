@@ -3,7 +3,7 @@ package com.phaseII.placepoint.Home.BusinessListing
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.support.v7.widget.RecyclerView
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +25,7 @@ import android.content.pm.PackageManager
 import android.app.Activity
 import android.location.Location
 import android.support.v4.app.ActivityCompat
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.BusEvents.TAXI_EVENT
 import com.phaseII.placepoint.Constants
 import kotlinx.android.synthetic.main.business_item.view.*

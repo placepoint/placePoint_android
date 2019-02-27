@@ -44,6 +44,10 @@ class AddNewPresenter(val view: AddNewHelper) {
         val desc = view.getDesc()
         val video_link = view.getVideoLink()
         val image = view.getImage()
+        val upload_video = view.uploadVideo()
+//if (upload_video.isEmpty()){
+//    return
+//}
         val title = view.getBusinessName()
         val height = view.getImageHeight()
         val width = view.getImageWidth()
@@ -113,16 +117,24 @@ class AddNewPresenter(val view: AddNewHelper) {
 
         addPostService(auth_code, width, height, desc, video_link, image, image_status,
                 title, serviceRunning, type, day, time, now_status, category,ftype,max_redemption,validity_date,
-                validity_time,per_person_redemption)
+                validity_time,per_person_redemption,upload_video)
     }
 
     private fun addPostService(auth_code: String, width: String, height: String, desc: String, video_link: String,
                                img: String, image_status: String, title: String,
                                serviceRunning: Boolean, type1: String, day: String,
-                               time: String, now_status2: String, category: String, ftype: String, max_redemption: String, validity_date: String, validity_time: String, per_person_redemption: String) {
+                               time: String, now_status2: String, category: String,
+                               ftype: String, max_redemption: String, validity_date: String,
+                               validity_time: String, per_person_redemption: String, upload_video: String) {
         view.showLoader()
         if (!img.isEmpty()) {
             file = File(img)
+            if (file != null) {
+                requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file)
+            }
+        }
+       if (!upload_video.isEmpty()) {
+            file = File(upload_video)
             if (file != null) {
                 requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file)
             }
@@ -150,6 +162,11 @@ class AddNewPresenter(val view: AddNewHelper) {
             images = MultipartBody.Part.createFormData("images", "images", requestFile)
         }
 
+      var upload_video2: MultipartBody.Part? = null
+        if (requestFile != null) {
+            upload_video2 = MultipartBody.Part.createFormData("upload_video", upload_video, requestFile)
+        }
+
         if (serviceRunning) {
             return
         }
@@ -158,7 +175,7 @@ class AddNewPresenter(val view: AddNewHelper) {
         val service = retrofit!!.create(Service::class.java)
         val call: Call<ResponseBody> = service.addPost(auth_code1, width, height, desc1, video_link1,
                 images, image_status1, title1, type, day, time, now_status, category,ftype1,
-                max_redemption1,validity_date1,validity_time1,per_person_redemption1)
+                max_redemption1,validity_date1,validity_time1,per_person_redemption1,upload_video2)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 view.hideLoader()

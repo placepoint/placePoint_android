@@ -2,7 +2,10 @@ package com.phaseII.placepoint
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Dialog
 import android.content.*
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import android.net.Uri
 import android.os.StrictMode
@@ -13,11 +16,14 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
+import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.RadioGroup
-import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.security.ProviderInstaller
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -174,9 +180,9 @@ class Constants {
                         item.setChecked(item.itemData.isChecked)
                     }
                 }
-            } catch (e: NoSuchFieldException) {
+            } catch (e: Exception) {
                 Log.e("BNVHelper", "Unable to get shift mode field", e)
-            } catch (e: IllegalAccessException) {
+            } catch (e:Exception) {
                 Log.e("BNVHelper", "Unable to change value of shift mode", e)
             }
 
@@ -355,9 +361,11 @@ class Constants {
                 }
             }
             if (!facebookAppFound) {
-                val i = Intent(Intent.ACTION_VIEW)
-                i.data = Uri.parse(link)
-                context.startActivity(i)
+                if (!link.isEmpty()) {
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(link)
+                    context.startActivity(i)
+                }
                 return
                 // Toast.makeText(context, "Facebook app not found.", Toast.LENGTH_LONG).show()
             }
@@ -692,6 +700,28 @@ class Constants {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+
+        fun showImagePreview(image_url: String, context: Context) {
+//            var alertDialog = Dialog(context)
+//            alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+//            alertDialog.setContentView(R.layout.activity_image_preview)
+//            val imagePreview = alertDialog.findViewById(R.id.imagePreView) as TouchImageView
+//            val cancel = alertDialog.findViewById(R.id.cancel) as ImageView
+//            cancel.setOnClickListener{
+//                alertDialog.dismiss()
+//            }
+//            Glide.with(context)
+//                    .load(image_url)
+//                    .apply(RequestOptions()
+//
+//                            .placeholder(R.mipmap.placeholder))
+//                    .into(imagePreview)
+////
+//            alertDialog.getWindow().setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+//            alertDialog.show()
+Constants.getPrefs(context)!!.edit().putString("showImagePre","yes").apply()
+context.startActivity(Intent(context,ImagePreview::class.java).putExtra("image",image_url))
         }
     }
 }

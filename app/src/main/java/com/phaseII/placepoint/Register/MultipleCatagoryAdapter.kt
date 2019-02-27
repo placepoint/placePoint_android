@@ -1,11 +1,11 @@
 package com.phaseII.placepoint.Register
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
 import com.phaseII.placepoint.R
 import kotlinx.android.synthetic.main.category_itemcheck.view.*

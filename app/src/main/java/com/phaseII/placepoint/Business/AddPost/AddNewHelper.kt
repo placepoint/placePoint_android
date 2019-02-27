@@ -42,4 +42,5 @@ interface AddNewHelper {
     fun getPersonFlashValue(): String
     fun getFlashDate(): String
     fun getFlashTime(): String
+    fun uploadVideo(): String
 }

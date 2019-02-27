@@ -38,6 +38,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:itemBackground="@color/colorPrimary"
+        app:itemTextAppearanceActive="@style/BottomNavigationView.Active"
+        app:itemTextAppearanceInactive="@style/BottomNavigationView"
         android:fitsSystemWindows="true"
         app:labelVisibilityMode="labeled"
         android:animateLayoutChanges="false"

@@ -8,8 +8,6 @@ import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +28,8 @@ import android.os.Build
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.widget.*
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.github.florent37.tutoshowcase.TutoShowcase
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.phaseII.placepoint.ConstantClass.GpsTracker
@@ -60,6 +60,8 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
     lateinit var toolbar: Toolbar
     lateinit var mTitle: TextView
     lateinit var noData: TextView
+    lateinit var taxiList: RecyclerView
+    lateinit var businessList: RecyclerView
 
     lateinit var toolbarArrow: ImageView
     lateinit var progressBar: ProgressBar
@@ -86,6 +88,8 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater!!.inflate(R.layout.business_listing_fragment, container, false)
 
+        businessList = view.findViewById(R.id.businessList)
+        taxiList = view.findViewById(R.id.taxiList)
         progressBar = view.findViewById(R.id.progressBar)
 
         noData = view.findViewById(R.id.noData)

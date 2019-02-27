@@ -6,14 +6,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.BusEvents.LogoutEvent
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.DashBoard.DashBoardActivity
@@ -37,6 +38,7 @@ class MoreFragment : Fragment(){
     lateinit var list: RecyclerView
     lateinit var toolbar: Toolbar
     private lateinit var mTitle: TextView
+    private lateinit var progressBar: ProgressBar
 //  lateinit var goToHome:HomeTab
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -58,16 +60,15 @@ class MoreFragment : Fragment(){
     private fun setAdApter() {
         val items: ArrayList<String> = ArrayList()
         if (Constants.getPrefs(activity!!)!!.getBoolean(Constants.LOGGED,false)){
-
-            items.add("Privacy Policy")
-            items.add("Terms and conditions")
             items.add("Choose Town")
             items.add("Reset Password")
+            items.add("Terms and conditions")
+            items.add("Privacy Policy")
             items.add("Logout")
         }else{
-            items.add("Privacy Policy")
-            items.add("Terms and conditions")
             items.add("Choose Town")
+            items.add("Terms and conditions")
+            items.add("Privacy Policy")
 
         }
 
@@ -79,6 +80,7 @@ class MoreFragment : Fragment(){
 
     private fun init(view: View) {
         list = view.findViewById(R.id.recyclerView)
+        progressBar = view.findViewById(R.id.progressBar)
 
     }
 

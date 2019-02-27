@@ -2,24 +2,25 @@ package com.phaseII.placepoint.Business.AddPost
 
 
 import android.Manifest
+import android.annotation.TargetApi
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.ContentValues
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.provider.MediaStore
-import android.support.constraint.ConstraintLayout
+import android.provider.OpenableColumns
+import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.RecyclerView
+
 import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.InputFilter
@@ -29,6 +30,9 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import android.support.constraint.ConstraintLayout
+import android.support.v7.widget.RecyclerView
+import android.webkit.MimeTypeMap
 import com.bumptech.glide.Glide
 import com.phaseII.placepoint.*
 import com.phaseII.placepoint.BusEvents.EmptyFields
@@ -44,9 +48,11 @@ import com.phaseII.placepoint.SubscriptionPlan.SubscriptionActivity
 import com.squareup.otto.Subscribe
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_add_new.*
+import org.jetbrains.anko.image
 
 
 import org.json.JSONObject
+import java.io.File
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -64,6 +70,7 @@ class AddPostFragment : Fragment(), AddNewHelper
     var GALLERY: Boolean = false
     var mAlertDialog: AlertDialog? = null
 
+    var videoAttached: Int = 0
     val MAX_WORDS: Int = 1000
     protected val SELECT_PICTURES = 110
     lateinit var toolbar: Toolbar
@@ -84,8 +91,11 @@ class AddPostFragment : Fragment(), AddNewHelper
     lateinit var flashHiddenLayout: LinearLayout
     lateinit var flashClick: RelativeLayout
     lateinit var mainLayout: RelativeLayout
+
+    lateinit var mainLay: RelativeLayout
     lateinit var monthLay: LinearLayout
     lateinit var dayLay: LinearLayout
+    lateinit var noSubLay: ConstraintLayout
 
     lateinit var seText: TextView
     lateinit var nowCheck: CheckBox
@@ -103,7 +113,11 @@ class AddPostFragment : Fragment(), AddNewHelper
     lateinit var selectCategory: TextView
     lateinit var upgrade: Button
     lateinit var schedulePost: TextView
+    lateinit var word_count: TextView
     lateinit var addPost: TextView
+    lateinit var videoName: TextView
+    lateinit var videoCancel: ImageView
+    lateinit var videoLayout: RelativeLayout
     lateinit var youtube: ImageView
     lateinit var youtubeField: EditText
     lateinit var postText: EditText
@@ -147,12 +161,18 @@ class AddPostFragment : Fragment(), AddNewHelper
     private var flashCheckedPos: Int = -1
     private var maxPersonValue: String = ""
     private var flashPersonValue: String = ""
-
+    private  var imageName: String=""
     //  lateinit var updater:setToMyPost
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.activity_add_new, container, false)
         Constants.getSSlCertificate(activity!!)
         mPresenter = AddNewPresenter(this)
+        videoCancel = view.findViewById(R.id.videoCancel)
+        videoName = view.findViewById(R.id.videoName)
+        videoLayout = view.findViewById(R.id.videoLayout)
+        word_count = view.findViewById(R.id.word_count)
+        noSubLay = view.findViewById(R.id.noSubLay)
+        mainLay = view.findViewById(R.id.mainLay)
         seText = view.findViewById(R.id.seText)
         nowCheck = view.findViewById(R.id.nowCheck)
         expandLayout = view.findViewById(R.id.expandLay)
@@ -199,8 +219,8 @@ class AddPostFragment : Fragment(), AddNewHelper
         flashdayTime = view.findViewById(R.id.flashdayTime)
 
         nowCheck.isChecked = false
-       // editText.imeOptions = EditorInfo.IME_ACTION_DONE
-      //  editText.setRawInputType(InputType.TYPE_CLASS_TEXT)
+        // editText.imeOptions = EditorInfo.IME_ACTION_DONE
+        //  editText.setRawInputType(InputType.TYPE_CLASS_TEXT)
         editText.addTextChangedListener(mTextEditorWatcher)
         // setToolBar(view)
         // croppedImage.visibility = View.GONE
@@ -229,6 +249,12 @@ class AddPostFragment : Fragment(), AddNewHelper
         //----------------------------------------------------------------------------
 
 
+        videoCancel.setOnClickListener {
+            recyclerItems.clear()
+            listFromCropper!!.clear()
+            videoAttached=0
+            videoLayout.visibility=View.GONE
+        }
         camera.setOnClickListener {
             mPresenter.openCamera()
         }
@@ -249,6 +275,7 @@ class AddPostFragment : Fragment(), AddNewHelper
         }
         gallery.setOnClickListener {
             mPresenter.openGallery()
+
         }
         cancel.setOnClickListener {
             imagestatus = "true"
@@ -261,22 +288,31 @@ class AddPostFragment : Fragment(), AddNewHelper
             cancel.visibility = View.GONE
         }
         youtube.setOnClickListener {
-            youtubeField.visibility = View.VISIBLE
+//            if (videoAttached==1){
+//                Toast.makeText(activity!!,"Please remove Attached video First.",Toast.LENGTH_LONG).show()
+//            }else{
+            croppedImage.visibility = View.GONE
+            cancel.visibility = View.GONE
+            videoLayout.visibility = View.GONE
+            videoName.text = ""
+            recyclerItems.clear()
+                youtubeField.visibility = View.VISIBLE
+//            }
         }
         val s = Constants.getPrefs(activity!!)?.getString(Constants.MY_BUSINESS_NAME, "")!!
         if (s != null) {
             profileText.text = s
         }
 
-       /* editText.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                editText.clearFocus()
+        /* editText.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                 editText.clearFocus()
 
-                hideKeyboard(editText)
-                return@OnEditorActionListener true
-            }
-            false
-        })*/
+                 hideKeyboard(editText)
+                 return@OnEditorActionListener true
+             }
+             false
+         })*/
         /*  editText.setOnKeyListener(object : View.OnKeyListener {
               override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean {
 
@@ -326,7 +362,12 @@ class AddPostFragment : Fragment(), AddNewHelper
             if (post.equals("DONE")) {
 
             } else {
+                var youtubetext=youtubeField.text.toString().trim()
                 clearPrefs()
+                if (!youtubetext.isEmpty()){
+                    youtubeField.visibility=View.VISIBLE
+                    youtubeField.setText(youtubetext)
+                }
                 adposition = 0
                 adposition1 = 0
                 adposition2 = 0
@@ -343,7 +384,7 @@ class AddPostFragment : Fragment(), AddNewHelper
                     expandLayout.visibility = View.VISIBLE
                     nowCheck.visibility = View.VISIBLE
                     hidenLay.visibility = View.VISIBLE
-                    scrollView.fullScroll(View.FOCUS_DOWN)
+                   // scrollView.fullScroll(View.FOCUS_DOWN)
                 } else {
                     open = 0
                     expandLayout.visibility = View.GONE
@@ -792,53 +833,8 @@ class AddPostFragment : Fragment(), AddNewHelper
                     setValue(getTimeValue.toString(), selectMonth)
                 }
             }
-            //    @Override
-//    public void onClick(DialogInterface dialog, int which) {
-//        if (from == 0) {
-//            Toast.makeText(activity, "Select One Choice",
-//                        Toast.LENGTH_SHORT).show();
-//        } else if (from == 1) {
-//            // Your Code
-//        } else if (from == 2) {
-//            // Your Code
-//        }
-//    }
         })
         alert.show()
-
-
-//        var dialogBuilder = AlertDialog.Builder(activity!!)
-//
-//// ...Irrelevant code for customizing the buttons and title
-//        var inflater = this.getLayoutInflater();
-//
-//        var alertView = inflater.inflate(R.layout.schedulelist, null)
-//
-//
-//        listRecycle = alertView.findViewById(R.id.list)
-//        val linear = LinearLayoutManager(activity)
-//        val adapter2 = ScheduleListOptionAdapter(activity!!, stringList1)
-//        listRecycle.layoutManager = linear
-//        listRecycle.adapter = adapter2
-//
-//
-//
-//
-//
-//        dialogBuilder.setView(alertView)
-//                .setPositiveButton("OK", DialogInterface.OnClickListener() { dialog, which ->
-//
-//                    dialog.dismiss()
-//                })
-//
-//
-//                .setNegativeButton("Cancel", DialogInterface.OnClickListener() { dialog, which ->
-//                    dialog.dismiss()
-//                })
-//
-//        dialogBuilder.create()
-//        dialogBuilder.show()
-
 
     }
 
@@ -875,13 +871,6 @@ class AddPostFragment : Fragment(), AddNewHelper
         }
     }
 
-//    override fun onStop() {
-//        super.onStop()
-//        if (mAlertDialog != null && mAlertDialog.isShowing()) {
-//            mAlertDialog.dismiss()
-//        }
-//    }
-
     fun showAlertDialog(title: String?, message: String?,
                         onPositiveButtonClickListener: DialogInterface.OnClickListener?,
                         positiveText: String,
@@ -898,13 +887,7 @@ class AddPostFragment : Fragment(), AddNewHelper
 
     val mTextEditorWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-//            val wordsLength = countWords(s.toString())// words.length;
-//            // count == 0 means a new word is going to start
-//            if (count == 0 && wordsLength >= MAX_WORDS) {
-//                setCharLimit(editText, editText.text.length)
-//            } else {
-//                removeFilter(editText)
-//            }
+
         }
 
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -977,15 +960,37 @@ class AddPostFragment : Fragment(), AddNewHelper
             ActivityCompat.requestPermissions(activity!!, arrayOf(permission), requestCode)
         }
     }
+@RequiresApi(Build.VERSION_CODES.KITKAT)
+private fun getRealPathFromURIForVideo(selectedVideoUri:Uri) :String{
+    try {
+        var wholeID = DocumentsContract.getDocumentId(selectedVideoUri);
+        var id = wholeID.split(":")[1];
+        val column = arrayOf(MediaStore.Video.Media.DATA)
 
+        var sel = MediaStore.Video.Media._ID + "=?";
+        var cursor = activity!!.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, column, sel, arrayOf(id), null);
+        var filePath = "";
+
+        var columnIndex = cursor.getColumnIndex(column[0]);
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+        return filePath;
+    }catch (e:Exception){
+        return getRealPathFromURI(selectedVideoUri)
+    }
+}
     private fun getRealPathFromURI(uri: Uri?): String {
         val result: String
-        val cursor = activity!!.contentResolver.query(uri, null, null, null, null)
+        val proj = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = activity!!.contentResolver.query(uri, proj, null, null, null)
         if (cursor == null) {
             result = uri!!.path
         } else {
             cursor.moveToFirst()
             val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+
             result = cursor.getString(idx)
             cursor.close()
         }
@@ -1009,42 +1014,25 @@ class AddPostFragment : Fragment(), AddNewHelper
                     getString(R.string.permission_write_storage_rationale),
                     REQUEST_STORAGE_WRITE_ACCESS)
         } else {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-                    .setType("image/*")
-                    .addCategory(Intent.CATEGORY_OPENABLE)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                val mimeTypes = arrayOf("image/jpeg", "image/png")
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-            }
-            /*  try {
-                  val picker: BSImagePicker = BSImagePicker.Builder("com.example.user24.placepoint.fileprovider")
-                          .setMaximumDisplayingImages(Int.MAX_VALUE)
-                          .setMaximumMultiSelectCount(1)
-                          .setMinimumMultiSelectCount(0)
-                          .build()
-                  picker.show(supportFragmentManager, "picker")
-              } catch (e: Exception) {
-                  e.printStackTrace()
-              }*/
-
-
-            val intent1 = Intent()
-            intent1.type = "image/*"
-            intent1.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent1, "Select Picture"), SELECT_PICTURES)
+//            val intent = Intent(Intent.ACTION_GET_CONTENT)
+//                    .setType("image/*")
+//                    .addCategory(Intent.CATEGORY_OPENABLE)
+//            val intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+//            intent.type = "image/* video/*"
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                val mimeTypes = arrayOf("image/jpeg", "image/png")
+//                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+//            }
+            val photoLibraryIntent1 = Intent(Intent.ACTION_GET_CONTENT)
+//            val photoLibraryIntent1 = Intent(Intent.ACTION_PICK,
+//                    android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+            photoLibraryIntent1.type = "*/*"
+//            val intent1 = Intent()
+//            intent1.type = "image/*"
+//            intent1.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(photoLibraryIntent1, "Select Picture"), SELECT_PICTURES)
         }
     }
-
-    /* override fun onMultiImageSelected(uriList: MutableList<Uri>?) {
-         if (uriList != null) {
-             recyclerItems.clear()
-             recyclerItems.addAll(uriList)
-             if (uriList.size <= 1) {
-                 mPresenter.openCropper(recyclerItems)
-             }
-         }
-     }*/
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
@@ -1082,12 +1070,30 @@ class AddPostFragment : Fragment(), AddNewHelper
 
     }
 
+    fun getPath(uri: Uri): String? {
+        val projection = arrayOf(MediaStore.Video.Media.DATA)
+        val cursor = activity!!.getContentResolver().query(uri, projection, null, null, null)
+        if (cursor != null) {
+            // HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
+            // THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE MEDIA
+            val column_index = cursor!!
+                    .getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
+            cursor!!.moveToFirst()
+            return cursor!!.getString(column_index)
+        } else
+            return null
+    }
+
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
                 try {
                     recyclerItems.clear()
+                   imageName=getFileName(this!!.imageUri!!)
+
                     recyclerItems.add(imageUri!!)
                     mPresenter.openCropper(recyclerItems)
                 } catch (e: Exception) {
@@ -1096,28 +1102,34 @@ class AddPostFragment : Fragment(), AddNewHelper
             }
         } else if (resultCode == 2) {
             try {
+                recyclerItems.clear()
                 val args = data!!.getBundleExtra("BUNDLE1")
                 listFromCropper = (args.getSerializable("ARRAYLIST1") as java.util.ArrayList<Uri>?)
                 if (listFromCropper!!.size == 0) {
                     val url = data.getStringExtra("url")
                     listFromCropper!!.add(Uri.parse(url))
-                    croppedImage.visibility = View.VISIBLE
-                    cancel.visibility = View.VISIBLE
+                    //croppedImage.visibility = View.VISIBLE
+                   // cancel.visibility = View.VISIBLE
 
+                    videoLayout.visibility = View.VISIBLE
+                  //  videoName.text = url.substring(url.lastIndexOf("/")+1)
+                    videoName.text = imageName
+                    Toast.makeText(activity!!,"Image is attached",Toast.LENGTH_SHORT).show()
+                    youtubeField.visibility = View.GONE
                     Glide.with(activity!!)
                             .load(url)
                             .into(croppedImage)
 
                 } else
                     if (listFromCropper!!.size > 0) {
-                        croppedImage.visibility = View.VISIBLE
-                        cancel.visibility = View.VISIBLE
+                       // croppedImage.visibility = View.VISIBLE
+                       // cancel.visibility = View.VISIBLE
                         for (i in listFromCropper!!) {
                             Glide.with(activity!!)
                                     .load(i)
                                     .into(croppedImage)
                         }
-                    }
+                          }
                 imagestatus = "true"
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -1133,14 +1145,109 @@ class AddPostFragment : Fragment(), AddNewHelper
 
             try {
                 recyclerItems.clear()
+
+                //------------------------------
+
+
+                //---------------------------------
                 val uri = data!!.data
-                recyclerItems.add(uri)
-                mPresenter.openCropper(recyclerItems)
+                var type = isImageFile(uri)
+
+                if (type.contains("image")
+                        ||type.contains("jpeg")
+                       ||type.contains("png")
+                      ||type.contains("svg")
+                     ||type.contains("svg")
+                        ||type.contains("jpg")) {
+                    val returnCursor = activity!!.getContentResolver().query(uri, null, null, null, null)
+                    val sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE)
+                    returnCursor.moveToFirst()
+                    val size = returnCursor.getLong(sizeIndex).toInt()
+                    val sizeInMb = size / (1024)
+                    if (sizeInMb > 0) {
+                        imageName=getFileName(uri)
+                        recyclerItems.add(uri)
+                        mPresenter.openCropper(recyclerItems)
+                    }else{
+                        Toast.makeText(activity!!,"Unable to upload",Toast.LENGTH_SHORT).show()
+                    }
+                } else if(type.contains("video")) {
+                    var sizeInMb:Int
+                    val returnCursor = activity!!.getContentResolver().query(uri, null, null, null, null)
+                    if (returnCursor==null){
+                        val file = File(uri.toString())
+                        sizeInMb = Integer.parseInt((file.length() / (1024 * 1024)).toString())
+                    }else {
+                        val sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE)
+                        returnCursor.moveToFirst()
+                        val size = returnCursor.getLong(sizeIndex).toInt()
+                        sizeInMb = (size / (1024 * 1024))
+                    }
+                    if (sizeInMb > 100) {
+                        Toast.makeText(activity, "Unable to upload video more than 100 MB.", Toast.LENGTH_LONG).show()
+                    } else {
+                        if (youtubeField.text.toString().length > 0) {
+                            Toast.makeText(activity, "Please remove YouTube url first.", Toast.LENGTH_LONG).show()
+
+                        } else {
+                            videoAttached=1
+                            videoLayout.visibility = View.VISIBLE
+                            videoName.text = getFileName(uri)
+                            cancel.visibility = View.GONE
+                            youtubeField.visibility = View.GONE
+                            Glide.with(activity!!)
+                                    .load("")
+                                    .into(croppedImage)
+                            listFromCropper!!.clear()
+                            recyclerItems.add( data!!.data)
+                            Toast.makeText(activity, "Video is attached", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }else{
+                    Toast.makeText(activity, "Select either video or Image", Toast.LENGTH_LONG).show()
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
 
         }
+    }
+public fun getFileName( uri:Uri):String {
+  var result:String = "";
+  if (uri.getScheme().equals("content")) {
+    var cursor:Cursor = activity!!.getContentResolver().query(uri, null, null, null, null);
+    try {
+      if (cursor != null && cursor.moveToFirst()) {
+        result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+      }
+    } finally {
+      cursor.close()
+    }
+  }
+  if (result == null||result.isEmpty()) {
+    result = uri.getPath()
+    var cut = result.lastIndexOf('/')
+    if (cut != -1) {
+      result = result.substring(cut + 1)
+    }
+  }
+  return result
+}
+    public fun isImageFile(uri: Uri): String {
+        var mimeType:String = "";
+        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+            var cr = activity!!.getContentResolver();
+            mimeType = cr.getType(uri);
+        } else {
+            var  fileExtension:String = MimeTypeMap.getFileExtensionFromUrl(uri
+                    .toString());
+            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    fileExtension.toLowerCase());
+        }
+        return mimeType;
+//        var cR = activity!!.getContentResolver();
+//        var type = cR.getType(uri)
+//        return type
     }
 
     fun getRealPathFromURI2(contentURI: Uri, context: Activity): String? {
@@ -1188,6 +1295,22 @@ class AddPostFragment : Fragment(), AddNewHelper
         }
         return ""
     }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
+    override fun uploadVideo(): String {
+        try {
+            val uri = recyclerItems!!.get(0)
+            val ur = getRealPathFromURIForVideo(uri)
+           // val ur = uri.path
+            return ur
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return ""
+
+    }
+
 
     override fun showLoader() {
         progressBar.visibility = View.VISIBLE
@@ -1415,10 +1538,14 @@ class AddPostFragment : Fragment(), AddNewHelper
         }
         selectCategory.text = main
         if (!event.value.image_url.isEmpty()) {
-            croppedImage.visibility = View.VISIBLE
-            cancel.visibility = View.VISIBLE
+//            croppedImage.visibility = View.VISIBLE
+//            cancel.visibility = View.VISIBLE
             Picasso.with(activity).load(event.value.image_url).into(croppedImage)
             imagePath = event.value.image_url
+            videoLayout.visibility = View.VISIBLE
+            videoLayout.visibility = View.VISIBLE
+            videoName.text = imagePath.substring(imagePath.lastIndexOf("/")+1)
+
         } else {
             imagePath = ""
             croppedImage.visibility = View.GONE

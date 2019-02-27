@@ -62,6 +62,7 @@ class FlashDetailPresenter(var view: FlashDetailContract.View) {
                 model.post_id = dataObject.optString("post_id")
                 model.name = dataObject.optString("name")
                 model.email = dataObject.optString("email")
+                model.phone_no = dataObject.optString("phone_no")
                 model.status = dataObject.optString("status")
                 model.created_at = dataObject.optString("created_at")
                 model.updated_at = dataObject.optString("updated_at")

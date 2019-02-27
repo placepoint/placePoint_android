@@ -1,10 +1,10 @@
 package com.phaseII.placepoint.Home.BusinessListing
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.R
 
 import kotlinx.android.synthetic.main.freelist_item.view.*

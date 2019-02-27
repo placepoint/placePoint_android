@@ -2,8 +2,6 @@ package com.phaseII.placepoint.Business.MyPosts.FlashDetail
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
@@ -13,6 +11,8 @@ import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.R
 import android.support.v7.app.AlertDialog
 import android.widget.*
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 
 
 class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {

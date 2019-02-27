@@ -4,14 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
 import org.json.JSONObject
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.content.DialogInterface
 import android.widget.RadioGroup
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.DashBoard.DashBoardActivity
 import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
