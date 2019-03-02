@@ -44,10 +44,7 @@ class AddNewPresenter(val view: AddNewHelper) {
         val desc = view.getDesc()
         val video_link = view.getVideoLink()
         val image = view.getImage()
-        val upload_video = view.uploadVideo()
-//if (upload_video.isEmpty()){
-//    return
-//}
+
         val title = view.getBusinessName()
         val height = view.getImageHeight()
         val width = view.getImageWidth()
@@ -87,37 +84,41 @@ class AddNewPresenter(val view: AddNewHelper) {
 
         //------------flashPost ------------------------------------------------------
 
-       var flashSwitch=view.isFlashSwitchIsOn()
-        var max_redemption=view.getPersonFlashValue()
-        var per_person_redemption=view.getMaxFlashValue()
-        var validity_date=view.getFlashDate()
-        var validity_time=view.getFlashTime()
-        var ftype="0"
-        if (flashSwitch){
-            ftype="1"
-            if (max_redemption.isEmpty()){
+        var flashSwitch = view.isFlashSwitchIsOn()
+        var max_redemption = view.getPersonFlashValue()
+        var per_person_redemption = view.getMaxFlashValue()
+        var validity_date = view.getFlashDate()
+        var validity_time = view.getFlashTime()
+        var ftype = "0"
+        if (flashSwitch) {
+            ftype = "1"
+            if (max_redemption.isEmpty()) {
                 view.showError("Select Max number of offers to be redeemed.")
                 return
             }
-      if (per_person_redemption.isEmpty()){
+            if (per_person_redemption.isEmpty()) {
                 view.showError("Select Max number Redeemed per person.")
                 return
             }
-      if (validity_date.isEmpty()){
+            if (validity_date.isEmpty()) {
                 view.showError("Select offer expires on.")
                 return
             }
-      if (validity_time.isEmpty()){
+            if (validity_time.isEmpty()) {
                 view.showError("Select offer expires Time")
                 return
             }
+
         }
         //-----------------------------------------------------------------------------
-
-
+        view.showLoader()
+        val upload_video = view.uploadVideo()
+//        if (upload_video.isEmpty()) {
+//           return
+//        }
         addPostService(auth_code, width, height, desc, video_link, image, image_status,
-                title, serviceRunning, type, day, time, now_status, category,ftype,max_redemption,validity_date,
-                validity_time,per_person_redemption,upload_video)
+                title, serviceRunning, type, day, time, now_status, category, ftype, max_redemption, validity_date,
+                validity_time, per_person_redemption, upload_video)
     }
 
     private fun addPostService(auth_code: String, width: String, height: String, desc: String, video_link: String,
@@ -126,14 +127,14 @@ class AddNewPresenter(val view: AddNewHelper) {
                                time: String, now_status2: String, category: String,
                                ftype: String, max_redemption: String, validity_date: String,
                                validity_time: String, per_person_redemption: String, upload_video: String) {
-        view.showLoader()
+
         if (!img.isEmpty()) {
             file = File(img)
             if (file != null) {
                 requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file)
             }
         }
-       if (!upload_video.isEmpty()) {
+        if (!upload_video.isEmpty()) {
             file = File(upload_video)
             if (file != null) {
                 requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file)
@@ -162,7 +163,7 @@ class AddNewPresenter(val view: AddNewHelper) {
             images = MultipartBody.Part.createFormData("images", "images", requestFile)
         }
 
-      var upload_video2: MultipartBody.Part? = null
+        var upload_video2: MultipartBody.Part? = null
         if (requestFile != null) {
             upload_video2 = MultipartBody.Part.createFormData("upload_video", upload_video, requestFile)
         }
@@ -174,8 +175,8 @@ class AddNewPresenter(val view: AddNewHelper) {
         val retrofit = Constants.getWebClient()
         val service = retrofit!!.create(Service::class.java)
         val call: Call<ResponseBody> = service.addPost(auth_code1, width, height, desc1, video_link1,
-                images, image_status1, title1, type, day, time, now_status, category,ftype1,
-                max_redemption1,validity_date1,validity_time1,per_person_redemption1,upload_video2)
+                images, image_status1, title1, type, day, time, now_status, category, ftype1,
+                max_redemption1, validity_date1, validity_time1, per_person_redemption1, upload_video2)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 view.hideLoader()
@@ -190,7 +191,7 @@ class AddNewPresenter(val view: AddNewHelper) {
                             view.showMessage(msg)
                             val data = `object`.optJSONObject("data")
                             view.saveLocAndCat(data)
-                            view.clearPrefsall(type1,ftype)
+                            view.clearPrefsall(type1, ftype)
                         }
 
                     } catch (e: IOException) {
@@ -250,27 +251,27 @@ class AddNewPresenter(val view: AddNewHelper) {
         }
         //------------flashPost ------------------------------------------------------
 
-        var flashSwitch=view.isFlashSwitchIsOn()
-        var max_redemption=view.getPersonFlashValue()
-        var per_person_redemption=view.getMaxFlashValue()
-        var validity_date=view.getFlashDate()
-        var validity_time=view.getFlashTime()
-        var ftype="0"
-        if (flashSwitch){
-            ftype="1"
-            if (max_redemption.isEmpty()){
+        var flashSwitch = view.isFlashSwitchIsOn()
+        var max_redemption = view.getPersonFlashValue()
+        var per_person_redemption = view.getMaxFlashValue()
+        var validity_date = view.getFlashDate()
+        var validity_time = view.getFlashTime()
+        var ftype = "0"
+        if (flashSwitch) {
+            ftype = "1"
+            if (max_redemption.isEmpty()) {
                 view.showError("Select Max number of offers to be redeemed.")
                 return
             }
-            if (per_person_redemption.isEmpty()){
+            if (per_person_redemption.isEmpty()) {
                 view.showError("Select Max number Redeemed per person.")
                 return
             }
-            if (validity_date.isEmpty()){
+            if (validity_date.isEmpty()) {
                 view.showError("Select offer expires on.")
                 return
             }
-            if (validity_time.isEmpty()){
+            if (validity_time.isEmpty()) {
                 view.showError("Select offer expires Time")
                 return
             }
@@ -315,8 +316,8 @@ class AddNewPresenter(val view: AddNewHelper) {
         val service = retrofit!!.create(Service::class.java)
         val call: Call<ResponseBody> = service.editSchedulePost(auth_code1, width,
                 height, desc1, video_link1, images, image_status1, postID, type, day,
-                time, category, title1,ftype1,
-                max_redemption1,validity_date1,validity_time1,per_person_redemption1)
+                time, category, title1, ftype1,
+                max_redemption1, validity_date1, validity_time1, per_person_redemption1)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 view.hideLoader()

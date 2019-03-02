@@ -42,6 +42,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout"
         android:layout_width="0dp"
+        android:padding="8dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -56,8 +57,6 @@
             android:id="@+id/nameLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -77,8 +76,6 @@
                 android:id="@+id/name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
                 android:fontFamily="@font/bold"
                 android:text="Name"
                 android:textColor="@color/colorText"
@@ -101,7 +98,6 @@
                 android:id="@+id/dateTime"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
                 android:fontFamily="@font/regular"
                 android:text="May 15 at 6:00PM"
                 android:textColor="@color/grey"
@@ -116,11 +112,6 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/regular"
-                android:paddingStart="4dp"
-                android:paddingTop="4dp"
-                android:paddingEnd="4dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="4dp"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/imagesLayout"
@@ -154,7 +145,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dateTime">
@@ -226,30 +216,21 @@
 
         <com.phaseII.placepoint.DynamicImageView
             android:id="@+id/postImage"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/nameLayout"
             app:layout_constraintTop_toBottomOf="@+id/nameLayout" />
 
         <RelativeLayout
-            android:visibility="gone"
             android:id="@+id/videoLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -275,25 +256,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
+
             <TextView
-                android:padding="8dp"
-                android:visibility="gone"
                 android:id="@+id/textFb"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:visibility="gone" />
 
             <RelativeLayout
                 android:id="@+id/youLay"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
-                />
+                android:layout_height="180dp" />
 
             <RelativeLayout
                 android:id="@+id/myVideoLay"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:background="@color/black">
-
 
 
                 <VideoView
@@ -303,11 +283,12 @@
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
                     android:visibility="gone" />
+
                 <ImageView
-                    android:visibility="gone"
+                    android:id="@+id/thumbNail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/thumbNail"/>
+                    android:visibility="gone" />
 
                 <ImageView
 

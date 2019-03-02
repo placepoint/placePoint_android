@@ -24,14 +24,13 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.InputFilter
-import android.text.InputType
 import android.text.TextWatcher
 import android.view.*
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.webkit.MimeTypeMap
 import com.bumptech.glide.Glide
 import com.phaseII.placepoint.*
@@ -47,12 +46,13 @@ import com.phaseII.placepoint.SubscriptionPlan.SubscriptionActivity
 
 import com.squareup.otto.Subscribe
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_add_new.*
-import org.jetbrains.anko.image
 
 
 import org.json.JSONObject
-import java.io.File
+import java.io.*
+import java.lang.Byte.decode
+import java.net.HttpURLConnection
+import java.net.URL
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -161,7 +161,7 @@ class AddPostFragment : Fragment(), AddNewHelper
     private var flashCheckedPos: Int = -1
     private var maxPersonValue: String = ""
     private var flashPersonValue: String = ""
-    private  var imageName: String=""
+    private var imageName: String = ""
     //  lateinit var updater:setToMyPost
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.activity_add_new, container, false)
@@ -252,8 +252,8 @@ class AddPostFragment : Fragment(), AddNewHelper
         videoCancel.setOnClickListener {
             recyclerItems.clear()
             listFromCropper!!.clear()
-            videoAttached=0
-            videoLayout.visibility=View.GONE
+            videoAttached = 0
+            videoLayout.visibility = View.GONE
         }
         camera.setOnClickListener {
             mPresenter.openCamera()
@@ -288,7 +288,7 @@ class AddPostFragment : Fragment(), AddNewHelper
             cancel.visibility = View.GONE
         }
         youtube.setOnClickListener {
-//            if (videoAttached==1){
+            //            if (videoAttached==1){
 //                Toast.makeText(activity!!,"Please remove Attached video First.",Toast.LENGTH_LONG).show()
 //            }else{
             croppedImage.visibility = View.GONE
@@ -296,7 +296,7 @@ class AddPostFragment : Fragment(), AddNewHelper
             videoLayout.visibility = View.GONE
             videoName.text = ""
             recyclerItems.clear()
-                youtubeField.visibility = View.VISIBLE
+            youtubeField.visibility = View.VISIBLE
 //            }
         }
         val s = Constants.getPrefs(activity!!)?.getString(Constants.MY_BUSINESS_NAME, "")!!
@@ -362,10 +362,10 @@ class AddPostFragment : Fragment(), AddNewHelper
             if (post.equals("DONE")) {
 
             } else {
-                var youtubetext=youtubeField.text.toString().trim()
+                var youtubetext = youtubeField.text.toString().trim()
                 clearPrefs()
-                if (!youtubetext.isEmpty()){
-                    youtubeField.visibility=View.VISIBLE
+                if (!youtubetext.isEmpty()) {
+                    youtubeField.visibility = View.VISIBLE
                     youtubeField.setText(youtubetext)
                 }
                 adposition = 0
@@ -384,7 +384,7 @@ class AddPostFragment : Fragment(), AddNewHelper
                     expandLayout.visibility = View.VISIBLE
                     nowCheck.visibility = View.VISIBLE
                     hidenLay.visibility = View.VISIBLE
-                   // scrollView.fullScroll(View.FOCUS_DOWN)
+                    // scrollView.fullScroll(View.FOCUS_DOWN)
                 } else {
                     open = 0
                     expandLayout.visibility = View.GONE
@@ -960,29 +960,42 @@ class AddPostFragment : Fragment(), AddNewHelper
             ActivityCompat.requestPermissions(activity!!, arrayOf(permission), requestCode)
         }
     }
-@RequiresApi(Build.VERSION_CODES.KITKAT)
-private fun getRealPathFromURIForVideo(selectedVideoUri:Uri) :String{
-    try {
-        var wholeID = DocumentsContract.getDocumentId(selectedVideoUri);
-        var id = wholeID.split(":")[1];
-        val column = arrayOf(MediaStore.Video.Media.DATA)
 
-        var sel = MediaStore.Video.Media._ID + "=?";
-        var cursor = activity!!.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, column, sel, arrayOf(id), null);
-        var filePath = "";
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
+    private fun getRealPathFromURIForVideo(selectedVideoUri: Uri): String {
+        try {
+            var wholeID = DocumentsContract.getDocumentId(selectedVideoUri);
+            var id = wholeID.split(":")[1]
+//        if (wholeID.contains(":")){
+//             id = wholeID.split(":")[1]
+//        }else{
+//            id=wholeID.substring(wholeID.lastIndexOf("/")+1)
+//        }
+            val column = arrayOf(MediaStore.Video.Media.DATA)
 
-        var columnIndex = cursor.getColumnIndex(column[0]);
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
+            var sel = MediaStore.Video.Media._ID + "=?"
+            var cursor = activity!!.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, column, sel, arrayOf(id), null);
+            var filePath = "";
+
+            var columnIndex = cursor.getColumnIndex(column[0]);
+            if (cursor.moveToFirst()) {
+                filePath = cursor.getString(columnIndex);
+            }
+            cursor.close();
+            return filePath;
+        } catch (e: Exception) {
+            if (isGoogleDriveUri(selectedVideoUri)) {
+                return getDriveFilePath(selectedVideoUri, activity);
+            } else {
+                return getRealPathFromURI(selectedVideoUri)
+            }
         }
-        cursor.close();
-        return filePath;
-    }catch (e:Exception){
-        return getRealPathFromURI(selectedVideoUri)
     }
-}
+
     private fun getRealPathFromURI(uri: Uri?): String {
         val result: String
+
+
         val proj = arrayOf(MediaStore.Images.Media.DATA)
         val cursor = activity!!.contentResolver.query(uri, proj, null, null, null)
         if (cursor == null) {
@@ -995,7 +1008,53 @@ private fun getRealPathFromURIForVideo(selectedVideoUri:Uri) :String{
             cursor.close()
         }
         return result
+
     }
+
+    private fun getDriveFilePath(uri: Uri?, context: Context?): String {
+
+        val returnCursor = context!!.getContentResolver().query(uri, null, null, null, null)
+
+        val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        val sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE)
+        returnCursor.moveToFirst()
+        val name = returnCursor.getString(nameIndex)
+        val size = java.lang.Long.toString(returnCursor.getLong(sizeIndex))
+        val file = File(context.getCacheDir(), name)
+        try {
+            val inputStream = context.getContentResolver().openInputStream(uri)
+            val outputStream = FileOutputStream(file)
+            var read = 0
+            val maxBufferSize = 1 * 1024 * 1024
+            val bytesAvailable = inputStream.available()
+
+            //int bufferSize = 1024;
+            val bufferSize = Math.min(bytesAvailable, maxBufferSize)
+
+            val buffers = ByteArray(bufferSize)
+
+//            while ((read = inputStream.read(buffers)) != -1) {
+//                outputStream.write(buffers, 0, read)
+//            }
+            Log.e("File Size", "Size " + file.length())
+            inputStream.close()
+            outputStream.close()
+            Log.e("File Path", "Path " + file.path)
+            Log.e("File Size", "Size " + file.length())
+        } catch (e: Exception) {
+            Log.e("Exception", e.message)
+        }
+
+        return file.path
+
+    }
+
+
+    private fun isGoogleDriveUri(uri: Uri?): Boolean {
+
+        return "com.google.android.apps.docs.storage".equals(uri!!.getAuthority()) || "com.google.android.apps.docs.storage.legacy".equals(uri!!.getAuthority());
+    }
+
 
     override fun openGallery() {
         GALLERY = true
@@ -1070,21 +1129,6 @@ private fun getRealPathFromURIForVideo(selectedVideoUri:Uri) :String{
 
     }
 
-    fun getPath(uri: Uri): String? {
-        val projection = arrayOf(MediaStore.Video.Media.DATA)
-        val cursor = activity!!.getContentResolver().query(uri, projection, null, null, null)
-        if (cursor != null) {
-            // HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
-            // THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE MEDIA
-            val column_index = cursor!!
-                    .getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
-            cursor!!.moveToFirst()
-            return cursor!!.getString(column_index)
-        } else
-            return null
-    }
-
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -1092,7 +1136,7 @@ private fun getRealPathFromURIForVideo(selectedVideoUri:Uri) :String{
             if (requestCode == REQUEST_CAMERA) {
                 try {
                     recyclerItems.clear()
-                   imageName=getFileName(this!!.imageUri!!)
+                    imageName = getFileName(this!!.imageUri!!)
 
                     recyclerItems.add(imageUri!!)
                     mPresenter.openCropper(recyclerItems)
@@ -1109,12 +1153,12 @@ private fun getRealPathFromURIForVideo(selectedVideoUri:Uri) :String{
                     val url = data.getStringExtra("url")
                     listFromCropper!!.add(Uri.parse(url))
                     //croppedImage.visibility = View.VISIBLE
-                   // cancel.visibility = View.VISIBLE
+                    // cancel.visibility = View.VISIBLE
 
                     videoLayout.visibility = View.VISIBLE
-                  //  videoName.text = url.substring(url.lastIndexOf("/")+1)
+                    //  videoName.text = url.substring(url.lastIndexOf("/")+1)
                     videoName.text = imageName
-                    Toast.makeText(activity!!,"Image is attached",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity!!, "Image is attached", Toast.LENGTH_SHORT).show()
                     youtubeField.visibility = View.GONE
                     Glide.with(activity!!)
                             .load(url)
@@ -1122,14 +1166,14 @@ private fun getRealPathFromURIForVideo(selectedVideoUri:Uri) :String{
 
                 } else
                     if (listFromCropper!!.size > 0) {
-                       // croppedImage.visibility = View.VISIBLE
-                       // cancel.visibility = View.VISIBLE
+                        // croppedImage.visibility = View.VISIBLE
+                        // cancel.visibility = View.VISIBLE
                         for (i in listFromCropper!!) {
                             Glide.with(activity!!)
                                     .load(i)
                                     .into(croppedImage)
                         }
-                          }
+                    }
                 imagestatus = "true"
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -1144,7 +1188,7 @@ private fun getRealPathFromURIForVideo(selectedVideoUri:Uri) :String{
         if (requestCode === SELECT_PICTURES) {
 
             try {
-                recyclerItems.clear()
+
 
                 //------------------------------
 
@@ -1154,30 +1198,31 @@ private fun getRealPathFromURIForVideo(selectedVideoUri:Uri) :String{
                 var type = isImageFile(uri)
 
                 if (type.contains("image")
-                        ||type.contains("jpeg")
-                       ||type.contains("png")
-                      ||type.contains("svg")
-                     ||type.contains("svg")
-                        ||type.contains("jpg")) {
+                        || type.contains("jpeg")
+                        || type.contains("png")
+                        || type.contains("svg")
+                        || type.contains("svg")
+                        || type.contains("jpg")) {
                     val returnCursor = activity!!.getContentResolver().query(uri, null, null, null, null)
                     val sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE)
                     returnCursor.moveToFirst()
                     val size = returnCursor.getLong(sizeIndex).toInt()
                     val sizeInMb = size / (1024)
                     if (sizeInMb > 0) {
-                        imageName=getFileName(uri)
+                        imageName = getFileName(uri)
+                        recyclerItems.clear()
                         recyclerItems.add(uri)
                         mPresenter.openCropper(recyclerItems)
-                    }else{
-                        Toast.makeText(activity!!,"Unable to upload",Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(activity!!, "Unable to upload", Toast.LENGTH_SHORT).show()
                     }
-                } else if(type.contains("video")) {
-                    var sizeInMb:Int
+                } else if (type.contains("video")) {
+                    var sizeInMb: Int
                     val returnCursor = activity!!.getContentResolver().query(uri, null, null, null, null)
-                    if (returnCursor==null){
+                    if (returnCursor == null) {
                         val file = File(uri.toString())
                         sizeInMb = Integer.parseInt((file.length() / (1024 * 1024)).toString())
-                    }else {
+                    } else {
                         val sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE)
                         returnCursor.moveToFirst()
                         val size = returnCursor.getLong(sizeIndex).toInt()
@@ -1186,24 +1231,44 @@ private fun getRealPathFromURIForVideo(selectedVideoUri:Uri) :String{
                     if (sizeInMb > 100) {
                         Toast.makeText(activity, "Unable to upload video more than 100 MB.", Toast.LENGTH_LONG).show()
                     } else {
-                        if (youtubeField.text.toString().length > 0) {
-                            Toast.makeText(activity, "Please remove YouTube url first.", Toast.LENGTH_LONG).show()
+//                        if (isGoogleDriveUri(uri)) {
+//
+////var url=GetGoogleDrivePath.getPath(activity!!,uri)
+//                           // Toast.makeText(activity, "Unable to upload video from google drive please select other video from internal storage", Toast.LENGTH_LONG).show()
+//
+//                            youtubeField.visibility=View.GONE
+//                            videoAttached=1
+//                            videoLayout.visibility = View.VISIBLE
+//                            videoName.text = getFileName(uri)
+//                            cancel.visibility = View.VISIBLE
+//                            youtubeField.visibility = View.GONE
+//                            Glide.with(activity!!)
+//                                    .load("")
+//                                    .into(croppedImage)
+//                            listFromCropper!!.clear()
+//                            recyclerItems.clear()
+//                             recyclerItems.add( data!!.data)
+//                        } else {
+                            if (youtubeField.text.toString().length > 0) {
+                                Toast.makeText(activity, "Please remove YouTube url first.", Toast.LENGTH_LONG).show()
 
-                        } else {
-                            videoAttached=1
-                            videoLayout.visibility = View.VISIBLE
-                            videoName.text = getFileName(uri)
-                            cancel.visibility = View.GONE
-                            youtubeField.visibility = View.GONE
-                            Glide.with(activity!!)
-                                    .load("")
-                                    .into(croppedImage)
-                            listFromCropper!!.clear()
-                            recyclerItems.add( data!!.data)
-                            Toast.makeText(activity, "Video is attached", Toast.LENGTH_LONG).show()
-                        }
+                            } else {
+                                videoAttached = 1
+                                videoLayout.visibility = View.VISIBLE
+                                videoName.text = getFileName(uri)
+                                cancel.visibility = View.GONE
+                                youtubeField.visibility = View.GONE
+                                Glide.with(activity!!)
+                                        .load("")
+                                        .into(croppedImage)
+                                listFromCropper!!.clear()
+                                recyclerItems.clear()
+                                recyclerItems.add(data!!.data)
+                                Toast.makeText(activity, "Video is attached", Toast.LENGTH_LONG).show()
+                            }
+//                        }
                     }
-                }else{
+                } else {
                     Toast.makeText(activity, "Select either video or Image", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
@@ -1212,34 +1277,36 @@ private fun getRealPathFromURIForVideo(selectedVideoUri:Uri) :String{
 
         }
     }
-public fun getFileName( uri:Uri):String {
-  var result:String = "";
-  if (uri.getScheme().equals("content")) {
-    var cursor:Cursor = activity!!.getContentResolver().query(uri, null, null, null, null);
-    try {
-      if (cursor != null && cursor.moveToFirst()) {
-        result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-      }
-    } finally {
-      cursor.close()
+
+    public fun getFileName(uri: Uri): String {
+        var result: String = "";
+        if (uri.getScheme().equals("content")) {
+            var cursor: Cursor = activity!!.getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                }
+            } finally {
+                cursor.close()
+            }
+        }
+        if (result == null || result.isEmpty()) {
+            result = uri.getPath()
+            var cut = result.lastIndexOf('/')
+            if (cut != -1) {
+                result = result.substring(cut + 1)
+            }
+        }
+        return result
     }
-  }
-  if (result == null||result.isEmpty()) {
-    result = uri.getPath()
-    var cut = result.lastIndexOf('/')
-    if (cut != -1) {
-      result = result.substring(cut + 1)
-    }
-  }
-  return result
-}
+
     public fun isImageFile(uri: Uri): String {
-        var mimeType:String = "";
+        var mimeType: String = "";
         if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
             var cr = activity!!.getContentResolver();
             mimeType = cr.getType(uri);
         } else {
-            var  fileExtension:String = MimeTypeMap.getFileExtensionFromUrl(uri
+            var fileExtension: String = MimeTypeMap.getFileExtensionFromUrl(uri
                     .toString());
             mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
                     fileExtension.toLowerCase());
@@ -1250,17 +1317,6 @@ public fun getFileName( uri:Uri):String {
 //        return type
     }
 
-    fun getRealPathFromURI2(contentURI: Uri, context: Activity): String? {
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = context.managedQuery(contentURI, projection, null, null, null) ?: return null
-        val column_index = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        return if (cursor.moveToFirst()) {
-// cursor.close();
-            cursor.getString(column_index)
-        } else null
-        // cursor.close();
-    }
 
     override fun openCropper(list: ArrayList<Uri>) {
         val intent = Intent(activity!!, PostCropper::class.java)
@@ -1300,9 +1356,14 @@ public fun getFileName( uri:Uri):String {
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun uploadVideo(): String {
         try {
+            var ur:String=""
             val uri = recyclerItems!!.get(0)
-            val ur = getRealPathFromURIForVideo(uri)
-           // val ur = uri.path
+            if (isGoogleDriveUri(uri)){
+                ur=GetGoogleDrivePath.getPath(activity!!,uri)
+            }else{
+                ur = getRealPathFromURIForVideo(uri)
+            }
+            // val ur = uri.path
             return ur
         } catch (e: Exception) {
             e.printStackTrace()
@@ -1336,7 +1397,11 @@ public fun getFileName( uri:Uri):String {
 
     override fun showMessage(msg: String?) {
         if (msg != null) {
-            Toast.makeText(activity!!, msg, Toast.LENGTH_SHORT).show()
+            try {
+                Toast.makeText(activity!!, msg, Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -1544,7 +1609,7 @@ public fun getFileName( uri:Uri):String {
             imagePath = event.value.image_url
             videoLayout.visibility = View.VISIBLE
             videoLayout.visibility = View.VISIBLE
-            videoName.text = imagePath.substring(imagePath.lastIndexOf("/")+1)
+            videoName.text = imagePath.substring(imagePath.lastIndexOf("/") + 1)
 
         } else {
             imagePath = ""

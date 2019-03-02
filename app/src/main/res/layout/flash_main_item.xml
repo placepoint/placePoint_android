@@ -78,9 +78,7 @@
                 android:id="@+id/nameLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
+                android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/header">
@@ -99,10 +97,8 @@
                     android:id="@+id/name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
                     android:fontFamily="@font/bold"
                     android:maxLines="3"
                     android:text="Name"
@@ -118,8 +114,6 @@
                     android:id="@+id/dateTime"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
                     android:fontFamily="@font/regular"
                     android:text="May 15 at 6:00PM"
                     android:textColor="@color/grey"
@@ -136,11 +130,6 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:fontFamily="@font/regular"
-                    android:paddingStart="4dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="4dp"
-                    android:paddingRight="4dp"
-                    android:paddingBottom="4dp"
                     android:textColor="@color/black"
                     app:layout_constraintEnd_toStartOf="@+id/imagesLayout"
                     app:layout_constraintStart_toStartOf="@+id/name"
@@ -150,11 +139,6 @@
                     android:id="@+id/videoUrl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginBottom="8dp"
                     android:fontFamily="@font/bold"
                     android:paddingStart="4dp"
                     android:paddingTop="4dp"
@@ -165,23 +149,23 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/postText" />
+
                 <LinearLayout
                     android:id="@+id/imagesLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/dateTime">
 
                     <ImageView
-                        android:visibility="gone"
                         android:id="@+id/bump"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:src="@mipmap/bump" />
+                        android:src="@mipmap/bump"
+                        android:visibility="gone" />
 
                     <RelativeLayout
                         android:id="@+id/imageLay"
@@ -213,13 +197,10 @@
 
             <com.phaseII.placepoint.DynamicImageView
                 android:id="@+id/postImage"
+                android:paddingLeft="@dimen/_8dp"
+                android:paddingRight="@dimen/_8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -229,10 +210,9 @@
                 android:id="@+id/videoLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:visibility="gone"
+                android:paddingLeft="@dimen/_8dp"
+                android:paddingRight="@dimen/_8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/postImage"
@@ -255,15 +235,15 @@
                     android:id="@+id/youtube_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    />
+                    android:visibility="gone" />
 
                 <TextView
-                    android:padding="8dp"
-                    android:visibility="gone"
                     android:id="@+id/textFb"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:visibility="gone" />
+
                 <RelativeLayout
                     android:id="@+id/youLay"
                     android:layout_width="match_parent"
@@ -282,11 +262,13 @@
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:visibility="gone" />
+
                     <ImageView
-                        android:visibility="gone"
+                        android:id="@+id/thumbNail"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:id="@+id/thumbNail"/>
+                        android:visibility="gone" />
+
                     <ImageView
 
                         android:id="@+id/play"
@@ -319,9 +301,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="0dp"
+                android:padding="8dp"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

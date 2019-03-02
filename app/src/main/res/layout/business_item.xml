@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginLeft="16dp"
     android:layout_marginTop="16dp"
-    android:orientation="vertical"
     android:layout_marginRight="16dp"
-    android:layout_marginLeft="16dp">
+    android:orientation="vertical">
 
     <android.support.constraint.ConstraintLayout
 
@@ -37,10 +37,10 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="16dp"
-
-            android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
+
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:background="@drawable/background_timing_green"
             android:fontFamily="@font/bold"
             android:gravity="center"
@@ -73,10 +73,10 @@
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout2"
             android:layout_width="0dp"
-            android:clickable="true"
             android:layout_height="wrap_content"
             android:background="@drawable/roundbottoms"
-android:padding="4dp"
+            android:clickable="true"
+            android:padding="4dp"
             app:layout_constraintBottom_toBottomOf="@+id/imageView"
             app:layout_constraintEnd_toEndOf="@+id/imageView"
             app:layout_constraintStart_toStartOf="@+id/imageView">
@@ -89,8 +89,8 @@ android:padding="4dp"
                 android:layout_marginRight="8dp"
                 android:fontFamily="@font/bold"
                 android:gravity="center_vertical"
-                android:paddingLeft="8dp"
                 android:paddingStart="8dp"
+                android:paddingLeft="8dp"
                 android:text="Title"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/white"
@@ -104,11 +104,11 @@ android:padding="4dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/title"
-                android:paddingLeft="8dp"
-                android:paddingStart="8dp"
-                android:text="Description"
-                android:singleLine="true"
                 android:fontFamily="@font/regular"
+                android:paddingStart="8dp"
+                android:paddingLeft="8dp"
+                android:singleLine="true"
+                android:text="Description"
                 android:textColor="@color/white"
                 android:textSize="10dp"
                 app:layout_constraintEnd_toEndOf="@+id/title"
@@ -160,8 +160,8 @@ android:padding="4dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/regular"
-                android:paddingLeft="8dp"
                 android:paddingStart="8dp"
+                android:paddingLeft="8dp"
                 android:singleLine="true"
                 android:text=""
                 android:textColor="@color/white"
@@ -174,13 +174,13 @@ android:padding="4dp"
         </android.support.constraint.ConstraintLayout>
 
         <View
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:background="@color/colorText"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -192,10 +192,10 @@ android:padding="4dp"
         android:id="@+id/layoutSecond"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginTop="8dp"
 
         android:background="@drawable/roundlight"
-        android:layout_marginTop="8dp">
+        android:orientation="vertical">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -206,12 +206,33 @@ android:padding="4dp"
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/constraintLayout4"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/righttopround"
-                app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
+                android:elevation="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/title1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/leftround"
+                    android:drawableLeft="@drawable/ic_location_listing"
+                    android:fontFamily="@font/bold"
+                    android:maxLines="3"
+                    android:padding="@dimen/_8dp"
+                    android:text="title"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/freeCall"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
 
@@ -219,26 +240,21 @@ android:padding="4dp"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
                     android:layout_toLeftOf="@+id/navigationImage"
                     android:src="@drawable/ic_taxi"
-                    app:layout_constraintBottom_toBottomOf="@+id/freenavigationImage"
                     app:layout_constraintEnd_toStartOf="@+id/freenavigationImage"
                     app:layout_constraintTop_toTopOf="@+id/freenavigationImage"
                     tools:ignore="NotSibling" />
 
                 <ImageView
-                    android:background="@drawable/fullround"
                     android:id="@+id/freenavigationImage"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_alignParentRight="true"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/fullround"
                     android:src="@drawable/ic_navigation"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -249,42 +265,20 @@ android:padding="4dp"
                     android:layout_height="30dp"
                     android:layout_alignParentRight="true"
                     android:layout_marginEnd="16dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginStart="8dp"
                     android:src="@drawable/ic_call"
-                    app:layout_constraintBottom_toBottomOf="@+id/freeTaxi"
                     app:layout_constraintEnd_toStartOf="@+id/freeTaxi"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/freeTaxi" />
 
             </android.support.constraint.ConstraintLayout>
-
-            <TextView
-                android:id="@+id/title1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/leftround"
-                android:drawableLeft="@drawable/ic_location_listing"
-                android:elevation="4dp"
-                android:fontFamily="@font/bold"
-                android:padding="8dp"
-                android:text="title"
-                android:maxLines="3"
-                android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
-                app:layout_constraintEnd_toStartOf="@+id/constraintLayout4"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <RelativeLayout
                 android:id="@+id/relativeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="1dp"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
                 android:layout_marginStart="0dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginRight="0dp"
                 android:elevation="4dp"
                 android:gravity="center_vertical"
                 android:visibility="gone"
@@ -315,16 +309,15 @@ android:padding="4dp"
             </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/linearLayout6"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginStart="0dp"
                 android:background="#E4E4E4"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
 
                 <RelativeLayout
@@ -337,14 +330,13 @@ android:padding="4dp"
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/constraintLayout3"
 
+                android:padding="@dimen/_8dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/title1"
-                app:layout_constraintTop_toBottomOf="@+id/title1">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout4">
 
                 <TextView
                     android:id="@+id/phoneNo"
@@ -363,11 +355,11 @@ android:padding="4dp"
 
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="8dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:layout_weight="1"
                     android:fontFamily="@font/regular"
                     android:text="address"
@@ -382,9 +374,9 @@ android:padding="4dp"
                     android:id="@+id/freeImage"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginBottom="2dp"
                     android:background="@drawable/roundlight"
                     android:scaleType="fitCenter"
                     android:src="@mipmap/placeholder"

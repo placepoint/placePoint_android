@@ -155,7 +155,7 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
                 if (fromWhere!="addPost") {
                     if(addPostActivity.isEmpty()){
                         addFragment()
-                    }
+                   }
                 }else{
                     Constants.getPrefs(this)?.edit()?.putString("comingFrom", "")?.apply()
                 }
@@ -329,11 +329,12 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
 
                 }
                 R.id.nav_business -> {
-                    Constants.getPrefs(this)?.edit()?.putString("addPostActivity", "addPost")?.apply()
+
                     Constants.getPrefs(this)!!.edit().putString("showTaxiAtHome", "no").apply()
                     // viewPager.currentItem = 2
                     val loggedIn = Constants.getPrefs(this@DashBoardActivity)!!.getBoolean(Constants.LOGGED, false)
                     if (loggedIn) {
+                        Constants.getPrefs(this)?.edit()?.putString("addPostActivity", "addPost")?.apply()
                         if (positon != 2) {
                             positon = 2
                             ft = supportFragmentManager.beginTransaction()
@@ -341,7 +342,7 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
                             ft.commit()
                         }
                     } else {
-
+                        Constants.getPrefs(this)?.edit()?.putString("addPostActivity", "")?.apply()
                         Constants.getPrefs(this)?.edit()?.putString("firstTime", "Town")?.apply()
                         val intent = Intent(this, LoginActivity::class.java)
                         startActivity(intent)
