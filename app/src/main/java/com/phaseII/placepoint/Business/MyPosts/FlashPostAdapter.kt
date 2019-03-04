@@ -124,9 +124,6 @@ class FlashPostAdapter(private val context: Context, private val list: ArrayList
                 holder.itemView.postImage.visibility = View.VISIBLE
                 Glide.with(context)
                         .load(modelData.image_url)
-                        .apply(RequestOptions()
-
-                                .placeholder(R.mipmap.placeholder))
                         .into(holder.postImage)
             }
             holder.postImage.setOnClickListener {
@@ -141,7 +138,8 @@ class FlashPostAdapter(private val context: Context, private val list: ArrayList
 
                 var thumb: Long = (position * 1000).toLong()
                 var options = RequestOptions().frame(thumb);
-                Glide.with(context).load(modelData.video_link).apply(options).into(holder.itemView.thumbNail);
+              //  Glide.with(context).load(modelData.video_link).apply(options).into(holder.itemView.thumbNail);
+                Glide.with(context).load(modelData.video_link).into(holder.itemView.thumbNail);
 //                Glide.with(context)
 //                        .load(ThumbnailUtils.createVideoThumbnail(modelData.video_link, MediaStore.Video.Thumbnails.MINI_KIND))
 //                        .apply(RequestOptions()
@@ -158,9 +156,7 @@ class FlashPostAdapter(private val context: Context, private val list: ArrayList
 
                 Glide.with(context)
                         .load("https://img.youtube.com/vi/$videoId/0.jpg")
-                        .apply(RequestOptions()
 
-                                .placeholder(R.mipmap.placeholder))
                         .into(holder.videoImage)
                 //---------------------------------------------------------------------------
 

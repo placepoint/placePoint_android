@@ -32,7 +32,7 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
     private var claimedList = ArrayList<ModelFDetail>()
     private var claimedListRedeemed = ArrayList<ModelFDetail>()
     private var claimedListUnRedeemed = ArrayList<ModelFDetail>()
-    private lateinit var adapter: FlashDetailAdapter
+   // private lateinit var adapter: FlashDetailAdapter
     private lateinit var adapterC: FlashDetailAdapterClaim
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,8 +112,8 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
         recyclerViewReedeem = findViewById(R.id.recyclerViewReedeem)
         Claimed = findViewById(R.id.Claimed)
         ReedeemedLay = findViewById(R.id.ReedeemedLay)
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerViewReedeem.setNestedScrollingEnabled(false);
+        //recyclerView.isNestedScrollingEnabled = false;
+        //recyclerViewReedeem.isNestedScrollingEnabled = false;
         setSearchView()
     }
 
@@ -148,53 +148,91 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
                 //closeButton.setVisibility(View.VISIBLE);
                 var newList = ArrayList<ModelFDetail>()
                 var newList2 = ArrayList<ModelFDetail>()
-                if (newText.trim { it <= ' ' } == "") {
-
-                    if (claimedListRedeemed.size > 0) {
-                        //noDataFlash.visibility = View.GONE
-                        ReedeemedLay.visibility = View.VISIBLE
-                        adapter = FlashDetailAdapter(applicationContext, claimedListRedeemed)
-                        val linear = LinearLayoutManager(applicationContext)
-                        recyclerViewReedeem.adapter = adapter
-                        recyclerViewReedeem.layoutManager = linear
-                    } else {
-                       // noDataFlash.visibility = View.VISIBLE
-                        ReedeemedLay.visibility = View.GONE
-                    }
-                 if (claimedListUnRedeemed.size > 0) {
-                        //noDataFlash.visibility = View.GONE
-                        Claimed.visibility = View.VISIBLE
-                        adapterC = FlashDetailAdapterClaim(applicationContext, claimedListUnRedeemed)
-                        val linear = LinearLayoutManager(applicationContext)
-                     recyclerView.adapter = adapterC
-                     recyclerView.layoutManager = linear
-                    } else {
-                       // noDataFlash.visibility = View.VISIBLE
-                     Claimed.visibility = View.GONE
-                    }
-                } else {
-                    if (adapter!=null) {
-                        newList = adapter.getSelectedItems(newText)
-                        if (newList.size > 0) {
-                            ReedeemedLay.visibility = View.VISIBLE
-
-                            adapter = FlashDetailAdapter(applicationContext, newList)
-                            val linear = LinearLayoutManager(applicationContext)
-                            recyclerViewReedeem.adapter = adapter
-                            recyclerViewReedeem.layoutManager = linear
-
-                        } else {
-
-                            ReedeemedLay.visibility = View.GONE
-
-                        }
-                    }
+                var newList3 = ArrayList<ModelFDetail>()
+                var newList4 = ArrayList<ModelFDetail>()
+               // if (newText.trim { it <= ' ' } == "") {
+                   // newList2=getSelectedItems(claimedListUnRedeemed)
+//                    if (claimedListRedeemed.size > 0) {
+//                        //noDataFlash.visibility = View.GONE
+//                        ReedeemedLay.visibility = View.VISIBLE
+//                        adapter = FlashDetailAdapter(applicationContext, claimedListRedeemed)
+//                        val linear = LinearLayoutManager(applicationContext)
+//                        recyclerViewReedeem.adapter = adapter
+//                        recyclerViewReedeem.layoutManager = linear
+//                    } else {
+//                       // noDataFlash.visibility = View.VISIBLE
+//                        ReedeemedLay.visibility = View.GONE
+//                    }
+//                 if (newList2.size > 0) {
+//                       noDataFlash.visibility = View.GONE
+//                        Claimed.visibility = View.VISIBLE
+//                        adapterC = FlashDetailAdapterClaim(applicationContext, claimedListUnRedeemed)
+//                        val linear = LinearLayoutManager(applicationContext)
+//                     recyclerView.adapter = adapterC
+//                     recyclerView.layoutManager = linear
+//                    } else {
+//                     noDataFlash.visibility = View.VISIBLE
+//                     Claimed.visibility = View.GONE
+//                    }
+//                } else {
+//                    if (adapter!=null) {
+//                        newList = adapter.getSelectedItems(newText)
+//                        if (newList.size > 0) {
+//                            ReedeemedLay.visibility = View.VISIBLE
+//
+//                            adapter = FlashDetailAdapter(applicationContext, newList)
+//                            val linear = LinearLayoutManager(applicationContext)
+//                            recyclerViewReedeem.adapter = adapter
+//                            recyclerViewReedeem.layoutManager = linear
+//
+//                        } else {
+//
+//                            ReedeemedLay.visibility = View.GONE
+//
+//                        }
+//                    }
                     if (adapterC!=null) {
-                        newList2 = adapterC.getSelectedItems(newText)
-                        if (newList2.size > 0) {
+                      newList2 =getSelectedItems(claimedListUnRedeemed,newText)
+                        for (m in 0 until newList2.size){
+                            if (newList2[m].status!="header"){
+                                newList4.add(newList2[m])
+                            }
+                        }
+                        for(i in 0 until newList4.size){
+                            if (newList4[i].status=="0"){
+                                newList.add(newList4[i])
+
+                            }else{
+                                newList3.add(newList4[i])
+                            }
+                        }
+                        if (newList.size>0) {
+                            val m = ModelFDetail()
+                            m.name = "Claimed"
+                            m.status = "header"
+                            m.post_id= ""
+                            m.email= ""
+                            m.phone_no= ""
+                            m.created_at= ""
+                            m.updated_at= ""
+                            newList.add(0, m)
+                        }
+                        if (newList3.size>0){
+                            val m1=ModelFDetail()
+                            m1.name="Redeemed"
+                            m1.status="header"
+                            m1.post_id= ""
+                            m1.email= ""
+                            m1.phone_no= ""
+                            m1.created_at= ""
+                            m1.updated_at= ""
+                            newList3.add(0,m1)
+                        }
+                        newList.addAll(newList3)
+                        if (newList.size > 0) {
                             Claimed.visibility = View.VISIBLE
 
-                            adapterC = FlashDetailAdapterClaim(applicationContext, newList2)
+                            adapterC = FlashDetailAdapterClaim(applicationContext, newList)
                             val linear = LinearLayoutManager(applicationContext)
                             recyclerView.adapter = adapterC
                             recyclerView.layoutManager = linear
@@ -203,9 +241,9 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
                             Claimed.visibility = View.GONE
 
                         }
-                    }
+                 //   }
 
-                    if (newList.size==0&&newList2.size==0){
+                    if (newList.size==0){
                         noDataFlash.visibility=View.VISIBLE
                     }else{
                         noDataFlash.visibility=View.GONE
@@ -214,6 +252,19 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
                 return false
             }
         })
+    }
+
+    private fun getSelectedItems(claimedListUnRedeemed: ArrayList<ModelFDetail>, newText: String): ArrayList<ModelFDetail> {
+
+        var newList= java.util.ArrayList<ModelFDetail>()
+        for (i in 0 until claimedListUnRedeemed.size){
+
+            if (claimedListUnRedeemed[i].email.contains(newText)) {
+                newList.add(claimedListUnRedeemed[i])
+            }
+
+        }
+        return newList
     }
 
     fun onClickS(v: View) {
@@ -255,10 +306,40 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
                 claimedListRedeemed.add(list[i])
             }
         }
+        if (claimedListUnRedeemed.size>0) {
+            val m = ModelFDetail()
+            m.name = "Claimed"
+            m.status = "header"
+            m.post_id= ""
+            m.email= ""
+            m.phone_no= ""
+            m.created_at= ""
+            m.updated_at= ""
+            claimedListUnRedeemed.add(0, m)
+        }
+        if (claimedListRedeemed.size>0){
+            val m1=ModelFDetail()
+            m1.name="Redeemed"
+            m1.status="header"
+            m1.post_id= ""
+            m1.email= ""
+            m1.phone_no= ""
+            m1.created_at= ""
+            m1.updated_at= ""
+            claimedListRedeemed.add(0,m1)
+        }
+        claimedListUnRedeemed.addAll(claimedListRedeemed)
         adapterC = FlashDetailAdapterClaim(this, claimedListUnRedeemed)
-        adapter = FlashDetailAdapter(this, claimedListRedeemed)
+        Claimed.visibility=View.VISIBLE
+        recyclerView.visibility=View.VISIBLE
+        noDataFlash.visibility = View.GONE
+
+        val linear = LinearLayoutManager(this)
+        recyclerView.adapter = adapterC
+        recyclerView.layoutManager = linear
+       // adapter = FlashDetailAdapter(this, claimedListRedeemed)
         if (claimedListRedeemed.size > 0||claimedListUnRedeemed.size>0) {
-            if (claimedListUnRedeemed.size>0){
+            //if (claimedListUnRedeemed.size>0){
                 Claimed.visibility=View.VISIBLE
                 recyclerView.visibility=View.VISIBLE
                 noDataFlash.visibility = View.GONE
@@ -266,21 +347,21 @@ class FlashDetailActivity : AppCompatActivity(), FlashDetailContract.View {
                 val linear = LinearLayoutManager(this)
                 recyclerView.adapter = adapterC
                 recyclerView.layoutManager = linear
-            }else{
-                Claimed.visibility=View.GONE
-            }
-            if (claimedListRedeemed.size>0){
-                ReedeemedLay.visibility=View.VISIBLE
-                recyclerViewReedeem.visibility=View.VISIBLE
-                noDataFlash.visibility = View.GONE
-
-                val linear = LinearLayoutManager(this)
-                recyclerViewReedeem.adapter = adapter
-                recyclerViewReedeem.layoutManager = linear
-            }else{
-                ReedeemedLay.visibility=View.GONE
-
-            }
+//            }else{
+//                Claimed.visibility=View.GONE
+//            }
+//            if (claimedListRedeemed.size>0){
+//                ReedeemedLay.visibility=View.VISIBLE
+//                recyclerViewReedeem.visibility=View.VISIBLE
+//                noDataFlash.visibility = View.GONE
+//
+//                val linear = LinearLayoutManager(this)
+//                recyclerViewReedeem.adapter = adapter
+//                recyclerViewReedeem.layoutManager = linear
+//            }else{
+//                ReedeemedLay.visibility=View.GONE
+//
+//            }
 
         } else {
             Claimed.visibility=View.GONE

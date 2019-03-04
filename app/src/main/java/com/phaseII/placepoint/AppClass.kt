@@ -25,6 +25,7 @@ import android.app.NotificationManager
 import android.app.NotificationChannel
 import android.app.PendingIntent
 import android.content.Context.NOTIFICATION_SERVICE
+import android.media.AudioManager
 import com.appsflyer.AppsFlyerConversionListener
 import com.appsflyer.AppsFlyerLib
 
@@ -131,24 +132,58 @@ class AppClass : Application() ,AppsFlyerConversionListener{
 //            }
 //
 //            //val mBuilder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+var audio:AudioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-            val mBuilder = NotificationCompat.Builder(applicationContext)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+            when (audio.getRingerMode()) {
+                AudioManager.RINGER_MODE_NORMAL -> {
+                    val mBuilder = NotificationCompat.Builder(applicationContext)
+                            .setSmallIcon(R.mipmap.ic_launcher)
 
-                   // .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
-                    .setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
-                    .setAutoCancel(true)
-                    .setOnlyAlertOnce(false)
+                            // .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
+                            .setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
+                            .setAutoCancel(true)
+                            .setOnlyAlertOnce(false)
 
-            val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                    val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-            mNotifyMgr.notify(0, mBuilder.build())
+                    mNotifyMgr.notify(0, mBuilder.build())
+                    val mp= MediaPlayer.create(applicationContext, R.raw.bikehorn)
+                    mp.start()
+                }
+                AudioManager.RINGER_MODE_SILENT -> {
+                    val mBuilder = NotificationCompat.Builder(applicationContext)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+
+                            // .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
+                            //.setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
+                            .setAutoCancel(true)
+                            .setOnlyAlertOnce(false)
+
+                    val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+                    mNotifyMgr.notify(0, mBuilder.build())
+                }
+                AudioManager.RINGER_MODE_VIBRATE -> {
+                    val mBuilder = NotificationCompat.Builder(applicationContext)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+
+                            // .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
+                            //.setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
+                            .setAutoCancel(true)
+                            .setOnlyAlertOnce(false)
+
+                    val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+                    mNotifyMgr.notify(0, mBuilder.build())
+                }
+            }
+
+
 
 //            notificationManager.notify(
 //                    1001, // notification id
 //                    mBuilder.build())
-            var mp= MediaPlayer.create(applicationContext, R.raw.bikehorn)
-            mp.start()
+
 //            val builder =  NotificationCompat.Builder(applicationContext)
 //
 //                    .setAutoCancel(true)

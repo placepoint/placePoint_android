@@ -28,68 +28,70 @@
         android:fontFamily="@font/regular"
         android:iconifiedByDefault="false"
         app:queryHint="Search" />
-<ScrollView
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_above="@+id/redeemButtonF"
-    android:layout_below="@+id/searchView">
-    <LinearLayout
 
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_above="@+id/redeemButtonF"
+        android:layout_below="@+id/searchView"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
 
         <LinearLayout
-            android:visibility="gone"
-            android:id="@+id/Claimed"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/Claimed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:text="Claimed"
-                android:textSize="18sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:textStyle="bold"/>
+                android:orientation="vertical"
+                android:visibility="gone">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:text="Claimed"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ReedeemedLay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:visibility="gone">
 
-        <LinearLayout
-            android:visibility="gone"
-            android:id="@+id/ReedeemedLay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:text="Redeemed"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:textSize="18sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:text="Redeemed"
-                android:textColor="@color/colorPrimaryDark"
-               android:textStyle="bold" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerViewReedeem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerViewReedeem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</ScrollView>
+
     <TextView
         android:id="@+id/redeemButtonF"
         android:layout_width="match_parent"

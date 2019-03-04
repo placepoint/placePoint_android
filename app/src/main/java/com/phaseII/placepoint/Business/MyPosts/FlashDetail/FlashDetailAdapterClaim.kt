@@ -20,43 +20,135 @@ import android.widget.TextView
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import com.phaseII.placepoint.R
+import kotlinx.android.synthetic.main.headerflashdetail.view.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FlashDetailAdapterClaim(private var context: Context, private val list: ArrayList<ModelFDetail>) : RecyclerView.Adapter<FlashDetailAdapterClaim.ViewHolder>() {
+class FlashDetailAdapterClaim(private var context: Context, private val list: ArrayList<ModelFDetail>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        if (viewType == TYPE_ITEM) {
 
-    private var inflater = LayoutInflater.from(context)
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(inflater.inflate(R.layout.flashdetail_item, parent, false))
+            return VHItem(inflater.inflate(R.layout.flashdetail_item, parent, false));
+        } else if (viewType == TYPE_HEADER) {
+            return VHHeader(inflater.inflate(R.layout.headerflashdetail, parent, false));
+        }
+        return VHItem(inflater.inflate(R.layout.flashdetail_item, parent, false))
     }
 
     override fun getItemCount(): Int {
         return list.size
     }
 
-    @SuppressLint("SimpleDateFormat")
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val modelData = list[position]
-        holder.checkBoxFlash.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
-            if (modelData.status=="0"){
-                modelData.checked = b
-            }
-        }
-        holder.emailTextFlash.text = modelData.email
-        holder.nameTextFlash.text = modelData.name
-        holder.phoneTextFlash.text = modelData.phone_no
-        holder.dateTextFlash.text = parseDateToddMMyyyy2(modelData.created_at)
-        holder.cardView.setCardBackgroundColor(context.resources.getColor(R.color.white))
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
-            holder.checkBoxFlash.visibility= View.VISIBLE
-        holder.phoneTextFlash.setOnClickListener{
-            if (!modelData.phone_no.trim().isEmpty()){
-                showDialog(modelData.phone_no)
+        if (holder is VHItem) {
+            var dataItem = getItem(position);
+            holder.checkBoxFlash.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
+                if (list[position].status == "0") {
+                    list[position].checked = b
+                }
             }
+            holder.emailTextFlash.text = list[position].email
+            holder.nameTextFlash.text = list[position].name
+            holder.phoneTextFlash.text = list[position].phone_no
+            holder.dateTextFlash.text = parseDateToddMMyyyy2(list[position].created_at)
+            holder.cardView.setCardBackgroundColor(context.resources.getColor(R.color.white))
+            if (list[position].status == "0") {
+                holder.checkBoxFlash.visibility = View.VISIBLE
+            } else {
+                holder.checkBoxFlash.visibility = View.INVISIBLE
+            }
+            holder.phoneTextFlash.setOnClickListener {
+                if (!list[position].phone_no.trim().isEmpty()) {
+                    showDialog(list[position].phone_no)
+                }
+            }
+
+        } else if (holder is VHHeader) {
+
+            holder.itemView.header.text = list[position].name
+
         }
     }
 
+    private fun getItem(position: Int): ModelFDetail {
+        return list[position]
+
+//        if (position != 0) {
+//            list[position - 1]
+//        } else {
+//            list[position]
+//        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+
+        if (list[position].status == "header") {
+            return TYPE_HEADER
+        }
+
+        return TYPE_ITEM
+    }
+
+    var TYPE_HEADER: Int = 0
+    var TYPE_ITEM: Int = 1
+    private var inflater = LayoutInflater.from(context)
+
+    class VHItem(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var checkBoxFlash: CheckBox = itemView.findViewById(R.id.checkBoxFlash)
+        var emailTextFlash: TextView = itemView.findViewById(R.id.emailTextFlash)
+        var nameTextFlash: TextView = itemView.findViewById(R.id.nameTextFlash)
+        var dateTextFlash: TextView = itemView.findViewById(R.id.dateTextFlash)
+        var cardView: CardView = itemView.findViewById(R.id.cardView)
+        var phoneTextFlash: TextView = itemView.findViewById(R.id.phoneTextFlash)
+        var cardLay: LinearLayout = itemView.findViewById(R.id.cardLay)
+    }
+
+
+    class VHHeader(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FlashDetailAdapter.ViewHolder {
+//        if (viewType == TYPE_ITEM) {
+//
+//            return  VHItem( inflater.inflate(R.layout.flashdetail_item, parent, false));
+//        } else if (viewType == TYPE_HEADER) {
+//            //inflate your layout and pass it to view holder
+//            return  VHHeader(null);
+//        }
+//        return ViewHolder(inflater.inflate(R.layout.flashdetail_item, parent, false))
+//    }
+//
+//    override fun getItemCount(): Int {
+//        return list.size
+//    }
+
+    //    @SuppressLint("SimpleDateFormat")
+//    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+//        try {
+//            ///val modelData = list[position]
+//            holder.checkBoxFlash.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
+//                if (list[position].status == "0") {
+//                    list[position].checked = b
+//                }
+//            }
+//            holder.emailTextFlash.text = list[position].email
+//            holder.nameTextFlash.text = list[position].name
+//            holder.phoneTextFlash.text = list[position].phone_no
+//            holder.dateTextFlash.text = parseDateToddMMyyyy2(list[position].created_at)
+//            holder.cardView.setCardBackgroundColor(context.resources.getColor(R.color.white))
+//
+//            holder.checkBoxFlash.visibility = View.VISIBLE
+//            holder.phoneTextFlash.setOnClickListener {
+//                if (!list[position].phone_no.trim().isEmpty()) {
+//                    showDialog(list[position].phone_no)
+//                }
+//            }
+//        }catch (e:Exception){
+//            e.printStackTrace()
+//        }
+//    }
+//
     private fun showDialog(phoneNo: String) {
 
         val dialog = AlertDialog.Builder(context)
@@ -85,24 +177,26 @@ class FlashDetailAdapterClaim(private var context: Context, private val list: Ar
         alert.show()
     }
 
-
+    //
+//
     fun getSectedIds(): String {
 
-        var ids:String=""
-        for(i in 0 until list.size){
+        var ids: String = ""
+        for (i in 0 until list.size) {
 
-                if (list[i].checked) {
-                    if (!ids.isEmpty()) {
-                        ids = ids + "," + list[i].id
-                    } else {
-                        ids = list[i].id
-                    }
+            if (list[i].checked) {
+                if (!ids.isEmpty()) {
+                    ids = ids + "," + list[i].id
+                } else {
+                    ids = list[i].id
+                }
 
             }
         }
         return ids
     }
 
+    //
     fun getSelectedItems(newText: String): ArrayList<ModelFDetail> {
         var newList=ArrayList<ModelFDetail>()
         for (i in 0 until list.size){
@@ -114,7 +208,7 @@ class FlashDetailAdapterClaim(private var context: Context, private val list: Ar
         }
         return newList
     }
-
+//
     fun parseDateToddMMyyyy2(time: String): String? {
         val inputPattern = "yyyy-MM-dd hh:mm:ss"
         val outputPattern = "dd MM yyyy"
@@ -135,15 +229,15 @@ class FlashDetailAdapterClaim(private var context: Context, private val list: Ar
 //        val currentDateandTime = sdf.format(Date())
         return str
     }
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var checkBoxFlash: CheckBox = itemView.findViewById(R.id.checkBoxFlash)
-        var emailTextFlash: TextView = itemView.findViewById(R.id.emailTextFlash)
-        var nameTextFlash: TextView = itemView.findViewById(R.id.nameTextFlash)
-        var dateTextFlash: TextView = itemView.findViewById(R.id.dateTextFlash)
-        var cardView: CardView = itemView.findViewById(R.id.cardView)
-        var phoneTextFlash: TextView = itemView.findViewById(R.id.phoneTextFlash)
-        var cardLay: LinearLayout = itemView.findViewById(R.id.cardLay)
-    }
+//    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+//        var checkBoxFlash: CheckBox = itemView.findViewById(R.id.checkBoxFlash)
+//        var emailTextFlash: TextView = itemView.findViewById(R.id.emailTextFlash)
+//        var nameTextFlash: TextView = itemView.findViewById(R.id.nameTextFlash)
+//        var dateTextFlash: TextView = itemView.findViewById(R.id.dateTextFlash)
+//        var cardView: CardView = itemView.findViewById(R.id.cardView)
+//        var phoneTextFlash: TextView = itemView.findViewById(R.id.phoneTextFlash)
+//        var cardLay: LinearLayout = itemView.findViewById(R.id.cardLay)
+//    }
 
 }
 

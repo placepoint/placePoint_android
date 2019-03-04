@@ -22,7 +22,6 @@ import android.support.design.internal.BottomNavigationMenuView
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import com.appsflyer.AppsFlyerConversionListener
-import com.crashlytics.android.Crashlytics
 import com.onesignal.OneSignal
 import com.phaseII.placepoint.Service
 import okhttp3.ResponseBody
