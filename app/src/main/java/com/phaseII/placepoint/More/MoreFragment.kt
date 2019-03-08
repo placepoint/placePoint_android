@@ -64,11 +64,13 @@ class MoreFragment : Fragment(){
             items.add("Reset Password")
             items.add("Terms and conditions")
             items.add("Privacy Policy")
+            items.add("Business")
             items.add("Logout")
         }else{
             items.add("Choose Town")
             items.add("Terms and conditions")
             items.add("Privacy Policy")
+            items.add("Business")
 
         }
 
@@ -114,14 +116,14 @@ class MoreFragment : Fragment(){
                         val status = `object`.optString("status")
                         // if (status.equals("true", ignoreCase = true)) {
                         val intent = Intent(context, DashBoardActivity::class.java)
-                        intent.putExtra("from", "false")
+//                        intent.putExtra("from", "false")
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
                         (context as Activity).finish()
 
                         // }
 
-                    } catch (e: IOException) {
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     } catch (e: JSONException) {
                         e.printStackTrace()

@@ -11,6 +11,7 @@ import com.phaseII.placepoint.R
 import com.phaseII.placepoint.Town.TownActivity
 import kotlinx.android.synthetic.main.more_item.view.*
 import android.app.Activity
+import android.content.SharedPreferences
 import android.support.v7.app.AlertDialog
 import android.widget.EditText
 import android.widget.TextView
@@ -33,7 +34,7 @@ import java.io.IOException
 
 
 class MoreAdapter(var context: Context, var items: ArrayList<String>) : RecyclerView.Adapter<MoreAdapter.ViewHolder>() {
-    //  val home=context as SwitchToHome
+    val businessFragment = context as OpenBusinessFragment
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater.from(context).inflate(R.layout.more_item, parent, false)
         return ViewHolder(view)
@@ -47,7 +48,7 @@ class MoreAdapter(var context: Context, var items: ArrayList<String>) : Recycler
 
         holder.itemView.item_name.text = items[position]
         holder.itemView.setOnClickListener {
-            if (Constants.getPrefs(context!!)!!.getBoolean(Constants.LOGGED,false)) {
+            if (Constants.getPrefs(context!!)!!.getBoolean(Constants.LOGGED, false)) {
                 if (position == 0) {
                     Constants.getPrefs(context)!!.edit().putString("showHomeBackButton", "yes").apply()
                     Constants.getPrefs(context)!!.edit().putString("comingFrom", "more").apply()
@@ -68,6 +69,12 @@ class MoreAdapter(var context: Context, var items: ArrayList<String>) : Recycler
                     context.startActivity(intent)
                 }
                 if (position == 4) {
+
+                    Constants.getPrefs(context)?.edit()?.putString("showbb", "yes")?.apply()
+                    businessFragment.openBusinessFragment()
+                }
+                if (position == 5) {
+
                     val cat = Constants.getPrefs(context)!!.getString(Constants.CATEGORY_IDS, "")
                     val townId = Constants.getPrefs(context)!!.getString(Constants.TOWN_ID, "")
                     val townName = Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME, "")
@@ -94,11 +101,13 @@ class MoreAdapter(var context: Context, var items: ArrayList<String>) : Recycler
                     Constants.getPrefs(context)?.edit()?.putString(Constants.TAXI_TOWNID, taxitownid)?.apply()
                     Constants.getPrefs(context)?.edit()?.putString(Constants.TAXI_SUB_ID, taxiSubid)?.apply()
                     Constants.getPrefs(context!!)!!.edit().putString("showHLiveYes", "yes").apply()
+                    Constants.getPrefs(context!!)!!.edit().putString("comingFrom", "").apply()
+
                     Constants.getBus().post(LogoutEvent(getauth))
                     //logoutApi(getauth)
 
                 }
-            }else{
+            } else {
                 if (position == 0) {
                     Constants.getPrefs(context)!!.edit().putString("showHomeBackButton", "yes").apply()
                     Constants.getPrefs(context)!!.edit().putString("comingFrom", "more").apply()
@@ -114,18 +123,21 @@ class MoreAdapter(var context: Context, var items: ArrayList<String>) : Recycler
                     val intent = Intent(context, PrivacyPolicyActivity::class.java)
                     context.startActivity(intent)
                 }
+                if (position == 3) {
+                    Constants.getPrefs(context)?.edit()?.putString("showbb", "yes")?.apply()
+                    businessFragment.openBusinessFragment()
+                }
             }
         }
     }
 
 
-
     private fun logoutApi(auth_code: String) {
 
-        var retrofit=Retrofit.Builder()
+        var retrofit = Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .build()
-        val service=retrofit.create(Service::class.java)
+        val service = retrofit.create(Service::class.java)
         val call: Call<ResponseBody> = service.logoutApp(auth_code)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -135,14 +147,14 @@ class MoreAdapter(var context: Context, var items: ArrayList<String>) : Recycler
                         val res = response.body()!!.string()
                         val `object` = JSONObject(res)
                         val status = `object`.optString("status")
-                       // if (status.equals("true", ignoreCase = true)) {
+                        // if (status.equals("true", ignoreCase = true)) {
                         val intent = Intent(context, DashBoardActivity::class.java)
                         intent.putExtra("from", "false")
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         context.startActivity(intent)
                         (context as Activity).finish()
 
-                       // }
+                        // }
 
                     } catch (e: IOException) {
                         e.printStackTrace()
@@ -154,12 +166,15 @@ class MoreAdapter(var context: Context, var items: ArrayList<String>) : Recycler
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-Toast.makeText(context,"Unable to Logout.",Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Unable to Logout.", Toast.LENGTH_LONG).show()
             }
         })
     }
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    interface OpenBusinessFragment {
+        fun openBusinessFragment()
+    }
 }
 

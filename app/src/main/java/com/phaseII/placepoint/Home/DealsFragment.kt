@@ -25,6 +25,7 @@ import com.phaseII.placepoint.Town.TownActivity
 import com.squareup.otto.Subscribe
 import java.util.ArrayList
 import android.content.DialogInterface
+import android.content.SharedPreferences
 import com.phaseII.placepoint.AboutBusiness.BusinessDetails.DetailFragment.setTitle
 import android.os.Build
 import android.support.v7.app.AlertDialog
@@ -32,7 +33,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 
 
-class HomeFragment : Fragment(), FlashContractHome.View {
+class DealsFragment : Fragment(), FlashContractHome.View {
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
     private lateinit var toolbar: Toolbar
@@ -73,52 +74,53 @@ class HomeFragment : Fragment(), FlashContractHome.View {
     @SuppressLint("SetTextI18n")
     override fun onResume() {
         super.onResume()
-if (Constants.getPrefs(activity!!)!!.getString("showImagePre","no").equals("no")) {
-    if (!Constants.isAppOpenedFirstTime) {
-        Constants.isAppOpenedFirstTime = true
-        // showAlert()
-    }
 
-    Constants.getBus().register(this)
-    Constants.getPrefs(activity!!)!!.edit().putString(Constants.SHOW_ALL_POST, "yes").apply()
-    Constants.getPrefs(activity!!)!!.edit().putString(Constants.FROMINTENT, "home").apply()
-    Constants.getPrefs(activity!!)!!.edit().putString(Constants.STOPCLICK, "no").apply()
-    if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
-        taxiWorking()
-    }
+        if (Constants.getPrefs(activity!!)!!.getString("showImagePre", "no").equals("no")) {
+            if (!Constants.isAppOpenedFirstTime) {
+                Constants.isAppOpenedFirstTime = true
+                // showAlert()
+            }
 
-    val prefs = Constants.getPrefs(activity!!)
-    val showLay = prefs!!.getString("showLay", "static")
-    if (showLay == "static") {
-        filter.visibility = View.GONE
-        layContainViewPager.visibility = View.GONE
-        staticLay.visibility = View.VISIBLE
+            Constants.getBus().register(this)
+            Constants.getPrefs(activity!!)!!.edit().putString(Constants.SHOW_ALL_POST, "yes").apply()
+            Constants.getPrefs(activity!!)!!.edit().putString(Constants.FROMINTENT, "home").apply()
+            Constants.getPrefs(activity!!)!!.edit().putString(Constants.STOPCLICK, "no").apply()
+            if (Constants.getPrefs(activity!!)!!.getString("showTaxiAtHome", "no") == "yes") {
+                taxiWorking()
+            }
 
-        //----------------------------Getting FlashPosts---------------------------------
-        val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
-        val town_id = Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_ID, "")
-        val category_id = Constants.getPrefs(activity!!)!!.getString(Constants.CATEGORY_IDS, "")
-        mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0")
-        pullToRefresh.setOnRefreshListener {
-            mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0")
-            pullToRefresh.isRefreshing = false
+            val prefs = Constants.getPrefs(activity!!)
+            val showLay = prefs!!.getString("showLay", "static")
+            if (showLay == "static") {
+                filter.visibility = View.GONE
+                layContainViewPager.visibility = View.GONE
+                staticLay.visibility = View.VISIBLE
+
+                //----------------------------Getting FlashPosts---------------------------------
+                val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
+                val town_id = Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_ID, "")
+                val category_id = Constants.getPrefs(activity!!)!!.getString(Constants.CATEGORY_IDS, "")
+                mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0")
+                pullToRefresh.setOnRefreshListener {
+                    mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0")
+                    pullToRefresh.isRefreshing = false
+                }
+                //-------------------------------------------------------------------------------
+                mText.text = "Flash Sales"
+                if (Constants.getPrefs(activity!!)!!.getString("showHLiveYes", "no") == "no") {
+                    Constants.getPrefs(activity!!)!!.edit().putString("showHLiveYes", "yes").apply()
+                    showCase()
+                }
+
+            } else {
+
+                filter.visibility = View.VISIBLE
+                layContainViewPager.visibility = View.VISIBLE
+                staticLay.visibility = View.GONE
+            }
+        } else {
+            Constants.getPrefs(activity!!)!!.edit().putString("showImagePre", "no").apply()
         }
-        //-------------------------------------------------------------------------------
-        mText.text = "Flash Sales"
-        if (Constants.getPrefs(activity!!)!!.getString("showHLiveYes", "no") == "no") {
-            Constants.getPrefs(activity!!)!!.edit().putString("showHLiveYes", "yes").apply()
-            showCase()
-        }
-
-    } else {
-
-        filter.visibility = View.VISIBLE
-        layContainViewPager.visibility = View.VISIBLE
-        staticLay.visibility = View.GONE
-    }
-}else{
-    Constants.getPrefs(activity!!)!!.edit().putString("showImagePre","no").apply()
-}
     }
 
     private fun showAlert() {
@@ -139,6 +141,8 @@ if (Constants.getPrefs(activity!!)!!.getString("showImagePre","no").equals("no")
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show()
     }
+
+
 
 
     override fun setAdapter(data: String) {
@@ -464,16 +468,16 @@ if (Constants.getPrefs(activity!!)!!.getString("showImagePre","no").equals("no")
     }
 
     override fun updateModeldata(position: String, claimed: String) {
-       try {
-           val rr = flashLish[position.toInt()]
-           val countRe = rr.redeemed.toInt() + 1
-           rr.redeemed = countRe.toString()
-           rr.personRedeem = claimed
-           flashLish.set(position.toInt(), rr)
-           flashAdapter.notifyDataSetChanged()
-       }catch (e:Exception){
-           e.printStackTrace()
-       }
+        try {
+            val rr = flashLish[position.toInt()]
+            val countRe = rr.redeemed.toInt() + 1
+            rr.redeemed = countRe.toString()
+            rr.personRedeem = claimed
+            flashLish.set(position.toInt(), rr)
+            flashAdapter.notifyDataSetChanged()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun showToast(optString: String?) {

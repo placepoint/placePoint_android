@@ -1,6 +1,7 @@
 package com.phaseII.placepoint.DashBoard
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -11,18 +12,20 @@ import com.phaseII.placepoint.BusEvents.*
 import com.phaseII.placepoint.Business.BusinessFragment
 import com.phaseII.placepoint.Categories.CategoriesFragment
 import com.phaseII.placepoint.Constants
-import com.phaseII.placepoint.Home.HomeFragment
+import com.phaseII.placepoint.Home.DealsFragment
 import com.phaseII.placepoint.Login.LoginActivity
 import com.phaseII.placepoint.More.MoreFragment
 import com.phaseII.placepoint.R
 import com.squareup.otto.Subscribe
 import android.content.DialogInterface
-import android.support.design.internal.BottomNavigationItemView
-import android.support.design.internal.BottomNavigationMenuView
+import android.content.SharedPreferences
+import android.os.Build
 import android.support.v7.app.AlertDialog
-import android.util.Log
-import com.appsflyer.AppsFlyerConversionListener
 import com.onesignal.OneSignal
+import com.phaseII.placepoint.Categories.CategoriesAdapter
+import com.phaseII.placepoint.Categories.SubCategories.SubCategoriesActivity
+import com.phaseII.placepoint.HomeNew.HomeFragment
+import com.phaseII.placepoint.More.MoreAdapter
 import com.phaseII.placepoint.Service
 import okhttp3.ResponseBody
 import org.json.JSONException
@@ -34,7 +37,9 @@ import java.io.IOException
 
 
 @Suppress("DEPRECATED_IDENTITY_EQUALS")
-class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
+class DashBoardActivity : AppCompatActivity(),DealsFragment.PopupShow ,
+        HomeFragment.SwitchFragment, MoreAdapter.OpenBusinessFragment ,
+        BusinessFragment.BackToMoreFragment {
 
     lateinit var bottomNavigation: BottomNavigationView
     //private lateinit var viewPager: ViewPagerUsedInXml
@@ -120,28 +125,68 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
     }
 
     private fun addHomeFragment() {
-        firstexe = 1
-        positon = 0
-        ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.pager, HomeFragment())
-        ft.commit()
-        val menu = bottomNavigation.getMenu()
-        var i = 0
-        val size = menu.size()
-        our@ while (i < size) {
-            val item = menu.getItem(i)
-            if (item.itemId === R.id.nav_home) {
-                item.isChecked = item.itemId === R.id.nav_home
-                break@our
+        if (intent.hasExtra("openMore")){
+            positon = 3
+            ft = supportFragmentManager.beginTransaction()
+            ft.replace(R.id.pager, MoreFragment())
+            ft.commit()
+            val menu = bottomNavigation.getMenu()
+            var i = 0
+            val size = menu.size()
+            our@ while (i < size) {
+                val item = menu.getItem(i)
+                if (item.itemId === R.id.nav_more) {
+                    item.isChecked = item.itemId === R.id.nav_more
+                    break@our
+                }
+                i++
             }
-            i++
+        }else {
+            var fromWhere = Constants.getPrefs(this)!!.getString("comingFrom", "")
+            firstexe = 0
+            if (fromWhere == "more") {
+                firstexe = 1
+                positon = 1
+                ft = supportFragmentManager.beginTransaction()
+                ft.replace(R.id.pager, DealsFragment())
+                ft.commit()
+                val menu = bottomNavigation.getMenu()
+                var i = 0
+                val size = menu.size()
+                our@ while (i < size) {
+                    val item = menu.getItem(i)
+                    if (item.itemId === R.id.nav_home) {
+                        item.isChecked = item.itemId === R.id.nav_home
+                        break@our
+                    }
+                    i++
+                }
+            } else {
+                firstexe = 1
+                positon = 0
+                ft = supportFragmentManager.beginTransaction()
+                ft.replace(R.id.pager, HomeFragment())
+                ft.commit()
+                val menu = bottomNavigation.getMenu()
+                var i = 0
+                val size = menu.size()
+                our@ while (i < size) {
+                    val item = menu.getItem(i)
+                    if (item.itemId === R.id.nav_newHome) {
+                        item.isChecked = item.itemId === R.id.nav_newHome
+                        break@our
+                    }
+                    i++
+                }
+            }
+            Constants.getPrefs(this)!!.edit().putString("showLay", "static").apply()
         }
-        Constants.getPrefs(this)!!.edit().putString("showLay", "static").apply()
     }
 
     override fun onResume() {
         super.onResume()
         Constants.getSSlCertificate(this)
+
 
         val showback = Constants.getPrefs(this)!!.getString("showHomeBackButton", "no")
         if (showback == "no") {
@@ -187,8 +232,8 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
                     val size = menu.size()
                     our@ while (i < size) {
                         val item = menu.getItem(i)
-                        if (item.itemId === R.id.nav_home) {
-                            item.isChecked = item.itemId === R.id.nav_home
+                        if (item.itemId === R.id.nav_newHome) {
+                            item.isChecked = item.itemId === R.id.nav_newHome
                             break@our
                         }
                         i++
@@ -223,7 +268,8 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
         if (freeRegister == "yes") {
 
             Constants.getPrefs(this)?.edit()?.putString("registers", "no")?.apply()
-            positon = 2
+            Constants.getPrefs(this)?.edit()?.putString("showbb", "yes")?.apply()
+            positon = 3
             ft = supportFragmentManager.beginTransaction()
             ft.replace(R.id.pager, BusinessFragment())
             ft.commit()
@@ -232,8 +278,8 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
             val size = menu.size()
             our@ while (i < size) {
                 val item = menu.getItem(i)
-                if (item.itemId === R.id.nav_business) {
-                    item.isChecked = item.itemId === R.id.nav_business
+                if (item.itemId === R.id.nav_more) {
+                    item.isChecked = item.itemId === R.id.nav_more
                     break@our
                 }
                 i++
@@ -251,8 +297,8 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
             val size = menu.size()
             our@ while (i < size) {
                 val item = menu.getItem(i)
-                if (item.itemId === R.id.nav_home) {
-                    item.isChecked = item.itemId === R.id.nav_home
+                if (item.itemId === R.id.nav_newHome) {
+                    item.isChecked = item.itemId === R.id.nav_newHome
                     break@our
                 }
                 i++
@@ -262,18 +308,18 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
             try {
                 Constants.getPrefs(this)!!.edit().putString("showLay", "static").apply()
                 Constants.getPrefs(this)!!.edit().putString("showHomeBackButton", "no").apply()
-                positon = 0
+                positon =1
                 Constants.getPrefs(this)?.edit()?.putString("firstTime", "no")?.apply()
                 ft = supportFragmentManager.beginTransaction()
-                ft.replace(R.id.pager, HomeFragment())
+                ft.replace(R.id.pager, DealsFragment())
                 ft.commit()
                 val menu = bottomNavigation.getMenu()
                 var i = 0
                 val size = menu.size()
                 our@ while (i < size) {
                     val item = menu.getItem(i)
-                    if (item.itemId === R.id.nav_home) {
-                        item.isChecked = item.itemId === R.id.nav_home
+                    if (item.itemId === R.id.nav_newHome) {
+                        item.isChecked = item.itemId === R.id.nav_newHome
                         break@our
                     }
                     i++
@@ -298,11 +344,11 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
 
 
             when (it.itemId) {
-                R.id.nav_home -> {
+                R.id.nav_newHome -> {
                     if (positon != 0) {
                         positon = 0
-                        Constants.getPrefs(this)!!.edit().putString("showBackYesOrNo", "home").apply()
-                        Constants.getPrefs(this)!!.edit().putString("showLay", "static").apply()
+
+
                         //viewPager.currentItem = 0
                         //it.itemId=R.id.home
                         ft = supportFragmentManager.beginTransaction()
@@ -310,10 +356,26 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
                         ft.commit()
                     }
                 }
+                R.id.nav_home -> {
+                   // if (positon != 1) {
+                        positon = 1
+                        if (getSharedPreferences("NewLoginRegister", Context.MODE_PRIVATE).getString("NewLoginRegister", "").isEmpty()) {
+
+                            showAlertFirst()
+                        }
+                        Constants.getPrefs(this)!!.edit().putString("showBackYesOrNo", "home").apply()
+                        Constants.getPrefs(this)!!.edit().putString("showLay", "static").apply()
+                        //viewPager.currentItem = 0
+                        //it.itemId=R.id.home
+                        ft = supportFragmentManager.beginTransaction()
+                        ft.replace(R.id.pager, DealsFragment())
+                        ft.commit()
+                   // }
+                }
                 R.id.nav_category -> {
                     Constants.getPrefs(this)!!.edit().putString("showTaxiAtHome", "no").apply()
                    // if (positon != 1) {
-                        positon = 1
+                        positon = 2
                         var inSubCategory = Constants.getPrefs(this)!!.getString("subcategory", "0")
 
                         Constants.getPrefs(this)!!.edit().putString("showBack", "no").apply()
@@ -348,6 +410,7 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
                     }
                 }
                 R.id.nav_more -> {
+                    Constants.getPrefs(this)?.edit()?.putString("showbb", "back")?.apply()
                     Constants.getPrefs(this)!!.edit().putString("showTaxiAtHome", "no").apply()
                     if (positon != 3) {
                         positon = 3
@@ -365,7 +428,7 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
     //----Adding Fragments with viewPager in DashBoard------
     private fun setupViewPager(viewPager: ViewPager) {
         val adapter = DashBoardViewPagerAdapter(supportFragmentManager)
-        adapter.addFragment(HomeFragment(), "Home")
+        adapter.addFragment(DealsFragment(), "Home")
         adapter.addFragment(CategoriesFragment(), "category")
         adapter.addFragment(BusinessFragment(), "business")
         adapter.addFragment(MoreFragment(), "more")
@@ -385,7 +448,20 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
                 }
 
             } else if(positon==3){
-                finish()
+
+
+                if ( Constants.getPrefs(this)!!.getString("showbb", "")=="yes"){
+                    Constants.getPrefs(this)?.edit()?.putString("showbb", "back")?.apply()
+                    showMoreFragment()
+                }else if(Constants.getPrefs(this)!!.getString("showbb", "")=="back"){
+                    Constants.getPrefs(this)?.edit()?.putString("showbb", "no")?.apply()
+                    Constants.getPrefs(this)?.edit()?.putString("comingFrom", "")?.apply()
+                   addHomeFragment()
+                } else{
+                    finish()
+                }
+
+
             }
 
             else {
@@ -402,8 +478,8 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
                         val size = menu.size()
                         our@ while (i < size) {
                             val item = menu.getItem(i)
-                            if (item.itemId === R.id.nav_home) {
-                                item.isChecked = item.itemId === R.id.nav_home
+                            if (item.itemId === R.id.nav_newHome) {
+                                item.isChecked = item.itemId === R.id.nav_newHome
                                 break@our
                             }
                             i++
@@ -462,8 +538,8 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
                     val size = menu.size()
                     our@ while (i < size) {
                         val item = menu.getItem(i)
-                        if (item.itemId === R.id.nav_home) {
-                            item.isChecked = item.itemId === R.id.nav_home
+                        if (item.itemId === R.id.nav_newHome) {
+                            item.isChecked = item.itemId === R.id.nav_newHome
                             break@our
                         }
                         i++
@@ -492,17 +568,17 @@ class DashBoardActivity : AppCompatActivity(),HomeFragment.PopupShow {
 
     @Subscribe
     fun getMessage(event: SetPagerToHome) {
-        positon = 0
+        positon = 1
         ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.pager, HomeFragment())
+        ft.replace(R.id.pager, DealsFragment())
         ft.commit()
         val menu = bottomNavigation.getMenu()
         var i = 0
         val size = menu.size()
         our@ while (i < size) {
             val item = menu.getItem(i)
-            if (item.itemId === R.id.nav_home) {
-                item.isChecked = item.itemId === R.id.nav_home
+            if (item.itemId === R.id.nav_newHome) {
+                item.isChecked = item.itemId === R.id.nav_newHome
                 break@our
             }
             i++
@@ -517,7 +593,7 @@ try {
     editor.apply()
     positon = 1
     ft = supportFragmentManager.beginTransaction()
-    ft.replace(R.id.pager, HomeFragment())
+    ft.replace(R.id.pager, DealsFragment())
     ft.commit()
     val menu = bottomNavigation.menu
     var i = 0
@@ -549,5 +625,115 @@ try {
     }
     interface showpp{
         fun ppshow()
+    }
+    private fun showAlertFirst() {
+
+        val builder: AlertDialog.Builder
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = AlertDialog.Builder(this)
+        } else {
+            builder = AlertDialog.Builder(this)
+        }
+        builder.setCancelable(false)
+        builder.setTitle("Alert")
+                .setMessage("Thanks for Downloading PlacePoint. Deals are limited to specific number so they can sometimes sell out in hours. We usually have 1-3 deals per week so keep the app installed if the current deals are expired to get an instant notification when the next deal is available.")
+                .setPositiveButton("Ok", DialogInterface.OnClickListener { dialog, which ->
+                    val firstTimeRegister = getSharedPreferences("NewLoginRegister", Context.MODE_PRIVATE)
+                    val editor: SharedPreferences.Editor = firstTimeRegister.edit()
+                    editor.putString("NewLoginRegister", "yes")
+                    editor.apply()
+                })
+
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show()
+    }
+
+    override fun homeClick(value: Int) {
+        if (value==1){
+            positon=1
+            ft = supportFragmentManager.beginTransaction()
+            ft.replace(R.id.pager, DealsFragment())
+            ft.commit()
+            val menu = bottomNavigation.getMenu()
+            var i = 0
+            val size = menu.size()
+            our@ while (i < size) {
+                val item = menu.getItem(i)
+                if (item.itemId === R.id.nav_home) {
+                    item.isChecked = item.itemId === R.id.nav_home
+                    break@our
+                }
+                i++
+            }
+        }else{
+            positon=2
+            ft = supportFragmentManager.beginTransaction()
+            ft.replace(R.id.pager, CategoriesFragment())
+            ft.commit()
+            val menu = bottomNavigation.getMenu()
+            var i = 0
+            val size = menu.size()
+            our@ while (i < size) {
+                val item = menu.getItem(i)
+                if (item.itemId === R.id.nav_category) {
+                    item.isChecked = item.itemId === R.id.nav_category
+                    break@our
+                }
+                i++
+            }
+        }
+
+    }
+
+    override fun openBusinessFragment() {
+        Constants.getPrefs(this)!!.edit().putString("showTaxiAtHome", "no").apply()
+        // viewPager.currentItem = 2
+        val loggedIn = Constants.getPrefs(this@DashBoardActivity)!!.getBoolean(Constants.LOGGED, false)
+        if (loggedIn) {
+            Constants.getPrefs(this)?.edit()?.putString("addPostActivity", "addPost")?.apply()
+//            if (positon != 3) {
+                positon = 3
+                ft = supportFragmentManager.beginTransaction()
+                ft.replace(R.id.pager, BusinessFragment())
+                ft.commit()
+                val menu = bottomNavigation.getMenu()
+                var i = 0
+                val size = menu.size()
+                our@ while (i < size) {
+                    val item = menu.getItem(i)
+                    if (item.itemId === R.id.nav_more) {
+                        item.isChecked = item.itemId === R.id.nav_more
+                        break@our
+                    }
+                    i++
+                }
+
+//            }
+        } else {
+            Constants.getPrefs(this)?.edit()?.putString("addPostActivity", "")?.apply()
+            Constants.getPrefs(this)?.edit()?.putString("firstTime", "Town")?.apply()
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
+    }
+
+    override fun showMoreFragment() {
+
+        positon = 3
+        ft = supportFragmentManager.beginTransaction()
+        ft.replace(R.id.pager, MoreFragment())
+        ft.commit()
+        val menu = bottomNavigation.getMenu()
+        var i = 0
+        val size = menu.size()
+        our@ while (i < size) {
+            val item = menu.getItem(i)
+            if (item.itemId === R.id.nav_more) {
+                item.isChecked = item.itemId === R.id.nav_more
+                break@our
+            }
+            i++
+        }
     }
 }

@@ -12,7 +12,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
 
-class HomePresenter(val view: HomeHelper) {
+class LiveFeedPresenter(val view: LiveFeedHelper) {
     fun prepareData(from: String) {
         val auth_code = view.getAuthCode()
         val townId = view.getTownId()

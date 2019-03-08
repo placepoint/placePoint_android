@@ -1,6 +1,7 @@
 package com.phaseII.placepoint.Business
 
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.TabLayout
@@ -17,6 +18,7 @@ import android.support.v7.widget.Toolbar
 import android.widget.TextView
 import android.graphics.Typeface
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import com.github.florent37.tutoshowcase.TutoShowcase
 import com.phaseII.placepoint.*
 import com.phaseII.placepoint.BusEvents.*
@@ -30,6 +32,8 @@ class BusinessFragment : Fragment() {
     private lateinit var viewPager: ViewPager
     lateinit var toolbar: Toolbar
     lateinit var mTitle: TextView
+    lateinit var back: ImageView
+    lateinit var showMoreFrag: BackToMoreFragment
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -46,11 +50,33 @@ class BusinessFragment : Fragment() {
         toolbar = view.findViewById(R.id.toolbar)
         mTitle = toolbar.findViewById(R.id.toolbar_title)
 
+
+
+            back = toolbar.findViewById(R.id.back) as ImageView
+        back.visibility=View.VISIBLE
+            mTitle.text = "Categories " + " (" + Constants.getPrefs(activity!!)?.getString(Constants.TOWN_NAME, "") + ")"
+            back.setOnClickListener {
+                showMoreFrag.showMoreFragment()
+            }
+
+
         mTitle.text = "Business Profile"
 
 
     }
+interface BackToMoreFragment{
+    fun showMoreFragment()
+}
 
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        showMoreFrag=context as BackToMoreFragment
+    }
+
+    override fun onAttach(activity: Activity?) {
+        super.onAttach(activity)
+        showMoreFrag=activity as BackToMoreFragment
+    }
     private fun init(view: View) {
 
         viewPager = view.findViewById(R.id.viewpager)

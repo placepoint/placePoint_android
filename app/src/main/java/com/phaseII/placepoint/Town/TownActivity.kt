@@ -1,6 +1,7 @@
 package com.phaseII.placepoint.Town
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -20,6 +21,7 @@ import com.google.android.gms.location.*
 import com.onesignal.OneSignal
 import com.phaseII.placepoint.ConstantClass.GpsTracker
 import com.phaseII.placepoint.Constants
+import com.phaseII.placepoint.DashBoard.DashBoardActivity
 import com.phaseII.placepoint.R
 
 class TownActivity : AppCompatActivity(), TownHelper {
@@ -171,7 +173,15 @@ class TownActivity : AppCompatActivity(), TownHelper {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item != null) {
             if (item.itemId == android.R.id.home) {
-                finish()
+                var fromWhere=Constants.getPrefs(this)!!.getString("comingFrom", "")
+                if (fromWhere=="more") {
+                    var intent= Intent(this,DashBoardActivity::class.java)
+                    intent.putExtra("openMore","yes")
+                    startActivity(intent)
+                    finish()
+                }else{
+                    finish()
+                }
             }
         }
         return super.onOptionsItemSelected(item)

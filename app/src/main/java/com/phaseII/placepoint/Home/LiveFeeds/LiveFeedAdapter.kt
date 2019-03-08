@@ -2,13 +2,9 @@ package com.phaseII.placepoint.Home.LiveFeeds
 
 import android.arch.lifecycle.LifecycleObserver
 import android.content.*
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.media.MediaPlayer
-import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +26,6 @@ import android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE
 import android.text.style.AbsoluteSizeSpan
 import android.webkit.URLUtil
 import android.widget.*
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.phaseII.placepoint.BusEvents.ClaimPostLiveFeed
 import com.phaseII.placepoint.Home.ModelClainService
@@ -53,11 +48,11 @@ import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 
-class HomeAdapter(private val context: Context, private val list: ArrayList<ModelHome>) :
-        RecyclerView.Adapter<HomeAdapter.ViewHolder>(), LifecycleObserver {
+class LiveFeedAdapter(private val context: Context, private val list: ArrayList<ModelHome>) :
+        RecyclerView.Adapter<LiveFeedAdapter.ViewHolder>(), LifecycleObserver {
 
     var pos = 0;
-    var modelData = ModelHome()
+    //var modelData = ModelHome()
     var release = 0
     var state = 0
 
@@ -90,7 +85,7 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        modelData = list.get(position)
+       // modelData = list[position]
         pos = position
         if (Constants.getPrefs(context)!!.getString(Constants.EMAIL, "").equals("help@placepoint.ie")) {
             holder.bump.visibility = View.VISIBLE
@@ -98,7 +93,7 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
             holder.bump.visibility = View.GONE
         }
         holder.bump.setOnClickListener {
-            hitService(modelData.id)
+            hitService(list[position].id)
         }
 
 //        holder.itemView.youtube_view.initialize(YouTubePlayerInitListener {
@@ -151,12 +146,12 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
 //            })
 //        },true)
 
-        if (modelData.created_by == "1") {
-            holder.itemView.name.text = modelData.business_name
+        if (list[position].created_by == "1") {
+            holder.itemView.name.text = list[position].business_name
         } else {
             var text2 = "(shared)"
-            var span1 = SpannableString(modelData.business_name);
-            span1.setSpan(AbsoluteSizeSpan(32), 0, modelData.business_name.length, SPAN_INCLUSIVE_INCLUSIVE);
+            var span1 = SpannableString(list[position].business_name);
+            span1.setSpan(AbsoluteSizeSpan(32), 0, list[position].business_name.length, SPAN_INCLUSIVE_INCLUSIVE);
 
             var span2 = SpannableString(text2);
             span2.setSpan(AbsoluteSizeSpan(22), 0, text2.length, SPAN_INCLUSIVE_INCLUSIVE);
@@ -166,9 +161,9 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
             holder.itemView.name.text = finalText
         }
 
-        holder.itemView.postText.text = modelData.description
+        holder.itemView.postText.text = list[position].description
         Linkify.addLinks(holder.itemView.postText, Linkify.WEB_URLS)
-        holder.itemView.dateTime.text = Constants.getDate2(modelData.updated_at)
+        holder.itemView.dateTime.text = Constants.getDate2(list[position].updated_at)
         if (!list[position].video_link.trim().isEmpty()) {
             holder.itemView.videoUrl.visibility = View.GONE
             holder.itemView.videoUrl.text = Html.fromHtml("<u>" + list[position].video_link + "</u>")
@@ -177,7 +172,7 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
             holder.itemView.videoUrl.visibility = View.GONE
         }
         holder.itemView.videoUrl.setOnClickListener {
-            context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(modelData.video_link)))
+            context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(list[position].video_link)))
 
         }
         holder.itemView.shareFaceBook.setOnClickListener {
@@ -188,7 +183,7 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
         holder.itemView.name.setOnClickListener {
 
             var townName = Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME, "")
-            var logEventN = townName + "-" + Constants.getPrefs(context)!!.getString(Constants.CATEGORY_NAMEO, "") + " - " + modelData.business_name;
+            var logEventN = townName + "-" + Constants.getPrefs(context)!!.getString(Constants.CATEGORY_NAMEO, "") + " - " + list[position].business_name;
 
 
             val click = Constants.getPrefs(context!!)!!.getString(Constants.STOPCLICK, "")
@@ -196,25 +191,25 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
                 var mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
                 val bundle = Bundle()
                 bundle.putString("town", Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME, ""))
-                bundle.putString("BusinessName", modelData.business_name)
+                bundle.putString("BusinessName", list[position].business_name)
                 mFirebaseAnalytics.logEvent(logEventN, bundle)
 
                 val intent = Intent(context, AboutBusinessActivity::class.java)
-                intent.putExtra("busId", modelData.bussness_id)
+                intent.putExtra("busId", list[position].bussness_id)
                 intent.putExtra("showallpost", "no")
                 intent.putExtra("from", "homeadapter")
-                intent.putExtra("busName", modelData.business_name)
-                intent.putExtra("subscriptionType", modelData.user_type)
+                intent.putExtra("busName", list[position].business_name)
+                intent.putExtra("subscriptionType", list[position].user_type)
 
                 context!!.startActivity(intent)
             }
         }
 
         try {
-            if (modelData.video_link.startsWith("http")) {
+            if (list[position].video_link.startsWith("http")) {
                 // mVideoPlayerManager.playNewVideo(null, holder.itemView.video_player_1, modelData.video_link)
                 holder.itemView.name.videoUrl.visibility = View.VISIBLE
-                holder.itemView.name.videoUrl.text = modelData.video_link
+                holder.itemView.name.videoUrl.text = list[position].video_link
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -227,19 +222,19 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
                     .apply(RequestOptions()
                             .override(180, 100).dontAnimate())
                     .into(holder.itemView.postImage)*/
-            if (modelData.image_url.equals("")) {
+            if (list[position].image_url.equals("")) {
                 holder.itemView.postImage.visibility = View.GONE
             } else {
                 holder.itemView.postImage.visibility = View.VISIBLE
                 Glide.with(context)
-                        .load(modelData.image_url)
+                        .load(list[position].image_url)
                         .into(holder.postImage)
             }
             holder.postImage.setOnClickListener {
 
                 Constants.showImagePreview(list[position].image_url, context)
             }
-            if (modelData.video_link.equals("")) {
+            if (list[position].video_link.equals("")) {
                 holder.itemView.videoLayout.visibility = View.GONE
                 // holder.itemView.youLay.visibility = View.GONE
             } else {
@@ -270,7 +265,7 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
 //                                .placeholder(R.mipmap.placeholder))
 //                        .into(holder.itemView.play)
 
-                var videoId = extractYoutubeVideoId(modelData.video_link)
+                var videoId = extractYoutubeVideoId(list[position].video_link)
                 if (videoId.contains("frameborder")) {
                     val split = videoId.split("frameborder")
                     videoId = split[0]
@@ -381,14 +376,14 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
                         holder.itemView.play.visibility = View.VISIBLE
                         var thumb: Long = (position * 1000).toLong()
                         var options = RequestOptions().frame(thumb);
-                        Glide.with(context).load(modelData.video_link).apply(options).into(holder.itemView.thumbNail);
+                        Glide.with(context).load(list[position].video_link).apply(options).into(holder.itemView.thumbNail);
 
                         if (list[position].video_link.contains(".MOV")
                                 || list[position].video_link.contains(".flv")
                                 || list[position].video_link.contains(".wmv")
                                 || list[position].video_link.contains("facebook")) {
                             holder.itemView.textFb.visibility = View.VISIBLE
-                            holder.itemView.textFb.text = modelData.video_link
+                            holder.itemView.textFb.text = list[position].video_link
                             holder.itemView.myVideoLay.visibility = View.GONE
                             holder.myVideo.visibility = View.GONE
                             holder.itemView.thumbNail.visibility = View.GONE
@@ -511,16 +506,16 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
 
         }
 
-        if (modelData.ftype == "1") {
+        if (list[position].ftype == "1") {
             holder.itemView.header.visibility = View.VISIBLE
-            if (modelData.expired == "1") {
+            if (list[position].expired == "1") {
                 holder.itemView.relativeLayout2.visibility = View.GONE
                 holder.itemView.claimButton.visibility = View.GONE
-                if (modelData.redeemed.isEmpty() || modelData.redeemed == "0") {
+                if (list[position].redeemed.isEmpty() || list[position].redeemed == "0") {
                     holder.itemView.header.text = "***Expired***"
                 } else {
                     //holder.itemView.header.text = "***Expired ${modelData.redeemed} offer(s) claimed***"
-                    holder.itemView.header.text = "*Expired ${modelData.redeemed} offer(s) claimed* " + findExpirey2(modelData.validity_date).replace("-", "") + " ago"
+                    holder.itemView.header.text = "*Expired ${list[position].redeemed} offer(s) claimed* " + findExpirey2(list[position].validity_date).replace("-", "") + " ago"
                 }
                 holder.itemView.validityText.text = ""
                 holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.expire_red))
@@ -530,21 +525,21 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
 
                 holder.itemView.relativeLayout2.visibility = View.VISIBLE
                 holder.itemView.header.text = "***Flash Alert Sale***"
-                val left: Int = modelData.max_redemption.toInt() - modelData.redeemed.toInt()
+                val left: Int = list[position].max_redemption.toInt() - list[position].redeemed.toInt()
                 if (left == 0) {
                     holder.itemView.relativeLayout2.visibility = View.GONE
                     holder.itemView.claimButton.visibility = View.GONE
-                    if (modelData.redeemed.isEmpty() || modelData.redeemed == "0") {
+                    if (list[position].redeemed.isEmpty() || list[position].redeemed == "0") {
                         holder.itemView.header.text = "***Expired***"
                     } else {
                         // holder.itemView.header.text = "***Expired ${modelData.redeemed} offer(s) claimed***"
-                        holder.itemView.header.text = "*Expired ${modelData.redeemed} offer(s) claimed* " + findExpirey2(modelData.validity_date).replace("-", "") + " ago"
+                        holder.itemView.header.text = "*Expired ${list[position].redeemed} offer(s) claimed* " + findExpirey2(list[position].validity_date).replace("-", "") + " ago"
                     }
                     holder.itemView.validityText.text = ""
                     holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.expire_red))
                 } else {
                     holder.itemView.claimButton.visibility = View.VISIBLE
-                    holder.itemView.validityText.text = "Hurry Expires in " + findExpirey(modelData.validity_date) + " - Only " + left + " left"
+                    holder.itemView.validityText.text = "Hurry Expires in " + findExpirey(list[position].validity_date) + " - Only " + left + " left"
                 }
 
             }
@@ -557,9 +552,9 @@ class HomeAdapter(private val context: Context, private val list: ArrayList<Mode
         holder.itemView.claimButton.setOnClickListener {
             dialogForClaim(list[position], position)
         }
-        if (modelData.redeemed.toInt() > 0) {
+        if (list[position].redeemed.toInt() > 0) {
             holder.itemView.desc.visibility = View.VISIBLE
-            holder.itemView.desc.setText(modelData.redeemed + " Offers successfully Claimed. To redeem visit the business and mention your name and email address.")
+            holder.itemView.desc.setText(list[position].redeemed + " Offers successfully Claimed. To redeem visit the business and mention your name and email address.")
         } else {
             holder.itemView.desc.visibility = View.GONE
         }

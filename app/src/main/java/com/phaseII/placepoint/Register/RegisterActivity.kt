@@ -1,5 +1,6 @@
 package com.phaseII.placepoint.Register
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -9,6 +10,7 @@ import android.widget.Toast
 import org.json.JSONObject
 import android.view.LayoutInflater
 import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.widget.RadioGroup
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -371,6 +373,8 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
     }
 
     override fun saveRegisterDataToPrefs(data: JSONObject, pass: String, category: String) {
+
+
         Constants.getPrefs(this@RegisterActivity)?.edit()?.putString("registers", "yes")?.apply()
         Constants.getPrefs(this@RegisterActivity)?.edit()?.putString(Constants.PASSWORD, pass)?.apply()
         Constants.getPrefs(this@RegisterActivity)?.edit()?.putString(Constants.CATEGORY, data.optString("category"))?.apply()

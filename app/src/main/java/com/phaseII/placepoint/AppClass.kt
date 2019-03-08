@@ -1,33 +1,24 @@
 package com.phaseII.placepoint
 
 import com.onesignal.OneSignal
-import android.R.attr.action
 import android.app.*
-import android.content.ContentResolver
 import android.net.Uri
 import android.support.v4.app.NotificationCompat
 import android.util.Log
-import android.widget.Toast
 import com.onesignal.OSNotification
 import com.onesignal.OSNotificationAction
-import org.json.JSONObject
 import com.onesignal.OSNotificationOpenResult
-import android.support.design.internal.NavigationMenu
 import android.content.Intent
-import android.media.RingtoneManager
 import com.phaseII.placepoint.DashBoard.DashBoardActivity
-import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Context
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.os.Build
 import android.app.NotificationManager
-import android.app.NotificationChannel
-import android.app.PendingIntent
-import android.content.Context.NOTIFICATION_SERVICE
 import android.media.AudioManager
 import com.appsflyer.AppsFlyerConversionListener
 import com.appsflyer.AppsFlyerLib
+import android.app.NotificationChannel
+import android.media.AudioAttributes
+import android.os.Build
+import android.support.annotation.RequiresApi
 
 
 class AppClass : Application() ,AppsFlyerConversionListener{
@@ -74,14 +65,17 @@ class AppClass : Application() ,AppsFlyerConversionListener{
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
                 .setNotificationOpenedHandler(ExampleNotificationOpenedHandler())
                 .setNotificationReceivedHandler(ExampleNotificationOpenedHandler())
+
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init()
+        OneSignal.enableSound(true);
         val appsFlyerId = AppsFlyerLib.getInstance().getAppsFlyerUID(this)
         AppsFlyerLib.getInstance().init("LocXuyz85AtUXHXPmF7ttT", this, applicationContext)
         AppsFlyerLib.getInstance().startTracking(this)
     }
 
     internal inner class ExampleNotificationOpenedHandler : OneSignal.NotificationOpenedHandler,OneSignal.NotificationReceivedHandler {
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun notificationReceived(notification: OSNotification?) {
 //            val alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn")
 //            val inboxStyle = NotificationCompat.InboxStyle()
@@ -136,19 +130,45 @@ var audio:AudioManager = applicationContext.getSystemService(Context.AUDIO_SERVI
 
             when (audio.getRingerMode()) {
                 AudioManager.RINGER_MODE_NORMAL -> {
+//                    val mp= MediaPlayer.create(applicationContext, R.raw.bikehorn_old)
+//                    mp.start()
+                   val sound =Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn)
+//                    var channel: NotificationChannel? =null
+                    val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+//
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+                        var attributes =  AudioAttributes.Builder()
+                                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                                .build();
+
+                        var mChannel =  NotificationChannel("uu5io",
+                                applicationContext.getString(R.string.app_name),
+                                NotificationManager.IMPORTANCE_HIGH);
+
+                        mChannel.setSound(sound, attributes); // This is IMPORTANT
+
+
+                        if (mNotifyMgr != null)
+                            mNotifyMgr.createNotificationChannel(mChannel);
+                    }
+
                     val mBuilder = NotificationCompat.Builder(applicationContext)
                             .setSmallIcon(R.mipmap.ic_launcher)
 
-                            // .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
-                            .setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
+                            //.setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_VIBRATE)
+                           //.setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
+                           .setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
+                            .setChannelId("uu5io")
                             .setAutoCancel(true)
                             .setOnlyAlertOnce(false)
 
-                    val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-                    mNotifyMgr.notify(0, mBuilder.build())
-                    val mp= MediaPlayer.create(applicationContext, R.raw.bikehorn)
-                    mp.start()
+
+                        mNotifyMgr.notify(1, mBuilder.build())
+
+
+
                 }
                 AudioManager.RINGER_MODE_SILENT -> {
                     val mBuilder = NotificationCompat.Builder(applicationContext)

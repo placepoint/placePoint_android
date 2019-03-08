@@ -1,6 +1,6 @@
 package com.phaseII.placepoint.Home.LiveFeeds
 
-interface HomeHelper {
+interface LiveFeedHelper {
     fun setDataToAdapter(data: String, category: String)
     fun getAuthCode(): String
     fun getTownId(): String

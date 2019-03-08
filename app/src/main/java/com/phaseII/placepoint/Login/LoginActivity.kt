@@ -1,6 +1,8 @@
 package com.phaseII.placepoint.Login
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -101,6 +103,7 @@ class LoginActivity : AppCompatActivity(), LoginHelper {
 //        val resultIntent = Intent()
 //      //  resultIntent.putExtra("some_key", "String data")
 //        setResult(Activity.RESULT_OK, resultIntent)
+
         Constants.getPrefs(this)!!.edit().putString("showHomeBackButton", "no").apply()
         Constants.getPrefs(this)?.edit()?.putBoolean(Constants.LOGIN, true)?.apply()
         Constants.getPrefs(this)?.edit()?.putString("firstTime", "login")?.apply()

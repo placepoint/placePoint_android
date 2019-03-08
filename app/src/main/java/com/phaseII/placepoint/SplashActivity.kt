@@ -23,6 +23,7 @@ class SplashActivity : Activity() {
             Constants.getPrefs(this)!!.edit().putString("subcategory", "0").apply()
             Constants.getPrefs(this)!!.edit().putString("showHomeBackButton", "no").apply()
             Constants.getPrefs(this)!!.edit().putString("showBackYesOrNo", "category").apply()
+            Constants.getPrefs(this)!!.edit().putString("comingFrom", "").apply()
 
             val loggedIn = Constants.getPrefs(this@SplashActivity)?.getBoolean(Constants.LOGGED, false)
             if (loggedIn!!) {
