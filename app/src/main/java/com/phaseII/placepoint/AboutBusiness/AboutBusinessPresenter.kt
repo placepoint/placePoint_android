@@ -2,7 +2,6 @@ package com.phaseII.placepoint.AboutBusiness
 
 
 import com.phaseII.placepoint.Constants
-import com.phaseII.placepoint.Home.BusinessListing.ModelBusiness
 import com.phaseII.placepoint.R
 import com.phaseII.placepoint.Service
 import okhttp3.ResponseBody
@@ -46,7 +45,8 @@ class AboutBusinessPresenter(var view: AboutBusinessHelper) {
                         val status = `object`.optString("status")
                         if (status.equals("true", ignoreCase = true)) {
                             val data = `object`.optJSONArray("data")
-                            view.setBusinessData(data.toString())
+                            val posts = `object`.optJSONArray("posts")
+                            view.setBusinessData(data.toString(),posts.toString())
                         }
 
                     } catch (e: IOException) {

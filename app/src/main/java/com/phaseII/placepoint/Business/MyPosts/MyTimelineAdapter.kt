@@ -41,11 +41,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
+import java.net.URLDecoder
 import java.text.SimpleDateFormat
 import java.util.regex.Pattern
 
 
-class MyTimelineAdapter(private val context: Context, private val list: ArrayList<ModelHome>) : RecyclerView.Adapter<MyTimelineAdapter.ViewHolder>() {
+class MyTimelineAdapter(private val context: Context, private val list: ArrayList<ModelHome>, var myPostsFragment: MyPostsFragment) : RecyclerView.Adapter<MyTimelineAdapter.ViewHolder>() {
     // var bPos=context as BumpPost
     var release = 0
     var state = 0
@@ -58,6 +59,7 @@ class MyTimelineAdapter(private val context: Context, private val list: ArrayLis
     private var youPause: Int = 0;
     var pause = 0
     private var inflater = LayoutInflater.from(context)
+    var moreless=myPostsFragment as ShowViewMoreLess
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(inflater.inflate(R.layout.timeline_item, parent, false))
     }
@@ -73,12 +75,22 @@ class MyTimelineAdapter(private val context: Context, private val list: ArrayLis
         val inFormat1 = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
         val inFormat = SimpleDateFormat("MMM, dd yyyy hh:mm aa")
         val newDate = inFormat1.parse(modelData.created_at)
-
+        var retail:Double=list[position].retail_price.toDouble()
+        if (retail>0) {
+            holder.itemView.retailPrice.visibility = View.VISIBLE
+            holder.itemView.discount.visibility = View.VISIBLE
+            holder.itemView.retailPrice.text = list[position].retail_price
+            holder.itemView.retailPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            holder.itemView.discount.text = list[position].sale_price + " (" + list[position].discount_price.toDouble().toInt() + "% off)"
+        }else{
+            holder.itemView.retailPrice.visibility = View.INVISIBLE
+            holder.itemView.discount.visibility = View.INVISIBLE
+        }
         if (modelData.ftype == "0") {
-            holder.itemView.shareFaceBook.visibility = View.VISIBLE
+            holder.itemView.shareFaceBook1.visibility = View.VISIBLE
             holder.itemView.flashImage.visibility = View.GONE
         } else {
-            holder.itemView.shareFaceBook.visibility = View.GONE
+            holder.itemView.shareFaceBook1.visibility = View.GONE
             holder.itemView.flashImage.visibility = View.VISIBLE
 
         }
@@ -103,6 +115,15 @@ class MyTimelineAdapter(private val context: Context, private val list: ArrayLis
             intent.putExtra("subscriptionType", Constants.getPrefs(context)!!.getString(Constants.USERTYPE, ""))
             context.startActivity(intent)
         }
+        holder.itemView.infoLay.setOnClickListener {
+            val intent = Intent(context, AboutBusinessActivity::class.java)
+            intent.putExtra("busId", modelData.bussness_id)
+            intent.putExtra("showallpost", "no")
+            intent.putExtra("from", "timelineadapter")
+            intent.putExtra("busName", modelData.business_name)
+            intent.putExtra("subscriptionType", Constants.getPrefs(context)!!.getString(Constants.USERTYPE, ""))
+            context.startActivity(intent)
+        }
 
         holder.itemView.flashImage.setOnClickListener {
             val intent = Intent(context, FlashDetailActivity::class.java)
@@ -113,11 +134,19 @@ class MyTimelineAdapter(private val context: Context, private val list: ArrayLis
             intent.putExtra("subscriptionType", Constants.getPrefs(context)!!.getString(Constants.USERTYPE, ""))
             context.startActivity(intent)
         }
-        holder.itemView.shareFaceBook.setOnClickListener {
+        holder.itemView.shareFaceBook1.setOnClickListener {
             setClipboard(context, list[position].description, list[position])
 
         }
-        holder.itemView.postText.text = modelData.description
+        try {
+            holder.itemView.postText.text = URLDecoder.decode(modelData.description, "UTF-8")
+        } catch (e: Exception) {
+            holder.itemView.postText.text = modelData.description
+        }
+       // Constants.setViewMoreLessFunctionality(holder.itemView.postText)
+        holder.itemView.postText.setOnClickListener{
+            moreless.showMoreLess(position)
+        }
         try {
             if (modelData.video_link.startsWith("http")) {
                 holder.itemView.name.videoUrl.visibility = View.VISIBLE
@@ -396,7 +425,8 @@ class MyTimelineAdapter(private val context: Context, private val list: ArrayLis
 //                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(modelData.video_link)))
 //                }
             }
-            holder.itemView.bump.setOnClickListener {
+            holder.itemView.bump1.visibility=View.VISIBLE
+            holder.itemView.bump1.setOnClickListener {
                 hitService(modelData.id)
             }
 
@@ -649,6 +679,8 @@ class MyTimelineAdapter(private val context: Context, private val list: ArrayLis
     interface BumpPost {
         fun applyBumpPost(id: String)
     }
-
+    interface ShowViewMoreLess{
+        fun showMoreLess(postion:Int)
+    }
 }
 

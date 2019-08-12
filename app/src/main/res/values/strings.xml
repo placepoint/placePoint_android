@@ -84,11 +84,51 @@
 
     <!--<string name="noDataHomeFlash">No flash posts available at the moment</string>-->
     <string name="noDataHomeFlash">No flash posts available at the moment</string>
-    <string name="addNote"><![CDATA[Rules: Flash Deals MUST be exclusive to PlacePoint & There must be a discount of 20% or higher. There is no charge to run a flash deal and everyone with the PlacePoint app will get a notification on their phone that a deal is available.]]></string>
-    <string name="textHomeFlash">Flash Deals are heavily discounted deals from businesses. Dont worry if you just see expired deals, we have several deals most weeks and as long as the app is installed you will get an instant notification when deal is available.</string>
+    <string name="addNote"><![CDATA[Rules: Flash Deals MUST be exclusive to PlacePoint & there must be a discount of 20% or higher. There is zero commission taken for running a flash deal and everyone with the PlacePoint app will get a notification on their phone that a deal is available.]]></string>
+    <string name="textHomeFlash">Flash Deals are heavily discounted deals from businesses. Dont worry if you just see expired deals, we have several deals most weeks and as long as the app is installed you will get an instant notification when a deal is available.</string>
     <string name="updateNow"><u>Update Now</u></string>
     <string name="seeCategories"><u>See Categories</u></string>
     <string name="seeAll"><u>See All</u></string>
     <string name="textcategory"><![CDATA[Placepoint has a live feed of activities & events from businesses in your town. Select a category then switch between business listings and the live activity feed tabs to keep up to date with whats going on in your town.]]></string>
     <!--<string name="welcome">PlacePoint connects people looking for things to do with the businesses providing those services. The live feed section contains information  directly from the businesses in real time, giving you instant in one central place. In the near future we will be expanding to include many more categories. Please select category from the bottom menu to continue.</string>-->
+    <string name="begin_chat">Start chat</string>
+    <string name="chat_with">Chat with the Jivo support team</string>
+    <string name="made_with">This app was made</string>
+    <string name="sdk">with the JivoChat Mobile SDK</string>
+    <string name="restrictionMsg"><b>Restricted Feature</b>
+        \nFree users do not have access to the following features:
+          \n1 - Create Posters (Web Only)\n
+            2 - Schedule Posts\n
+            3 - Flash Deals\n
+            4 - Featured Listings on Homepage\n
+            5 - Prominent placement in category view\n
+            6 - Competitions (coming soon)\n
+            7 - Featured Business of the week promotion\n
+            8 - Unlimited Relevant Categories (Restricted to 2 max)
+            \nPlease upgrade the Package to avail unrestricted access across the platform.
+</string>
+    <string name="restrictionMsgwithImage">Seems like you are a Free User.</string>
+    <string name="restrictionMsgwithImagesub">Free users do not have access to the following features -
+        \n\n1 - Create Posters (Web Only)\n
+2 - Schedule Posts\n
+3 - Flash Deals\n
+4 - Featured Listing on homepage\n
+5 - Prominent placement in category view\n
+6 - Competitions (coming soon)\n
+7 - Featured Business of the week promotion\n
+8 - Unlimited Relevant Categories (Restricted to 2 max)\n\nTo unlock these features click here to upgrade.
+</string>
+    <string-array name="claims">
+        <item>Select Claims</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
 </resources>

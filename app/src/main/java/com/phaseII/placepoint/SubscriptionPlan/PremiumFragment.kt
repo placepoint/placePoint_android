@@ -24,13 +24,26 @@ class PremiumFragment: Fragment() {
         upgradeButton=view.findViewById(R.id.upgradeButton)
         progressBar=view.findViewById(R.id.progressBar3)
         recyclerView2=view.findViewById(R.id.recyclerView2)
-        list.add(".  Allows you to add all business\n\t details including opening hours.")
-        list.add(".  Business Profile Page allowed.")
-        list.add(".  Unlimited Categories.")
-        list.add(".  Live Feed Allowed.")
-        list.add(".  Scheduled posts allowed.")
-        list.add(".  Positioned at top of listing.")
-        adapter = PlanFeaturesAdapter(activity!!, list)
+//        list.add(".  Allows you to add all business\n\t details including opening hours.")
+//        list.add(".  Business Profile Page allowed.")
+//        list.add(".  Unlimited Categories.")
+//        list.add(".  Live Feed Allowed.")
+//        list.add(".  Scheduled posts allowed.")
+//        list.add(".  Positioned at top of listing.")
+//        - Create Posters (Web Only)
+//
+//
+//
+list.add("Features:")
+list.add(" - Unlimited Flash Deals")
+list.add(" - Unlimited Competitions (coming soon)")
+list.add(" - Unlimited Categories")
+list.add(" - Create Poster (Web only)")
+list.add(" - Feature Listing on homepage")
+list.add(" - Prominent placement in category view")
+list.add(" - Featured Business of the week promotion")
+list.add(" - Unlimited Relevant Categories")
+                adapter = PlanFeaturesAdapter(activity!!, list)
         val linear = LinearLayoutManager(activity!!)
         recyclerView2.layoutManager = linear
         recyclerView2.adapter = adapter

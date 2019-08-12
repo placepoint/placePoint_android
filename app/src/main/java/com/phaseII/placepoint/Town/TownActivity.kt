@@ -30,14 +30,13 @@ class TownActivity : AppCompatActivity(), TownHelper {
     lateinit var recyclerView: RecyclerView
     lateinit var progressBar: ProgressBar
     lateinit var toolbar: Toolbar
-    lateinit var toolbarArrow: ImageView
     private lateinit var adapter: TownAdapter
     private var list: ArrayList<ModelTown>? = arrayListOf()
     var p: String = "false"
 
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
-    // bunch of location related apis
+    // bunch of location related apisTOWN_ID2
     lateinit var mFusedLocationClient: FusedLocationProviderClient
     lateinit var mSettingsClient: SettingsClient
     lateinit var mLocationRequest: LocationRequest
@@ -96,8 +95,6 @@ class TownActivity : AppCompatActivity(), TownHelper {
         toolbar = findViewById(R.id.toolbar)
         recyclerView = findViewById(R.id.recyclerView)
         progressBar = findViewById(R.id.progressBar)
-        toolbarArrow = toolbar.findViewById(R.id.arrow_down) as ImageView
-        toolbarArrow.visibility = View.GONE
         setSupportActionBar(toolbar)
         title = ""
         var userId=""
@@ -119,6 +116,7 @@ class TownActivity : AppCompatActivity(), TownHelper {
             supportActionBar!!.setDisplayShowTitleEnabled(true)
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         }
+        //title="Choose a Town"
         val mTitle = toolbar.findViewById(R.id.toolbar_title) as TextView
         mTitle.text = "Choose a Town"
     }

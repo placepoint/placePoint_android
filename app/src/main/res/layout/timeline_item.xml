@@ -5,21 +5,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="4dp"
-    android:layout_marginLeft="4dp"
     android:orientation="vertical">
 
     <View
+        android:visibility="gone"
         android:id="@+id/line"
         android:layout_width="0.5dp"
         android:layout_height="0dp"
         android:background="@color/colorText"
-        app:layout_constraintBottom_toBottomOf="@+id/layout"
+        app:layout_constraintBottom_toBottomOf="@+id/newLayout"
         app:layout_constraintEnd_toStartOf="@+id/arrow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/circle"
         android:layout_width="14dp"
         android:layout_height="14dp"
@@ -27,151 +27,354 @@
         android:src="@drawable/circle"
         app:layout_constraintEnd_toStartOf="@+id/line"
         app:layout_constraintStart_toStartOf="@+id/line"
-        app:layout_constraintTop_toTopOf="@+id/layout" />
+        app:layout_constraintTop_toTopOf="@+id/newLayout" />
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/arrow"
         android:layout_width="14dp"
         android:layout_height="14dp"
         android:src="@drawable/ic_arrow"
         app:layout_constraintBottom_toBottomOf="@+id/circle"
-        app:layout_constraintEnd_toStartOf="@+id/layout"
+        app:layout_constraintEnd_toStartOf="@+id/newLayout"
         app:layout_constraintStart_toEndOf="@+id/circle"
         app:layout_constraintTop_toTopOf="@+id/circle" />
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/layout"
+    <LinearLayout
+        android:id="@+id/newLayout"
         android:layout_width="0dp"
-        android:padding="8dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@drawable/post_bg"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/arrow"
         app:layout_constraintTop_toTopOf="parent">
 
-
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/nameLayout"
+            android:id="@+id/layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:background="@drawable/post_bg">
 
-            <com.phaseII.placepoint.CustomViews.RoundedImageView
-                android:id="@+id/logo"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:scaleType="centerInside"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/dateTime"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/name" />
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/bold"
-                android:text="Name"
-                android:textColor="@color/colorText"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/dateTime"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/menu_timeline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/timeline_menu"
-                android:visibility="gone"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/dateTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/regular"
-                android:text="May 15 at 6:00PM"
-                android:textColor="@color/grey"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/name"
-                app:layout_constraintVertical_weight="1" />
-
-            <TextView
-                android:id="@+id/postText"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/nameLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:fontFamily="@font/regular"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imagesLayout"
-                app:layout_constraintStart_toStartOf="@+id/name"
-                app:layout_constraintTop_toBottomOf="@+id/dateTime" />
-
-            <TextView
-                android:id="@+id/videoUrl"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="@font/bold"
-                android:paddingStart="4dp"
-                android:paddingTop="4dp"
-                android:paddingEnd="4dp"
-                android:paddingRight="4dp"
-                android:paddingBottom="4dp"
-                android:textColor="@color/black"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/nameLayout"
-                app:layout_constraintTop_toBottomOf="@+id/postText" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
-                android:id="@+id/imagesLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dateTime">
+                <com.phaseII.placepoint.CustomViews.RoundedImageView
+                    android:id="@+id/logo"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:scaleType="centerInside"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/dateTime"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/name" />
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/opensans_bold"
+                    android:text="Name"
+                    android:textColor="@color/colorText"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/dateTime"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-                    android:id="@+id/bump"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@mipmap/bump" />
+                    android:id="@+id/menu_timeline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/timeline_menu"
+                    android:visibility="gone"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <RelativeLayout
-                    android:id="@+id/imageLay"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="8dp">
+                <TextView
+                    android:id="@+id/dateTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:fontFamily="@font/opensans_regular"
+                    android:text="May 15 at 6:00PM"
+                    android:textColor="@color/grey"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/name"
+                    app:layout_constraintVertical_weight="1" />
+
+                <!--<com.skyhope.showmoretextview.ShowMoreTextView-->
+                    <!--android:id="@+id/postText"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginTop="8dp"-->
+                    <!--android:layout_marginEnd="8dp"-->
+                    <!--android:fontFamily="@font/opensans_regular"-->
+                    <!--android:textColor="@color/black"-->
+                    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+                    <!--app:layout_constraintEnd_toStartOf="@+id/imagesLayout"-->
+                    <!--app:layout_constraintStart_toStartOf="@+id/name"-->
+                    <!--app:layout_constraintTop_toBottomOf="@+id/dateTime" />-->
+                <com.borjabravo.readmoretextview.ReadMoreTextView
+                    android:id="@+id/postText"
+                    app:trimExpandedText="show more"
+                    app:showTrimExpandedText="true"
+                    app:colorClickableText="@color/colormoreless"
+                    app:trimCollapsedText=" ...show less"
+                    app:trimMode="trimModeLine"
+                    app:trimLines="6"
+                    android:fontFamily="@font/opensans_regular"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/imagesLayout"
+                    app:layout_constraintStart_toStartOf="@+id/name"
+                    app:layout_constraintTop_toBottomOf="@+id/dateTime" />
+                <TextView
+                    android:id="@+id/videoUrl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/opensans_bold"
+                    android:paddingStart="4dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingBottom="4dp"
+                    android:textColor="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/nameLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/postText" />
+
+                <LinearLayout
+                    android:id="@+id/imagesLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dateTime">
 
                     <ImageView
-                        android:id="@+id/shareFaceBook"
+                        android:id="@+id/bump"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:src="@mipmap/bump"
+                        android:visibility="gone" />
+
+                    <RelativeLayout
+                        android:id="@+id/imageLay"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="8dp">
+
+                        <ImageView
+                            android:id="@+id/shareFaceBook"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/ic_share"
+                            tools:ignore="VectorDrawableCompat" />
+
+                        <ImageView
+                            android:id="@+id/flashImage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/ic_flash"
+                            tools:ignore="VectorDrawableCompat" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+            </android.support.constraint.ConstraintLayout>
+
+
+            <!--
+
+                        <android.support.v4.view.ViewPager
+                            android:id="@+id/bannerPager"
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            app:layout_constraintBottom_toTopOf="@+id/view_pager_indicator"
+                            app:layout_constraintEnd_toEndOf="@+id/nameLayout"
+                            app:layout_constraintStart_toStartOf="@+id/nameLayout"
+                            app:layout_constraintTop_toBottomOf="@+id/postText" />
+
+                        <com.github.vivchar.viewpagerindicator.ViewPagerIndicator
+                            android:id="@+id/view_pager_indicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:gravity="center"
+                            app:delimiterSize="8dp"
+                            app:itemIcon="@mipmap/ic_dot"
+                            app:itemScale="1.5"
+                            app:itemSelectedTint="@color/colorPrimary"
+                            app:itemSize="16dp"
+                            app:itemTint="@color/grey"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/bannerPager" />
+                -->
+
+
+            <com.phaseII.placepoint.DynamicImageView
+                android:id="@+id/postImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/nameLayout"
+                app:layout_constraintTop_toBottomOf="@+id/nameLayout" />
+
+            <RelativeLayout
+                android:id="@+id/videoLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/postImage"
+                app:layout_constraintTop_toBottomOf="@+id/postImage">
+
+                <com.phaseII.placepoint.DynamicImageView
+                    android:id="@+id/videoImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_youtube_play_button"
+                    android:visibility="gone" />
+
+
+                <com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView
+                    android:id="@+id/youtube_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/textFb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:visibility="gone" />
+
+                <RelativeLayout
+                    android:id="@+id/youLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp" />
+
+                <RelativeLayout
+                    android:id="@+id/myVideoLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:background="@color/black">
+
+
+                    <VideoView
+                        android:id="@+id/myVideo"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/thumbNail"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
+
+                    <ImageView
+
+                        android:id="@+id/play"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/ic_play" />
+
+                    <ImageView
+                        android:id="@+id/pause"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/ic_pause"
+                        android:visibility="gone" />
+                </RelativeLayout>
+
+
+                <!--<include-->
+                <!--layout="@layout/mk_player"-->
+                <!--android:visibility="gone"-->
+                <!--android:id="@+id/myVideo"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="8dp" />-->
+            </RelativeLayout>
+
+
+        </android.support.constraint.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/bottomLayoutmAllBumpShare"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:padding="@dimen/_8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/imageLay1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/shareFaceBook1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        app:srcCompat="@drawable/ic_share"
+                        app:srcCompat="@drawable/ic_share_darkblue"
                         tools:ignore="VectorDrawableCompat" />
 
                     <ImageView
-                        android:id="@+id/flashImage"
+                        android:id="@+id/flashImage1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
@@ -180,143 +383,121 @@
                         tools:ignore="VectorDrawableCompat" />
                 </RelativeLayout>
 
+                <ImageView
+                    android:id="@+id/bump1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:src="@drawable/bump_new"
+                    android:visibility="gone" />
             </LinearLayout>
-        </android.support.constraint.ConstraintLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="visible">
 
-        <!--
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:padding="2dp">
 
-                    <android.support.v4.view.ViewPager
-                        android:id="@+id/bannerPager"
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        app:layout_constraintBottom_toTopOf="@+id/view_pager_indicator"
-                        app:layout_constraintEnd_toEndOf="@+id/nameLayout"
-                        app:layout_constraintStart_toStartOf="@+id/nameLayout"
-                        app:layout_constraintTop_toBottomOf="@+id/postText" />
+                    <TextView
+                        android:id="@+id/retailPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/opensans_bold"
+                        android:text=""
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/colorText"
+                        android:textSize="11dp" />
 
-                    <com.github.vivchar.viewpagerindicator.ViewPagerIndicator
-                        android:id="@+id/view_pager_indicator"
+                    <TextView
+                        android:id="@+id/discount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="4dp"
+                        android:singleLine="true"
+                        android:layout_toRightOf="@+id/retailPrice"
+                        android:fontFamily="@font/opensans_bold"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/colorText"
+                        android:textSize="14dp" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/infoLay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="4dp"
+                    android:background="@drawable/fullroundblue"
+                    android:padding="2dp">
+
+                    <ImageView
+                        android:id="@+id/imageInfo"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="4dp"
+                        android:src="@drawable/ic_info" />
+
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp"
+                        android:layout_centerInParent="true"
+                        android:layout_toRightOf="@+id/imageInfo"
+                        android:fontFamily="@font/opensans_bold"
                         android:gravity="center"
-                        app:delimiterSize="8dp"
-                        app:itemIcon="@mipmap/ic_dot"
-                        app:itemScale="1.5"
-                        app:itemSelectedTint="@color/colorPrimary"
-                        app:itemSize="16dp"
-                        app:itemTint="@color/grey"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/bannerPager" />
-            -->
+                        android:text="info"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
+            </LinearLayout>
 
-
-        <com.phaseII.placepoint.DynamicImageView
-            android:id="@+id/postImage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/nameLayout"
-            app:layout_constraintTop_toBottomOf="@+id/nameLayout" />
-
-        <RelativeLayout
-            android:id="@+id/videoLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/postImage"
-            app:layout_constraintTop_toBottomOf="@+id/postImage">
-
-            <com.phaseII.placepoint.DynamicImageView
-                android:id="@+id/videoImage"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_youtube_play_button"
-                android:visibility="gone" />
-
-
-            <com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView
-                android:id="@+id/youtube_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/textFb"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:visibility="gone" />
-
-            <RelativeLayout
-                android:id="@+id/youLay"
-                android:layout_width="match_parent"
-                android:layout_height="180dp" />
-
-            <RelativeLayout
-                android:id="@+id/myVideoLay"
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:background="@color/black">
-
-
-                <VideoView
-                    android:id="@+id/myVideo"
-
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:visibility="gone" />
-
-                <ImageView
-                    android:id="@+id/thumbNail"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:background="@drawable/fullroundblue"
+                    android:padding="2dp">
 
-                <ImageView
+                    <ImageView
+                        android:id="@+id/menuIcon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="4dp"
+                        android:src="@drawable/ic_menu_white" />
 
-                    android:id="@+id/play"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/ic_play" />
-
-                <ImageView
-                    android:id="@+id/pause"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/ic_pause"
-                    android:visibility="gone" />
-            </RelativeLayout>
-
-
-            <!--<include-->
-            <!--layout="@layout/mk_player"-->
-            <!--android:visibility="gone"-->
-            <!--android:id="@+id/myVideo"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginTop="8dp" />-->
-        </RelativeLayout>
-
-
-    </android.support.constraint.ConstraintLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_toRightOf="@+id/menuIcon"
+                        android:gravity="center"
+                        android:text="menu"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -16,6 +16,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.IOException
+import java.net.URLEncoder
 
 class AddNewPresenter(val view: AddNewHelper) {
     private var file: File? = null
@@ -35,10 +36,7 @@ class AddNewPresenter(val view: AddNewHelper) {
 
     fun addPost(serviceRunning: Boolean) {
         val postText = view.getPostText()
-        if (postText.isEmpty()) {
-            view.showEmptyPostMsg()
-            return
-        }
+
 
         val auth_code = view.getAuthCode()
         val desc = view.getDesc()
@@ -62,6 +60,7 @@ class AddNewPresenter(val view: AddNewHelper) {
 
         if (image.isEmpty()) {
             image_status = "false"
+
         } else {
             image_status = "true"
         }
@@ -89,6 +88,11 @@ class AddNewPresenter(val view: AddNewHelper) {
         var per_person_redemption = view.getMaxFlashValue()
         var validity_date = view.getFlashDate()
         var validity_time = view.getFlashTime()
+        var retailPrice = view.getRetailPrice()
+        var discountPrice = view.getDiscountAmount()
+        var dicountPercentage = view.getDiscountPercentage()
+
+        var automatedEmailText = view.getAutomatedEmailText()
         var ftype = "0"
         if (flashSwitch) {
             ftype = "1"
@@ -108,17 +112,38 @@ class AddNewPresenter(val view: AddNewHelper) {
                 view.showError("Select offer expires Time")
                 return
             }
-
+            if (!dicountPercentage.isEmpty()) {
+                var dd:Double=dicountPercentage.toDouble()
+                if (dd.toInt() < 20) {
+                    view.showError("Discount Percentage cannot be less than 20%")
+                    return
+                }
+            }else{
+                discountPrice=""
+                retailPrice=""
+            }
+            val getExclusiveStatus=view.getExclusiveCheckBoxStatus()
+            if (!getExclusiveStatus){
+                view.showErrorAlert("PlacePoint only permits offers exclusive to PlacePoint.")
+                return
+            }
         }
         //-----------------------------------------------------------------------------
-        view.showLoader()
+
         val upload_video = view.uploadVideo()
 //        if (upload_video.isEmpty()) {
 //           return
 //        }
-        addPostService(auth_code, width, height, desc, video_link, image, image_status,
+        if (postText.isEmpty()&&image.isEmpty()&&video_link.isEmpty()&&upload_video.isEmpty()){
+            if (postText.isEmpty()) {
+                view.showEmptyPostMsg()
+                return
+            }
+        }
+        view.showLoader()
+        addPostService(auth_code, width, height, URLEncoder.encode(desc, "UTF-8"), video_link, image, image_status,
                 title, serviceRunning, type, day, time, now_status, category, ftype, max_redemption, validity_date,
-                validity_time, per_person_redemption, upload_video)
+                validity_time, per_person_redemption, upload_video,retailPrice,discountPrice,dicountPercentage,automatedEmailText)
     }
 
     private fun addPostService(auth_code: String, width: String, height: String, desc: String, video_link: String,
@@ -126,7 +151,10 @@ class AddNewPresenter(val view: AddNewHelper) {
                                serviceRunning: Boolean, type1: String, day: String,
                                time: String, now_status2: String, category: String,
                                ftype: String, max_redemption: String, validity_date: String,
-                               validity_time: String, per_person_redemption: String, upload_video: String) {
+                               validity_time: String, per_person_redemption: String,
+                               upload_video: String, retailPrice: String,
+                               discountPrice: String, dicountPercentage: String,
+                               automatedEmailText: String) {
 
         if (!img.isEmpty()) {
             file = File(img)
@@ -157,6 +185,10 @@ class AddNewPresenter(val view: AddNewHelper) {
         val validity_date1 = RequestBody.create(MediaType.parse("text/plain"), validity_date)
         val validity_time1 = RequestBody.create(MediaType.parse("text/plain"), validity_time)
         val per_person_redemption1 = RequestBody.create(MediaType.parse("text/plain"), per_person_redemption)
+        val retailPrice = RequestBody.create(MediaType.parse("text/plain"), retailPrice)
+        val discountPrice = RequestBody.create(MediaType.parse("text/plain"), discountPrice)
+        val dicountPercentage = RequestBody.create(MediaType.parse("text/plain"), dicountPercentage)
+        val automatedEmailText = RequestBody.create(MediaType.parse("text/plain"), automatedEmailText)
 
         var images: MultipartBody.Part? = null
         if (requestFile != null) {
@@ -176,7 +208,8 @@ class AddNewPresenter(val view: AddNewHelper) {
         val service = retrofit!!.create(Service::class.java)
         val call: Call<ResponseBody> = service.addPost(auth_code1, width, height, desc1, video_link1,
                 images, image_status1, title1, type, day, time, now_status, category, ftype1,
-                max_redemption1, validity_date1, validity_time1, per_person_redemption1, upload_video2)
+                max_redemption1, validity_date1, validity_time1, per_person_redemption1,retailPrice,
+                discountPrice,dicountPercentage,automatedEmailText, upload_video2)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 view.hideLoader()

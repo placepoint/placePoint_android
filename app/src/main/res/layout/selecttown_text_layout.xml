@@ -20,7 +20,7 @@
 
 
     <TextView
-        android:fontFamily="@font/regular"
+        android:fontFamily="@font/opensans_regular"
         android:id="@+id/towns"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Paint
 import android.media.MediaPlayer
 import android.net.Uri
 import android.support.v7.app.AlertDialog
@@ -31,25 +33,27 @@ import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerList
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerInitListener
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerListener
+import java.net.URLDecoder
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 
-class FlashHomeAdapter(private val context: Context, private val list: ArrayList<ModelHome>) : RecyclerView.Adapter<FlashHomeAdapter.ViewHolder>() {
+class FlashHomeAdapter(private val context: Context, private val list: ArrayList<ModelHome>, var dealsFragment: DealsFragment) : RecyclerView.Adapter<FlashHomeAdapter.ViewHolder>() {
 
     var release = 0
     var state = 0
     var myPlay = 0
-    var from="none"
-    var pos=0
+    var from = "none"
+    var pos = 0
     var youtuber: YouTubePlayer? = null
-    private var stopPosition: Int=0
-    private var youPause: Int=0
+    private var stopPosition: Int = 0
+    private var youPause: Int = 0
     var pause = 0
     var pos2 = -99
-
+    var status = dealsFragment as CheckPostExpired
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(context)
         return ViewHolder(inflater.inflate(R.layout.flash_main_item, parent, false))
@@ -61,25 +65,61 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        //holder.itemView.bottomLayoutmAllBumpShare.visibility=View.GONE
         val modelData = list.get(position)
-        if (modelData.created_by=="1"){
+        if (modelData.created_by == "1") {
             holder.itemView.name.text = modelData.business_name
-        }else{
-           // holder.itemView.name.text = "Posted on behalf of "+modelData.business_name
-            var text2 = "(shared)"
-            var span1 = SpannableString(modelData.business_name);
-            span1.setSpan(AbsoluteSizeSpan(32), 0, modelData.business_name.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            holder.itemView.shared.visibility = View.GONE
+        } else {
+            holder.itemView.shared.visibility = View.VISIBLE
+            holder.itemView.name.text = modelData.business_name
 
-            var span2 = SpannableString(text2);
-            span2.setSpan(AbsoluteSizeSpan(22), 0, text2.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
-// let's put both spans together with a separator and all
-            var finalText = TextUtils.concat(span1, " ", span2)
-            holder.itemView.name.text = finalText
+//            // holder.itemView.name.text = "Posted on behalf of "+modelData.business_name
+//            var text2 = "(shared)"
+//            var span1 = SpannableString(modelData.business_name);
+//            span1.setSpan(AbsoluteSizeSpan(32), 0, modelData.business_name.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+//
+//            var span2 = SpannableString(text2);
+//            span2.setSpan(AbsoluteSizeSpan(22), 0, text2.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+//
+//// let's put both spans together with a separator and all
+//            var finalText = TextUtils.concat(span1, " ", span2)
+//            holder.itemView.name.text = finalText
 
         }
-        holder.itemView.postText.text = modelData.description
-        Linkify.addLinks(holder.itemView.postText, Linkify.WEB_URLS)
+        if (list[position].retail_price==null||list[position].retail_price.isEmpty()){
+            list[position].retail_price="0"
+        }
+        var retail:Double=list[position].retail_price.toDouble()
+        if (retail>0) {
+            holder.itemView.priceLay.visibility = View.VISIBLE
+            holder.itemView.retailPrice.text ="\u20ac"+ list[position].retail_price
+            holder.itemView.retailPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            holder.itemView.discount.text = "\u20ac"+list[position].sale_price
+            holder.itemView.percentage.text =   ""+list[position].discount_price.toDouble().toInt() + "% off"
+        }else{
+            holder.itemView.priceLay.visibility = View.GONE
+        }
+        holder.itemView.townName.visibility = View.VISIBLE
+        holder.itemView.townName.text = list[position].town
+//
+        try{
+            holder.itemView.postText.text = URLDecoder.decode(modelData.description, "UTF-8")
+           // holder.itemView.postText.setShowingLine(3)
+
+        }catch (e:Exception){
+           // holder.itemView.postText.setShowingLine(3)
+            holder.itemView.postText.text = modelData.description
+
+        }
+
+       // Constants.setViewMoreLessFunctionality(holder.itemView.postText)
+      holder.itemView.postText.setOnClickListener{
+          status.scroolToPositonOfclickedItem(position)
+      }
+
+         Linkify.addLinks(holder.itemView.postText, Linkify.WEB_URLS)
         holder.itemView.dateTime.text = Constants.getDate2(modelData.updated_at)
         if (!list[position].video_link.trim().isEmpty()) {
             holder.itemView.videoUrl.visibility = View.GONE
@@ -92,7 +132,7 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
             context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(modelData.video_link)))
 
         }
-        holder.itemView.shareFaceBook.setOnClickListener {
+        holder.itemView.shareFaceBook1.setOnClickListener {
             setClipboard(context, list[position].description, list[position])
 
 
@@ -106,7 +146,20 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
                 intent.putExtra("from", "homeadapter")
                 intent.putExtra("busName", modelData.business_name)
                 intent.putExtra("subscriptionType", modelData.user_type)
-
+                intent.putExtra("show", "hideTaxi")
+                context!!.startActivity(intent)
+            }
+        }
+holder.itemView.infoLay.setOnClickListener {
+            val click = Constants.getPrefs(context!!)!!.getString(Constants.STOPCLICK, "")
+            if (click == "no") {
+                val intent = Intent(context, AboutBusinessActivity::class.java)
+                intent.putExtra("busId", modelData.bussness_id)
+                intent.putExtra("showallpost", "no")
+                intent.putExtra("from", "homeadapter")
+                intent.putExtra("busName", modelData.business_name)
+                intent.putExtra("subscriptionType", modelData.user_type)
+                intent.putExtra("show", "hideTaxi")
                 context!!.startActivity(intent)
             }
         }
@@ -121,7 +174,8 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
         }
 
         holder.itemView.claimButton.setOnClickListener {
-            dialogForClaim(modelData, position)
+            status.checkPostExpiredStatus(modelData, position)
+                    //dialogForClaim(modelData, position)
         }
 
         if (context != null) {
@@ -131,6 +185,7 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
                     .into(holder.itemView.postImage)*/
             if (modelData.image_url == "") {
                 holder.itemView.postImage.visibility = View.GONE
+                holder.itemView.townName.visibility = View.GONE
             } else {
                 holder.itemView.postImage.visibility = View.VISIBLE
                 Glide.with(context)
@@ -401,7 +456,7 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
 //            val intent = Intent(context, VideoLinkPlayerActivity::class.java)
 //            intent.putExtra("link",modelData.video_link)
 //            context.startActivity(intent)
-            }
+        }
 
 
 
@@ -413,7 +468,7 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
                 holder.itemView.header.text = "***Expired***"
             } else {
                 //holder.itemView.header.text = "***Expired ${modelData.redeemed} offer(s) claimed***"
-                holder.itemView.header.text = "*Expired ${modelData.redeemed} offer(s) claimed* "+findExpirey2(modelData.validity_date).replace("-","")+" ago"
+                holder.itemView.header.text = "*Expired ${modelData.redeemed} offer(s) claimed* " + findExpirey2(modelData.validity_date).replace("-", "") + " ago"
 
             }
             holder.itemView.validityText.text = ""
@@ -433,8 +488,8 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
                 if (modelData.redeemed.isEmpty() || modelData.redeemed == "0") {
                     holder.itemView.header.text = "***Expired***"
                 } else {
-                  //  holder.itemView.header.text = "***Expired ${modelData.redeemed} offer(s) claimed***"
-                    holder.itemView.header.text = "*Expired ${modelData.redeemed} offer(s) claimed* "+findExpirey2(modelData.validity_date).replace("-","")+" ago"
+                    //  holder.itemView.header.text = "***Expired ${modelData.redeemed} offer(s) claimed***"
+                    holder.itemView.header.text = "*Expired ${modelData.redeemed} offer(s) claimed* " + findExpirey2(modelData.validity_date).replace("-", "") + " ago"
                 }
                 holder.itemView.validityText.text = ""
                 holder.itemView.header.setBackgroundColor(context.resources.getColor(R.color.expire_red))
@@ -574,7 +629,8 @@ class FlashHomeAdapter(private val context: Context, private val list: ArrayList
         }
         return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toString() + "d " + (TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS) - 24 * TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)).toString() + "hrs"
     }
-private fun findExpirey2(validity_date: String): String {
+
+    private fun findExpirey2(validity_date: String): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd kk:mm:ss")
         val cal = Calendar.getInstance()
         System.out.println("time => " + dateFormat.format(cal.time))
@@ -582,8 +638,8 @@ private fun findExpirey2(validity_date: String): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd kk:mm:ss")
         val date = sdf.parse(validity_date)
         val date2 = sdf.parse(dateFormat.format(cal.time))
-        val diff =  date2.time-date.time
-    if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toString() == "0") {
+        val diff = date2.time - date.time
+        if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toString() == "0") {
             if (TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS).toString() == "0") {
                 return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS).toString() + "m"
             } else {
@@ -616,78 +672,13 @@ private fun findExpirey2(validity_date: String): String {
         return str!!
     }
 
-    private var emailClaim: String = ""
-    var countClaim: Int = 0
+
 
     private fun dialogForClaim(modelData: ModelHome, position: Int) {
-        val mDialogView = LayoutInflater.from(context).inflate(R.layout.claim_layout, null)
-        //AlertDialogBuilder
-        val mBuilder = AlertDialog.Builder(context)
-                .setView(mDialogView)
-                .setTitle("Enter Details")
-        //show dialog
-        val mAlertDialog = mBuilder.show()
-        //login button click of custom layout
-        val done = mAlertDialog.findViewById<TextView>(R.id.done)
-        val cancel = mAlertDialog.findViewById<TextView>(R.id.cancel)
-        val name = mAlertDialog.findViewById<EditText>(R.id.name)
-        val email = mAlertDialog.findViewById<EditText>(R.id.emailClaim)
-        val phoneNo = mAlertDialog.findViewById<EditText>(R.id.phoneNo)
-        done!!.setOnClickListener {
-            //dismiss dialog
-            if (name!!.text.toString().isEmpty() || email!!.text.toString().isEmpty()) {
-                Toast.makeText(context, "Please enter details", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-            val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
-            val emailEntered = email.text.toString()
-            if (!isEmailValid(emailEntered)) {
-                Toast.makeText(context, "Please enter valid email.", Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-            if (phoneNo != null) {
-                if (phoneNo.text.toString().trim().isEmpty()||phoneNo.text.toString().length<10) {
-                    Toast.makeText(context, "Please enter 10 digit Phone Number.", Toast.LENGTH_LONG).show()
-                    return@setOnClickListener
-                }
-            }
-            //update.claimPostService(modelData,name!!.text.toString(),email!!.text.toString())
-            if (emailClaim != email.text.toString()) {
-                countClaim = 0
-            }
 
-            var modelc = ModelClainService()
-            modelc.postId = modelData.id
-            modelc.name = name.text.toString()
-            modelc.email = email.text.toString()
-            modelc.position = position.toString()
-            modelc.phoneNo = phoneNo!!.text.toString()
-            emailClaim = email.text.toString()
-            countClaim += 1
-            Constants.getBus().post(ClaimPost(modelc))
-            mAlertDialog.dismiss()
-            //get text from EditTexts of custom layout
-        }
-        //cancel button click of custom layout
-        cancel!!.setOnClickListener {
-            //dismiss dialog
-            mAlertDialog.dismiss()
-        }
 
     }
 
-    fun isEmailValid(email: String): Boolean {
-        var isValid = false
-
-        val expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$"
-
-        val pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE)
-        val matcher = pattern.matcher(email)
-        if (matcher.matches()) {
-            isValid = true
-        }
-        return isValid
-    }
 
     fun extractYoutubeVideoId(ytUrl: String): String {
 
@@ -740,64 +731,68 @@ private fun findExpirey2(validity_date: String): String {
         alert.show()
     }
 
-    fun makeTextViewResizable(tv: TextView, maxLine: Int, expandText: String, viewMore: Boolean) {
+//    fun makeTextViewResizable(tv: TextView, maxLine: Int, expandText: String, viewMore: Boolean) {
+//
+//        if (tv.tag == null) {
+//            tv.tag = tv.text
+//        }
+//        val vto = tv.viewTreeObserver
+//        vto.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+//
+//            override fun onGlobalLayout() {
+//                val text: String
+//                val lineEndIndex: Int
+//                val obs = tv.viewTreeObserver
+//                obs.removeGlobalOnLayoutListener(this)
+//                if (maxLine == 0) {
+//                    lineEndIndex = tv.layout.getLineEnd(0)
+//                    text = tv.text.subSequence(0, lineEndIndex - expandText.length + 1).toString() + " " + expandText
+//                } else if (maxLine > 0 && tv.lineCount >= maxLine) {
+//                    lineEndIndex = tv.layout.getLineEnd(maxLine - 1)
+//                    text = tv.text.subSequence(0, lineEndIndex - expandText.length + 1).toString() + " " + expandText
+//                } else {
+//                    lineEndIndex = tv.layout.getLineEnd(tv.layout.lineCount - 1)
+//                    text = tv.text.subSequence(0, lineEndIndex).toString() + " " + expandText
+//                }
+//                tv.text = text
+//                tv.movementMethod = LinkMovementMethod.getInstance()
+//                tv.setText(
+//                        addClickablePartTextViewResizable(Html.fromHtml(tv.text.toString()), tv, lineEndIndex, expandText,
+//                                viewMore), TextView.BufferType.SPANNABLE)
+//            }
+//        })
+//
+//    }
 
-        if (tv.tag == null) {
-            tv.tag = tv.text
-        }
-        val vto = tv.viewTreeObserver
-        vto.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
 
-            override fun onGlobalLayout() {
-                val text: String
-                val lineEndIndex: Int
-                val obs = tv.viewTreeObserver
-                obs.removeGlobalOnLayoutListener(this)
-                if (maxLine == 0) {
-                    lineEndIndex = tv.layout.getLineEnd(0)
-                    text = tv.text.subSequence(0, lineEndIndex - expandText.length + 1).toString() + " " + expandText
-                } else if (maxLine > 0 && tv.lineCount >= maxLine) {
-                    lineEndIndex = tv.layout.getLineEnd(maxLine - 1)
-                    text = tv.text.subSequence(0, lineEndIndex - expandText.length + 1).toString() + " " + expandText
-                } else {
-                    lineEndIndex = tv.layout.getLineEnd(tv.layout.lineCount - 1)
-                    text = tv.text.subSequence(0, lineEndIndex).toString() + " " + expandText
-                }
-                tv.text = text
-                tv.movementMethod = LinkMovementMethod.getInstance()
-                tv.setText(
-                        addClickablePartTextViewResizable(Html.fromHtml(tv.text.toString()), tv, lineEndIndex, expandText,
-                                viewMore), TextView.BufferType.SPANNABLE)
-            }
-        })
+//    private fun addClickablePartTextViewResizable(strSpanned: Spanned, tv: TextView,
+//                                                  maxLine: Int, spanableText: String, viewMore: Boolean): SpannableStringBuilder {
+//        val str = strSpanned.toString()
+//        val ssb = SpannableStringBuilder(strSpanned)
+//
+//        if (str.contains(spanableText)) {
+//
+//
+//            ssb.setSpan(object : MySpannable(false) {
+//                override fun onClick(widget: View) {
+//                    tv.layoutParams = tv.layoutParams
+//                    tv.setText(tv.tag.toString(), TextView.BufferType.SPANNABLE)
+//                    tv.invalidate()
+//                    if (viewMore) {
+//                        makeTextViewResizable(tv, -2, "less", false)
+//                    } else {
+//                        makeTextViewResizable(tv, 2, "more..", true)
+//                    }
+//                }
+//            }, str.indexOf(spanableText), str.indexOf(spanableText) + spanableText.length, 0)
+//
+//        }
+//        return ssb
+//
+//    }
 
+    interface CheckPostExpired {
+        fun checkPostExpiredStatus(modelData: ModelHome, position: Int)
+        fun scroolToPositonOfclickedItem(position: Int)
     }
-
-
-    private fun addClickablePartTextViewResizable(strSpanned: Spanned, tv: TextView,
-                                                  maxLine: Int, spanableText: String, viewMore: Boolean): SpannableStringBuilder {
-        val str = strSpanned.toString()
-        val ssb = SpannableStringBuilder(strSpanned)
-
-        if (str.contains(spanableText)) {
-
-
-            ssb.setSpan(object : MySpannable(false) {
-                override fun onClick(widget: View) {
-                    tv.layoutParams = tv.layoutParams
-                    tv.setText(tv.tag.toString(), TextView.BufferType.SPANNABLE)
-                    tv.invalidate()
-                    if (viewMore) {
-                        makeTextViewResizable(tv, -2, "less", false)
-                    } else {
-                        makeTextViewResizable(tv, 2, "more..", true)
-                    }
-                }
-            }, str.indexOf(spanableText), str.indexOf(spanableText) + spanableText.length, 0)
-
-        }
-        return ssb
-
-    }
-
 }

@@ -42,8 +42,29 @@ interface Service {
                       @Field("password") password: String,
                       @Field("auth_code") auth_code: String?): Call<ResponseBody>
 
+    //    @Multipart
+//    @POST("addPostVideo")
+//    fun addPost(@Part("auth_code") auth_code: RequestBody?,
+//                @Part("width") width: RequestBody?,
+//                @Part("height") height: RequestBody?,
+//                @Part("description") desc: RequestBody?,
+//                @Part("video_link") video_link: RequestBody?,
+//                @Part images: MultipartBody.Part?,
+//                @Part("image_status") image_status: RequestBody?,
+//                @Part("title") title1: RequestBody,
+//                @Part("type") type: RequestBody,
+//                @Part("day") day: RequestBody,
+//                @Part("time") time: RequestBody,
+//                @Part("now_status") now_status: RequestBody,
+//                @Part("category") category: RequestBody,
+//                @Part("ftype") ftype: RequestBody,
+//                @Part("max_redemption") max_redemption: RequestBody,
+//                @Part("validity_date") validity_date: RequestBody,
+//                @Part("validity_time") validity_time: RequestBody,
+//                @Part("per_person_redemption") per_person_redemption: RequestBody,
+//                @Part upload_video: MultipartBody.Part?): Call<ResponseBody>
     @Multipart
-    @POST("addPostVideo")
+    @POST("addPostVideo_v1")
     fun addPost(@Part("auth_code") auth_code: RequestBody?,
                 @Part("width") width: RequestBody?,
                 @Part("height") height: RequestBody?,
@@ -62,6 +83,10 @@ interface Service {
                 @Part("validity_date") validity_date: RequestBody,
                 @Part("validity_time") validity_time: RequestBody,
                 @Part("per_person_redemption") per_person_redemption: RequestBody,
+                @Part("retail_price") retail_price: RequestBody,
+                @Part("sale_price") sale_price: RequestBody,
+                @Part("discount_price") discount_price: RequestBody,
+                @Part("email_body") email_body: RequestBody,
                 @Part upload_video: MultipartBody.Part?): Call<ResponseBody>
 
 // @Multipart
@@ -149,7 +174,7 @@ interface Service {
 
 
     @Multipart
-    @POST("updateBusinessPage")
+    @POST("updateBusinessPage_v1")
     fun updateBusinessPage(@Part("business_name") business_name: RequestBody,
                            @Part("auth_code") auth_code: RequestBody,
                            @Part("town_id") town_id: RequestBody,
@@ -166,11 +191,54 @@ interface Service {
                            @Part("long") long: RequestBody,
                            @Part("description") bus_desc: RequestBody,
                            @Part("oldimages") oldimages: RequestBody,
+                           @Part("website") websiteUrl: RequestBody,
                            @Part("business_email") business_email: RequestBody,
                            @Part coverImage: MultipartBody.Part?): Call<ResponseBody>
 
-    @Multipart
-    @POST("updateBusinessPage")
+//   @Multipart
+//    @POST("updateBusinessPage")
+//    fun updateBusinessPage(@Part("business_name") business_name: RequestBody,
+//                           @Part("auth_code") auth_code: RequestBody,
+//                           @Part("town_id") town_id: RequestBody,
+//                           @Part("email") email: RequestBody,
+//                           @Part("category_id") category_id: RequestBody,
+//                           @Part surveyImage: ArrayList<MultipartBody.Part>,
+//                           @Part("image_status") image_status: RequestBody,
+//                           @Part("video_link") video_link: RequestBody,
+//                           @Part("opening_hours") opening_hours: RequestBody,
+//                           @Part("image_count") image_count: RequestBody,
+//                           @Part("address") address: RequestBody,
+//                           @Part("contact_no") contact_no: RequestBody,
+//                           @Part("lat") lat: RequestBody,
+//                           @Part("long") long: RequestBody,
+//                           @Part("description") bus_desc: RequestBody,
+//                           @Part("oldimages") oldimages: RequestBody,
+//                           @Part("business_email") business_email: RequestBody,
+//                           @Part coverImage: MultipartBody.Part?): Call<ResponseBody>
+//
+//    @Multipart
+//    @POST("updateBusinessPage")
+//    fun updateBusinessPage2(@Part("business_name") business_name: RequestBody,
+//                            @Part("auth_code") auth_code: RequestBody,
+//                            @Part("town_id") town_id: RequestBody,
+//                            @Part("email") email: RequestBody,
+//                            @Part("category_id") category_id: RequestBody,
+//                            @Part surveyImage: ArrayList<MultipartBody.Part>,
+//                            @Part("image_status") image_status: RequestBody,
+//                            @Part("video_link") video_link: RequestBody,
+//                            @Part("opening_hours") opening_hours: RequestBody,
+//                            @Part("image_count") image_count: RequestBody,
+//                            @Part("address") address: RequestBody,
+//                            @Part("contact_no") contact_no: RequestBody,
+//                            @Part("lat") lat: RequestBody,
+//                            @Part("long") long: RequestBody,
+//                            @Part("description") bus_desc: RequestBody,
+//                            @Part("oldimages") oldimages: RequestBody,
+//                            @Part("business_email") business_email: RequestBody): Call<ResponseBody>
+
+
+  @Multipart
+    @POST("updateBusinessPage_v1")
     fun updateBusinessPage2(@Part("business_name") business_name: RequestBody,
                             @Part("auth_code") auth_code: RequestBody,
                             @Part("town_id") town_id: RequestBody,
@@ -187,11 +255,12 @@ interface Service {
                             @Part("long") long: RequestBody,
                             @Part("description") bus_desc: RequestBody,
                             @Part("oldimages") oldimages: RequestBody,
+                            @Part("website") websiteUrl: RequestBody,
                             @Part("business_email") business_email: RequestBody): Call<ResponseBody>
 
 
     @Multipart
-    @POST("updateBusinessPage")
+    @POST("updateBusinessPage_v1")
     fun updateBusinessPage3(@Part("business_name") bus_name: RequestBody?,
                             @Part("auth_code") auth_code: RequestBody?,
                             @Part("town_id") town_id: RequestBody?,
@@ -207,12 +276,33 @@ interface Service {
                             @Part("long") long: RequestBody?,
                             @Part("description") bus_desc: RequestBody?,
                             @Part("oldimages") oldimages: RequestBody?,
+                            @Part("website") websiteUrl: RequestBody,
                             @Part("business_email") business_email: RequestBody?,
                             @Part coverImage: MultipartBody.Part?): Call<ResponseBody>
 
+// @Multipart
+//    @POST("updateBusinessPage")
+//    fun updateBusinessPage3(@Part("business_name") bus_name: RequestBody?,
+//                            @Part("auth_code") auth_code: RequestBody?,
+//                            @Part("town_id") town_id: RequestBody?,
+//                            @Part("email") email: RequestBody?,
+//                            @Part("category_id") category_id: RequestBody?,
+//                            @Part("image_status") image_status: RequestBody?,
+//                            @Part("video_link") video_link: RequestBody?,
+//                            @Part("opening_hours") opening_hours: RequestBody?,
+//                            @Part("image_count") image_count: RequestBody?,
+//                            @Part("address") address: RequestBody?,
+//                            @Part("contact_no") contact_no: RequestBody?,
+//                            @Part("lat") lat: RequestBody?,
+//                            @Part("long") long: RequestBody?,
+//                            @Part("description") bus_desc: RequestBody?,
+//                            @Part("oldimages") oldimages: RequestBody?,
+//                            @Part("business_email") business_email: RequestBody?,
+//                            @Part coverImage: MultipartBody.Part?): Call<ResponseBody>
+//
 
     @FormUrlEncoded
-    @POST("updateBusinessPage")
+    @POST("updateBusinessPage_v1")
     fun updateBusinessPage33(@Field("business_name") bus_name: String,
                              @Field("auth_code") auth_code: String,
                              @Field("town_id") town_id: String,
@@ -228,11 +318,32 @@ interface Service {
                              @Field("long") long: String,
                              @Field("description") bus_desc: String,
                              @Field("oldimages") oldimages: String,
+                             @Field("website") websiteUrl: String,
                              @Field("business_email") business_email: String): Call<ResponseBody>
 
+//
+//    @FormUrlEncoded
+//    @POST("updateBusinessPage")
+//    fun updateBusinessPage33(@Field("business_name") bus_name: String,
+//                             @Field("auth_code") auth_code: String,
+//                             @Field("town_id") town_id: String,
+//                             @Field("email") email: String,
+//                             @Field("category_id") category_id: String,
+//                             @Field("image_status") image_status: String,
+//                             @Field("video_link") video_link: String,
+//                             @Field("opening_hours") opening_hours: String,
+//                             @Field("image_count") image_count: String,
+//                             @Field("address") address: String,
+//                             @Field("contact_no") contact_no: String,
+//                             @Field("lat") lat: String,
+//                             @Field("long") long: String,
+//                             @Field("description") bus_desc: String,
+//                             @Field("oldimages") oldimages: String,
+//                             @Field("business_email") business_email: String): Call<ResponseBody>
+//
 
     @FormUrlEncoded
-    @POST("getBusinessDetails")
+    @POST("getBusinessDetails_v1")
     fun getBusinessDetail(@Field("auth_code") auth_code: String?,
                           @Field("town_id") town_id: String?,
                           @Field("limit") limit: String?,
@@ -240,7 +351,7 @@ interface Service {
                           @Field("category_id") category_id: String?): Call<ResponseBody>
 
     @FormUrlEncoded
-    @POST("getSingleBusiness")
+    @POST("getSingleBusiness_v1")
     fun getSingleBusiness(@Field("auth_code") auth_code: String,
                           @Field("business_id") business_id: String,
                           @Field("mydetail") mydetail: String): Call<ResponseBody>
@@ -291,20 +402,28 @@ interface Service {
                             @Field("type") userType: String): Call<ResponseBody>
 
     @FormUrlEncoded
-    @POST("getFlashPost")
+    @POST("getFlashPostV1")
     fun getFlashDetail(@Field("auth_code") auth_code: String,
                        @Field("town_id") town_id: String,
                        @Field("category_id") category_id: String,
                        @Field("limit") limit: String,
                        @Field("page") page: String): Call<ResponseBody>
 
+    //    @FormUrlEncoded
+//    @POST("claimDeal")
+//    fun claimPost(@Field("auth_code") auth_code: String,
+//                  @Field("post_id") town_id: String,
+//                  @Field("name") name: String,
+//                  @Field("phone_no") phone_no: String,
+//                  @Field("email") email: String): Call<ResponseBody>
     @FormUrlEncoded
-    @POST("claimDeal")
+    @POST("claimDeal_v1")
     fun claimPost(@Field("auth_code") auth_code: String,
                   @Field("post_id") town_id: String,
                   @Field("name") name: String,
                   @Field("phone_no") phone_no: String,
-                  @Field("email") email: String): Call<ResponseBody>
+                  @Field("email") email: String,
+                  @Field("quantity") quantity: String): Call<ResponseBody>
 
     @FormUrlEncoded
     @POST("getClaimedFlashPostList")
@@ -321,7 +440,8 @@ interface Service {
     @POST("updateOnesignalid")
     fun updateOnesignalid(@Field("auth_code") auth_code: String,
                           @Field("onesignal_id") onesignal_id: String,
-                          @Field("town_id") town_id: String): Call<ResponseBody>
+                          @Field("town_id") town_id: String,
+                          @Field("category_id") category_id: String): Call<ResponseBody>
 
     @FormUrlEncoded
     @POST("sendEmail")
@@ -332,6 +452,11 @@ interface Service {
     @POST("bumppost")
     fun bumpPost(@Field("auth_code") auth_code: String,
                  @Field("post_id") post_id: String): Call<ResponseBody>
+
+    @FormUrlEncoded
+    @POST("post_status")
+    fun getPostStatus(@Field("auth_code") auth_code: String,
+                      @Field("post_id") post_id: String): Call<ResponseBody>
 
 
 }

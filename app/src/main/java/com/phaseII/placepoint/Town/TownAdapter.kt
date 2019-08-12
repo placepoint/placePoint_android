@@ -1,6 +1,7 @@
 package com.phaseII.placepoint.Town
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.DashBoard.DashBoardActivity
 import com.phaseII.placepoint.R
 import com.phaseII.placepoint.Service
+import com.phaseII.placepoint.Town.MultipleTown.MultipleTownActivity
 import kotlinx.android.synthetic.main.town_item.view.*
 import okhttp3.ResponseBody
 import org.json.JSONArray
@@ -36,10 +38,17 @@ class TownAdapter(val context: TownActivity, var list: List<ModelTown>,
         val model = list.get(position)
         holder.itemView.title_text.text = model.townname
         holder.itemView.main.setOnClickListener {
-            if (Constants.getPrefs(context)!!.getString("getAuthCode", "") == "") {
-                Constants.getPrefs(context)?.edit()?.putString(Constants.OPEN_TOWN, "no")?.apply()
-                runAppAuthService(model.id, model.townname)
 
+            val pprefs: SharedPreferences =context.getSharedPreferences("MultiCategory",0)
+            if (pprefs.getString("MultiCategoryIds","").isEmpty()){
+//                Constants.getPrefs(context)?.edit()?.putString(Constants.OPEN_TOWN, "no")?.apply()
+//                runAppAuthService(model.id, model.townname)
+                val intent = Intent(context, MultipleTownActivity::class.java)
+                intent.putExtra("from","cat")
+                intent.putExtra("from1",from)
+                intent.putExtra("townId",model.id)
+                intent.putExtra("townName",model.townname)
+                context.startActivity(intent)
             }else {
 
                 val intent = Intent(context, CategoryActivity::class.java)
@@ -168,7 +177,7 @@ class TownAdapter(val context: TownActivity, var list: List<ModelTown>,
         Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townname).apply()
         Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, town_id).apply()
 
-        val intent = Intent(context, DashBoardActivity::class.java)
+        val intent = Intent(context, MultipleTownActivity::class.java)
             intent.putExtra("from","cat")
             intent.putExtra("from1",from)
             intent.putExtra("townId",town_id)

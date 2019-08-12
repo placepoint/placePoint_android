@@ -15,11 +15,10 @@ import com.phaseII.placepoint.Home.ModelHome
 import com.phaseII.placepoint.R
 import com.phaseII.placepoint.SubscriptionPlan.SubscriptionActivity
 import com.phaseII.placepoint.Town.ModelTown
-import kotlinx.android.synthetic.main.fragment_my_timeline.*
 import java.util.ArrayList
 import java.util.HashSet
 
-class FlashPostFragment : Fragment(), MyTimelineHelper {
+class FlashPostFragment : Fragment(), MyTimelineHelper, FlashPostAdapter.ShowViewMoreLess {
 
     private lateinit var mAdapter: FlashPostAdapter
     lateinit var progressBar: ProgressBar
@@ -78,7 +77,7 @@ class FlashPostFragment : Fragment(), MyTimelineHelper {
                     noPosts.visibility = View.GONE
 
                     recyclerView.layoutManager = LinearLayoutManager(activity)
-                    mAdapter = FlashPostAdapter(this.context!!, postList)
+                    mAdapter = FlashPostAdapter(this.context!!, postList,this)
                     recyclerView.adapter = mAdapter
                 } else {
                     noPosts.visibility = View.VISIBLE
@@ -189,5 +188,10 @@ class FlashPostFragment : Fragment(), MyTimelineHelper {
             noSubLay.visibility=View.GONE
             mainLay.visibility=View.VISIBLE
         }
+    }
+
+    override fun showMoreLess(postion: Int) {
+
+        recyclerView.scrollToPosition(postion)
     }
 }

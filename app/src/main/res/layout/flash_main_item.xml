@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+
     android:orientation="vertical">
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -12,8 +12,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
+        android:layout_marginTop="@dimen/_8dp"
         android:orientation="vertical">
 
         <View
@@ -22,6 +21,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
             android:background="@color/colorText"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/layout"
             app:layout_constraintEnd_toStartOf="@+id/arrow"
             app:layout_constraintStart_toStartOf="parent"
@@ -33,6 +33,7 @@
             android:layout_height="14dp"
             android:layout_marginTop="16dp"
             android:src="@drawable/circle"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/line"
             app:layout_constraintStart_toStartOf="@+id/line"
             app:layout_constraintTop_toTopOf="@+id/layout" />
@@ -42,147 +43,484 @@
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:src="@drawable/ic_arrow"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/circle"
             app:layout_constraintEnd_toStartOf="@+id/layout"
             app:layout_constraintStart_toEndOf="@+id/circle"
             app:layout_constraintTop_toTopOf="@+id/circle" />
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
             android:id="@+id/layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
             android:background="@drawable/post_bg"
+            android:orientation="vertical"
             android:paddingBottom="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/arrow"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="***Flash Alert Sale***"
-                android:textColor="@color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <android.support.constraint.ConstraintLayout
-                android:id="@+id/nameLayout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/header">
 
-                <com.phaseII.placepoint.CustomViews.RoundedImageView
-                    android:id="@+id/logo"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:scaleType="centerInside"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@+id/dateTime"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/name" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/name"
-                    android:layout_width="0dp"
+                    android:id="@+id/header"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:fontFamily="@font/bold"
-                    android:maxLines="3"
-                    android:text="Name"
-                    android:textAllCaps="false"
-                    android:textColor="@color/colorText"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toStartOf="@+id/dateTime"
-                    app:layout_constraintStart_toEndOf="@+id/logo"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_weight="1" />
-
-                <TextView
-                    android:id="@+id/dateTime"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/regular"
-                    android:text="May 15 at 6:00PM"
-                    android:textColor="@color/grey"
-                    android:textSize="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/name"
-                    app:layout_constraintVertical_weight="1" />
-
-                <TextView
-
-                    android:id="@+id/postText"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:fontFamily="@font/regular"
-                    android:textColor="@color/black"
-                    app:layout_constraintEnd_toStartOf="@+id/imagesLayout"
-                    app:layout_constraintStart_toStartOf="@+id/name"
-                    app:layout_constraintTop_toBottomOf="@+id/name" />
-
-                <TextView
-                    android:id="@+id/videoUrl"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/bold"
-                    android:paddingStart="4dp"
-                    android:paddingTop="4dp"
-                    android:paddingEnd="4dp"
-                    android:paddingRight="4dp"
-                    android:textColor="@color/black"
-                    android:visibility="gone"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="***Flash Alert Sale***"
+                    android:textColor="@color/white"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/postText" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <LinearLayout
-                    android:id="@+id/imagesLayout"
-                    android:layout_width="wrap_content"
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/nameLayout"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
+                    android:padding="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/dateTime">
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/header">
+
+                    <com.phaseII.placepoint.CustomViews.RoundedImageView
+                        android:id="@+id/logo"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:scaleType="centerInside"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/dateTime"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/nameLay" />
+
+
+                    <LinearLayout
+                        android:id="@+id/nameLay"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintEnd_toStartOf="@+id/dateTime"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/logo"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_weight="1">
+
+                        <TextView
+                            android:id="@+id/name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/opensans_bold"
+                            android:maxLines="3"
+                            android:text="Name"
+                            android:textAllCaps="false"
+                            android:textColor="@color/colorText"
+                            android:textSize="16dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/shared"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/opensans_bold"
+                            android:text="  (shared)"
+                            android:textAllCaps="false"
+                            android:textColor="@color/colorText"
+                            android:textSize="12dp"
+                            android:textStyle="bold"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/dateTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/opensans_regular"
+                        android:text="May 15 at 6:00PM"
+                        android:textColor="@color/grey"
+                        android:textSize="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/nameLay"
+                        app:layout_constraintVertical_weight="1" />
+
+                    <LinearLayout
+                        android:id="@+id/postTextLay"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toStartOf="@+id/imagesLayout"
+                        app:layout_constraintStart_toStartOf="@+id/nameLay"
+                        app:layout_constraintTop_toBottomOf="@+id/nameLay">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="3.5">
+
+                            <com.borjabravo.readmoretextview.ReadMoreTextView
+                                android:id="@+id/postText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+
+                                app:showTrimExpandedText="true"
+                                app:colorClickableText="@color/colormoreless"
+                                app:trimExpandedText="show more"
+                                app:trimCollapsedText="...show less"
+                                app:trimMode="trimModeLength"
+                                app:trimLength="130"
+                                android:fontFamily="@font/opensans_regular"
+                                android:textColor="@color/black" />
+ <!--<com.skyhope.showmoretextview.ShowMoreTextView-->
+                                <!--android:id="@+id/postText"-->
+                                <!--android:layout_width="match_parent"-->
+                                <!--android:layout_height="wrap_content"-->
+                                <!--android:fontFamily="@font/opensans_regular"-->
+                                <!--android:textColor="@color/black" />-->
+
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:id="@+id/priceLay"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="6.5"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:orientation="vertical">
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                    <TextView
+                                        android:id="@+id/retailPrice"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:fontFamily="@font/opensans_bold"
+                                        android:text=""
+                                        android:textColor="@color/colorText"
+                                        android:textSize="11dp" />
+
+                                    <TextView
+                                        android:id="@+id/discount"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:layout_marginLeft="4dp"
+                                        android:layout_toRightOf="@+id/retailPrice"
+                                        android:fontFamily="@font/opensans_bold"
+                                        android:gravity="center"
+                                        android:singleLine="true"
+                                        android:text=""
+                                        android:textColor="@color/lightGreen"
+                                        android:textSize="15dp" />
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:id="@+id/percentage"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:layout_marginTop="@dimen/_8dp"
+                                    android:background="@color/lightGreen"
+                                    android:padding="4dp"
+                                    android:fontFamily="@font/opensans_bold"
+                                    android:text="shghghhgdfg"
+                                    android:textColor="@color/white"
+                                    android:textSize="10dp"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent" />
+
+
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                    <TextView
+                        android:id="@+id/videoUrl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/opensans_bold"
+                        android:paddingStart="4dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="4dp"
+                        android:paddingRight="4dp"
+                        android:textColor="@color/black"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/postTextLay" />
+
+                    <LinearLayout
+                        android:id="@+id/imagesLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/dateTime">
+
+                        <ImageView
+                            android:id="@+id/bump"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:src="@mipmap/bump"
+                            android:visibility="gone" />
+
+                        <RelativeLayout
+                            android:id="@+id/imageLay"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="8dp"
+                            android:visibility="gone">
+
+                            <ImageView
+
+                                android:id="@+id/shareFaceBook"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                app:srcCompat="@drawable/ic_share"
+                                tools:ignore="VectorDrawableCompat" />
+
+                            <ImageView
+                                android:id="@+id/flashImage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:visibility="gone"
+                                app:srcCompat="@drawable/ic_flash"
+                                tools:ignore="VectorDrawableCompat" />
+                        </RelativeLayout>
+
+                    </LinearLayout>
+                </android.support.constraint.ConstraintLayout>
+
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/postImageLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/nameLayout">
+
+                    <com.phaseII.placepoint.DynamicImageView
+                        android:id="@+id/postImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/_8dp"
+                        android:paddingRight="@dimen/_8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/townName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@color/light_blue"
+                        android:padding="4dp"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textSize="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/videoLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/_8dp"
+                    android:paddingRight="@dimen/_8dp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/postImageLay"
+                    app:layout_constraintTop_toBottomOf="@+id/postImageLay">
+
+                    <com.phaseII.placepoint.DynamicImageView
+                        android:id="@+id/videoImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
 
                     <ImageView
-                        android:id="@+id/bump"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/ic_youtube_play_button"
+                        android:visibility="gone" />
+
+                    <com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView
+                        android:id="@+id/youtube_view"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:src="@mipmap/bump"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/textFb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
                         android:visibility="gone" />
 
                     <RelativeLayout
-                        android:id="@+id/imageLay"
+                        android:id="@+id/youLay"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="8dp">
+                        android:layout_height="180dp" />
+
+                    <RelativeLayout
+                        android:id="@+id/myVideoLay"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:background="@color/black">
+
+
+                        <VideoView
+                            android:id="@+id/myVideo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_centerInParent="true"
+                            android:visibility="gone" />
 
                         <ImageView
-                            android:id="@+id/shareFaceBook"
+                            android:id="@+id/thumbNail"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="gone" />
+
+                        <ImageView
+
+                            android:id="@+id/play"
+                            android:layout_width="35dp"
+                            android:layout_height="30dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/ic_play" />
+
+                        <ImageView
+                            android:id="@+id/pause"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/ic_pause"
+                            android:visibility="gone" />
+                    </RelativeLayout>
+
+
+                    <!--<include-->
+                    <!--layout="@layout/mk_player"-->
+                    <!--android:visibility="gone"-->
+                    <!--android:id="@+id/myVideo"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginTop="8dp" />-->
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relativeLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:padding="8dp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/videoLayout">
+
+                    <TextView
+
+                        android:id="@+id/desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:background="@drawable/round_corner_green"
+                        android:fontFamily="@font/opensans_regular"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/validityText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/desc"
+                        android:fontFamily="@font/opensans_regular"
+                        android:gravity="center"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:id="@+id/claimButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/validityText"
+                        android:layout_centerInParent="true"
+                        android:layout_marginTop="16dp"
+
+                        android:background="@drawable/round_corner_light_green"
+                        android:fontFamily="@font/opensans_bold"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:text="Claim Offer Now"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
+
+            </android.support.constraint.ConstraintLayout>
+
+            <LinearLayout
+                android:id="@+id/bottomLayoutmAllBumpShare"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="@dimen/_8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:id="@+id/imageLay1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/shareFaceBook1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            app:srcCompat="@drawable/ic_share"
+                            app:srcCompat="@drawable/ic_share_darkblue"
                             tools:ignore="VectorDrawableCompat" />
 
                         <ImageView
-                            android:id="@+id/flashImage"
+                            android:id="@+id/flashImage1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
@@ -191,160 +529,84 @@
                             tools:ignore="VectorDrawableCompat" />
                     </RelativeLayout>
 
-                </LinearLayout>
-            </android.support.constraint.ConstraintLayout>
-
-
-            <com.phaseII.placepoint.DynamicImageView
-                android:id="@+id/postImage"
-                android:paddingLeft="@dimen/_8dp"
-                android:paddingRight="@dimen/_8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nameLayout" />
-
-            <RelativeLayout
-                android:id="@+id/videoLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:paddingLeft="@dimen/_8dp"
-                android:paddingRight="@dimen/_8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/postImage"
-                app:layout_constraintTop_toBottomOf="@+id/postImage">
-
-                <com.phaseII.placepoint.DynamicImageView
-                    android:id="@+id/videoImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/ic_youtube_play_button"
-                    android:visibility="gone" />
-
-                <com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView
-                    android:id="@+id/youtube_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/textFb"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:visibility="gone" />
-
-                <RelativeLayout
-                    android:id="@+id/youLay"
-                    android:layout_width="match_parent"
-                    android:layout_height="180dp" />
-
-                <RelativeLayout
-                    android:id="@+id/myVideoLay"
-                    android:layout_width="match_parent"
-                    android:layout_height="180dp"
-                    android:background="@color/black">
-
-
-                    <VideoView
-                        android:id="@+id/myVideo"
+                    <ImageView
+                        android:id="@+id/bump1"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_centerInParent="true"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:src="@drawable/bump_new"
                         android:visibility="gone" />
+                </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/thumbNail"
+
+                <LinearLayout
+                    android:id="@+id/infoLay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="gone" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
+                        android:background="@drawable/fullroundblue"
+                        android:padding="2dp">
 
-                    <ImageView
+                        <ImageView
+                            android:id="@+id/imageInfo"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginLeft="4dp"
+                            android:src="@drawable/ic_info" />
 
-                        android:id="@+id/play"
-                        android:layout_width="35dp"
-                        android:layout_height="30dp"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/ic_play" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_toRightOf="@+id/imageInfo"
+                            android:fontFamily="@font/opensans_bold"
+                            android:gravity="center"
+                            android:text="info"
+                            android:textColor="@color/white" />
+                    </RelativeLayout>
+                </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/pause"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/ic_pause"
-                        android:visibility="gone" />
-                </RelativeLayout>
-
-
-                <!--<include-->
-                <!--layout="@layout/mk_player"-->
-                <!--android:visibility="gone"-->
-                <!--android:id="@+id/myVideo"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginTop="8dp" />-->
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/relativeLayout2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:padding="8dp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/videoLayout">
-
-                <TextView
-
-                    android:id="@+id/desc"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
-                    android:background="@drawable/round_corner_green"
-                    android:fontFamily="@font/regular"
-                    android:gravity="center"
-                    android:padding="4dp"
-                    android:textColor="@color/white" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:background="@drawable/fullroundblue"
+                        android:padding="2dp">
 
-                <TextView
-                    android:id="@+id/validityText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/desc"
-                    android:fontFamily="@font/regular"
-                    android:gravity="center"
-                    android:textColor="@color/black" />
+                        <ImageView
+                            android:id="@+id/menuIcon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginLeft="4dp"
+                            android:src="@drawable/ic_menu_white" />
 
-                <TextView
-                    android:id="@+id/claimButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/validityText"
-                    android:layout_centerInParent="true"
-                    android:layout_marginTop="16dp"
-
-                    android:background="@drawable/round_corner_light_green"
-                    android:fontFamily="@font/bold"
-                    android:gravity="center"
-                    android:padding="16dp"
-                    android:text="Claim Offer Now"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white" />
-            </RelativeLayout>
-        </android.support.constraint.ConstraintLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_toRightOf="@+id/menuIcon"
+                            android:gravity="center"
+                            android:text="menu"
+                            android:textColor="@color/white" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 
 </LinearLayout>

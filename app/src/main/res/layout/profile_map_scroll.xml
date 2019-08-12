@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:fontFamily="@font/bold"
+            android:fontFamily="@font/opensans_bold"
             android:text="@string/address_string"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/colorText" />
@@ -35,7 +35,7 @@
             android:layout_below="@+id/view"
             android:layout_margin="8dp"
             android:background="@drawable/outline"
-            android:fontFamily="@font/regular"
+            android:fontFamily="@font/opensans_regular"
             android:padding="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/black" />
@@ -47,7 +47,7 @@
             android:layout_below="@+id/houseNo"
             android:layout_margin="8dp"
             android:background="@drawable/outline"
-            android:fontFamily="@font/regular"
+            android:fontFamily="@font/opensans_regular"
             android:padding="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/black" />
@@ -60,7 +60,7 @@
             android:layout_below="@+id/street"
             android:layout_margin="8dp"
             android:background="@drawable/outline"
-            android:fontFamily="@font/regular"
+            android:fontFamily="@font/opensans_regular"
             android:padding="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/black" />
@@ -73,7 +73,7 @@
             android:layout_below="@+id/city"
             android:layout_margin="8dp"
             android:background="@drawable/outline"
-            android:fontFamily="@font/regular"
+            android:fontFamily="@font/opensans_regular"
             android:padding="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/black" />

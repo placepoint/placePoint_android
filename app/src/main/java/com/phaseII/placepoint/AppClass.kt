@@ -3,7 +3,6 @@ package com.phaseII.placepoint
 import com.onesignal.OneSignal
 import android.app.*
 import android.net.Uri
-import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.onesignal.OSNotification
 import com.onesignal.OSNotificationAction
@@ -19,25 +18,26 @@ import android.app.NotificationChannel
 import android.media.AudioAttributes
 import android.os.Build
 import android.support.annotation.RequiresApi
+import android.support.v4.app.NotificationCompat
+import com.google.gson.JsonObject
+import org.json.JSONObject
 
 
-class AppClass : Application() ,AppsFlyerConversionListener{
+class AppClass : Application(), AppsFlyerConversionListener {
+
     override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onAttributionFailure(p0: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onInstallConversionDataLoaded(conversionData: MutableMap<String, String>?) {
-        for ( attrName:String in conversionData!!.keys) {
-     Log.d(AppsFlyerLib.LOG_TAG, "attribute: " + attrName + " = " + conversionData.get(attrName));
-   }
+        for (attrName: String in conversionData!!.keys) {
+            //Log.d(AppsFlyerLib.LOG_TAG, "attribute: " + attrName + " = " + conversionData.get(attrName));
+        }
     }
 
     override fun onInstallConversionFailure(p0: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 //    override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
 //
@@ -74,13 +74,21 @@ class AppClass : Application() ,AppsFlyerConversionListener{
         AppsFlyerLib.getInstance().startTracking(this)
     }
 
-    internal inner class ExampleNotificationOpenedHandler : OneSignal.NotificationOpenedHandler,OneSignal.NotificationReceivedHandler {
+    internal inner class ExampleNotificationOpenedHandler : OneSignal.NotificationOpenedHandler, OneSignal.NotificationReceivedHandler {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun notificationReceived(notification: OSNotification?) {
+            notification!!.androidNotificationId
 //            val alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn")
 //            val inboxStyle = NotificationCompat.InboxStyle()
             //inboxStyle.setBigContentTitle(notificationString)
+            var type="2"
+            try {
+                var obj: String = notification.payload.additionalData.toString()
+                var jsonObject: JSONObject = JSONObject(obj)
+                 type = jsonObject.optString("type")
+            }catch (e:Exception){
 
+            }
 //            val pendingIntent = PendingIntent.getActivity(applicationContext, 0,
 //                    Intent(applicationContext, NavigationMenu::class.java),
 //                    0)
@@ -126,80 +134,114 @@ class AppClass : Application() ,AppsFlyerConversionListener{
 //            }
 //
 //            //val mBuilder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-var audio:AudioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            var audio: AudioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            if (type == "1"||type == "0") {
+                val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+//
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 
-            when (audio.getRingerMode()) {
-                AudioManager.RINGER_MODE_NORMAL -> {
+//                    var attributes = AudioAttributes.Builder()
+//                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+//                            .build();
+
+                   // var mChannel = NotificationChannel("uu5io",
+                    var mChannel = NotificationChannel("uu5io"+notification!!.androidNotificationId,
+                            applicationContext.getString(R.string.app_name),
+                            NotificationManager.IMPORTANCE_HIGH)
+                    mChannel.setSound(null, null)
+                    // mChannel.setSound(sound, attributes); // This is IMPORTANT
+
+
+                    if (mNotifyMgr != null)
+                        mNotifyMgr.createNotificationChannel(mChannel);
+                }
+                val mBuilder = NotificationCompat.Builder(applicationContext)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+
+                        //.setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_VIBRATE)
+                        //.setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
+                        //  .setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
+                        //.setChannelId("uu5io")
+                        .setChannelId("uu5io"+notification!!.androidNotificationId)
+                        .setAutoCancel(true)
+                        .setOnlyAlertOnce(false)
+
+
+
+                mNotifyMgr.notify(1, mBuilder.build())
+
+            } else {
+                when (audio.getRingerMode()) {
+                    AudioManager.RINGER_MODE_NORMAL -> {
 //                    val mp= MediaPlayer.create(applicationContext, R.raw.bikehorn_old)
 //                    mp.start()
-                   val sound =Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn)
+                        val sound = Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn)
 //                    var channel: NotificationChannel? =null
-                    val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                        val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 //
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 
-                        var attributes =  AudioAttributes.Builder()
-                                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                                .build();
+                            var attributes = AudioAttributes.Builder()
+                                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                                    .build();
 
-                        var mChannel =  NotificationChannel("uu5io",
-                                applicationContext.getString(R.string.app_name),
-                                NotificationManager.IMPORTANCE_HIGH);
+                            //var mChannel = NotificationChannel("uu5io",
+                            var mChannel = NotificationChannel("uu5io"+notification!!.androidNotificationId,
+                                    applicationContext.getString(R.string.app_name),
+                                    NotificationManager.IMPORTANCE_HIGH)
 
-                        mChannel.setSound(sound, attributes); // This is IMPORTANT
+                            mChannel.setSound(sound, attributes); // This is IMPORTANT
 
 
-                        if (mNotifyMgr != null)
-                            mNotifyMgr.createNotificationChannel(mChannel);
-                    }
+                            if (mNotifyMgr != null)
+                                mNotifyMgr.createNotificationChannel(mChannel);
+                        }
 
-                    val mBuilder = NotificationCompat.Builder(applicationContext)
-                            .setSmallIcon(R.mipmap.ic_launcher)
+                        val mBuilder = NotificationCompat.Builder(applicationContext)
+                                .setSmallIcon(R.mipmap.ic_launcher)
 
-                            //.setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_VIBRATE)
-                           //.setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
-                           .setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
-                            .setChannelId("uu5io")
-                            .setAutoCancel(true)
-                            .setOnlyAlertOnce(false)
+                                //.setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_VIBRATE)
+                                //.setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
+                                .setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
+                                .setChannelId("uu5io"+notification!!.androidNotificationId)
+                                .setAutoCancel(true)
+                                .setOnlyAlertOnce(false)
 
 
 
                         mNotifyMgr.notify(1, mBuilder.build())
 
 
+                    }
+                    AudioManager.RINGER_MODE_SILENT -> {
+                        val mBuilder = NotificationCompat.Builder(applicationContext)
+                                .setSmallIcon(R.mipmap.ic_launcher)
 
+                                // .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
+                                //.setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
+                                .setAutoCancel(true)
+                                .setOnlyAlertOnce(false)
+
+                        val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+                        mNotifyMgr.notify(0, mBuilder.build())
+                    }
+                    AudioManager.RINGER_MODE_VIBRATE -> {
+                        val mBuilder = NotificationCompat.Builder(applicationContext)
+                                .setSmallIcon(R.mipmap.ic_launcher)
+
+                                // .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
+                                //.setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
+                                .setAutoCancel(true)
+                                .setOnlyAlertOnce(false)
+
+                        val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+                        mNotifyMgr.notify(0, mBuilder.build())
+                    }
                 }
-                AudioManager.RINGER_MODE_SILENT -> {
-                    val mBuilder = NotificationCompat.Builder(applicationContext)
-                            .setSmallIcon(R.mipmap.ic_launcher)
 
-                            // .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
-                            //.setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
-                            .setAutoCancel(true)
-                            .setOnlyAlertOnce(false)
-
-                    val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-
-                    mNotifyMgr.notify(0, mBuilder.build())
-                }
-                AudioManager.RINGER_MODE_VIBRATE -> {
-                    val mBuilder = NotificationCompat.Builder(applicationContext)
-                            .setSmallIcon(R.mipmap.ic_launcher)
-
-                            // .setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
-                            //.setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
-                            .setAutoCancel(true)
-                            .setOnlyAlertOnce(false)
-
-                    val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-
-                    mNotifyMgr.notify(0, mBuilder.build())
-                }
             }
-
-
-
 //            notificationManager.notify(
 //                    1001, // notification id
 //                    mBuilder.build())
@@ -230,29 +272,38 @@ var audio:AudioManager = applicationContext.getSystemService(Context.AUDIO_SERVI
 //                    .setAutoCancel(true)
 //
 
-           }
+        }
 
         // This fires when a notification is opened by tapping on it.
         override fun notificationOpened(result: OSNotificationOpenResult) {
-            val actionType = result.action.type
-            val data = result.notification.payload.additionalData
-            val customKey: String?
-
-            if (data != null) {
-                customKey = data.optString("customkey", null)
-                if (customKey != null)
-                    Log.i("OneSignalExample", "customkey set with value: $customKey")
-            }
-
-            if (actionType == OSNotificationAction.ActionType.ActionTaken)
-                Log.i("OneSignalExample", "Button pressed with id: " + result.action.actionID)
+//            val actionType = result.action.type
+//
+//            if (actionType == OSNotificationAction.ActionType.ActionTaken)
+//                Log.i("OneSignalExample", "Button pressed with id: " + result.action.actionID)
 
             // The following can be used to open an Activity of your choice.
             // Replace - getApplicationContext() - with any Android Context.
-             val intent =  Intent(applicationContext, DashBoardActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-             startActivity(intent)
+            var type="1"
+            try {
+                var obj: String = result.notification.payload.additionalData.toString()
+                var jsonObject: JSONObject = JSONObject(obj)
+               type = jsonObject.optString("type")
+            }catch (e:java.lang.Exception){
+
+            }
+            if (type=="2") {
+                val intent = Intent(applicationContext, DashBoardActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                intent.putExtra("noti", true)
+                startActivity(intent)
+            }else{
+                val intent = Intent(applicationContext, DashBoardActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                intent.putExtra("noti2", true)
+                startActivity(intent)
+            }
 
             // Add the following to your AndroidManifest.xml to prevent the launching of your main Activity
             //   if you are calling startActivity above.

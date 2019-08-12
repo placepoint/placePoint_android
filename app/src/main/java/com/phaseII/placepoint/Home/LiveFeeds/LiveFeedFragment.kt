@@ -24,7 +24,7 @@ import com.phaseII.placepoint.R
 import com.squareup.otto.Subscribe
 
 
-class LiveFeedFragment : Fragment(), LiveFeedHelper {
+class LiveFeedFragment : Fragment(), LiveFeedHelper, LiveFeedAdapter.ShowViewMoreLess {
     private lateinit var mPresenter: LiveFeedPresenter
     lateinit var recyclerView: RecyclerView
     lateinit var noPosts: TextView
@@ -49,9 +49,9 @@ class LiveFeedFragment : Fragment(), LiveFeedHelper {
         recyclerView.stopNestedScroll()
         recyclerView.setHasFixedSize(true)
         val from = Constants.getPrefs(activity!!)!!.getString(Constants.FROMINTENT, "")
-        mPresenter.prepareData(from)
+        mPresenter.prepareData(from, "true")
         pullToRefresh.setOnRefreshListener {
-            mPresenter.prepareData(from)
+            mPresenter.prepareData(from, "true")
             pullToRefresh.isRefreshing = false
         }
 
@@ -99,7 +99,7 @@ class LiveFeedFragment : Fragment(), LiveFeedHelper {
                         noPosts.visibility = View.GONE
                         recyclerView.visibility = View.VISIBLE
                         recyclerView.layoutManager = LinearLayoutManager(activity!!)
-                       adapter = LiveFeedAdapter(activity!!, list)
+                       adapter = LiveFeedAdapter(activity!!, list,this)
                         recyclerView.adapter=adapter
                         Constants.getPrefs(activity!!)!!.edit().putString("showTLive","yes").apply()
                     } catch (e: Exception) {
@@ -118,9 +118,13 @@ class LiveFeedFragment : Fragment(), LiveFeedHelper {
                 noPosts.visibility = View.VISIBLE
             }
         } else {
-            Constants.getPrefs(activity!!)!!.edit().putString("showTLive","no").apply()
-            recyclerView.visibility = View.GONE
-            noPosts.visibility = View.VISIBLE
+            try {
+                recyclerView.visibility = View.GONE
+                noPosts.visibility = View.VISIBLE
+                Constants.getPrefs(activity!!)!!.edit().putString("showTLive", "no").apply()
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
         }
 
     }
@@ -204,19 +208,19 @@ class LiveFeedFragment : Fragment(), LiveFeedHelper {
     @Subscribe
     fun getEventValue(event: LiveFeedTaxiEvent) {
 
-        mPresenter.prepareData("Taxi")
+        mPresenter.prepareData("Taxi", "true")
 
     }
     @Subscribe
     fun getEventValue(event: ClaimPostLiveFeed) {
 
         val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
-        mPresenter.claimPostCall(auth_code, event.model.postId, event.model.name, event.model.phoneNo, event.model.email, event.model.position)
+        mPresenter.claimPostCall(auth_code, event.model.postId, event.model.name, event.model.phoneNo, event.model.email, event.model.position,event.model.perPerson)
     }
     @Subscribe
     fun getEventValue(event: LiveListingBackEvent) {
 
-        mPresenter.prepareData("home")
+        mPresenter.prepareData("home", "true")
 
     }
 
@@ -236,5 +240,22 @@ class LiveFeedFragment : Fragment(), LiveFeedHelper {
 
     override fun showToast(optString: String?) {
         Toast.makeText(activity, optString, Toast.LENGTH_LONG).show()
+    }
+
+    override fun showMoreLess(postion: Int) {
+        recyclerView.scrollToPosition(postion)
+    }
+
+    override fun getBusId(): String {
+
+        return ""
+    }
+
+    override fun getIfLoggedIn(): String {
+        return ""
+    }
+
+    override fun setBusinessData(toString: String, toString1: String) {
+
     }
 }

@@ -31,7 +31,7 @@ class MultipleCategories : AppCompatActivity(), CategoryHelper,MultiChoiceRadioA
     lateinit var progressBar: ProgressBar
     private var from: String = ""
     lateinit var toolbar: Toolbar
-    lateinit var toolbarArrow: ImageView
+   // lateinit var toolbarArrow: ImageView
     private var lastExpandedPosition = -1
     private lateinit var mList: ArrayList<ModelCategoryData>
     private lateinit var parentList: ArrayList<ModelCategoryData>
@@ -59,8 +59,8 @@ class MultipleCategories : AppCompatActivity(), CategoryHelper,MultiChoiceRadioA
     @SuppressLint("SetTextI18n")
     private fun setToolBar() {
         toolbar = findViewById(R.id.toolbar)
-        toolbarArrow = toolbar.findViewById(R.id.arrow_down) as ImageView
-        toolbarArrow.visibility = View.GONE
+//        toolbarArrow = toolbar.findViewById(R.id.arrow_down) as ImageView
+//        toolbarArrow.visibility = View.GONE
         setSupportActionBar(toolbar)
         title = ""
         val mTitle = toolbar.findViewById(R.id.toolbar_title) as TextView
@@ -109,7 +109,7 @@ class MultipleCategories : AppCompatActivity(), CategoryHelper,MultiChoiceRadioA
                 if (list2[i].checked){
                     if (list2[i].parent_category!="0") {
                         stringBuilder.append(prefix)
-                        prefix = ","
+                        prefix = ", "
                         stringBuilder.append(list2[i].id)
                     }
                 }
@@ -119,7 +119,7 @@ class MultipleCategories : AppCompatActivity(), CategoryHelper,MultiChoiceRadioA
                     if (list2[i].parent_category!="0") {
                         list3.add(list2[i].name)
                         stringBuilder2.append(prefix2)
-                        prefix2 = " ,"
+                        prefix2 = ", "
                         stringBuilder2.append(list2[i].name)
 
                     }

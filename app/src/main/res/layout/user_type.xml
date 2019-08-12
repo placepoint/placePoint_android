@@ -14,10 +14,30 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+        <RadioButton
+            android:fontFamily="@font/opensans_bold"
+            android:id="@+id/premium"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:buttonTint="@color/light_blue"
+            android:text="     Pro     € 225/year"
+            android:textColor="@color/black" />
+        <RadioButton
+            android:visibility="visible"
+            android:fontFamily="@font/opensans_bold"
+            android:id="@+id/standard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:buttonTint="@color/light_blue"
+            android:text="     Standard     € 195/year"
+            android:textColor="@color/black" />
+
 
         <RadioButton
             android:id="@+id/free"
-           android:fontFamily="@font/bold"
+           android:fontFamily="@font/opensans_bold"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -25,28 +45,10 @@
             android:text="     Free              € 0/year"
             android:textColor="@color/black" />
 
-        <RadioButton
-            android:fontFamily="@font/bold"
-            android:id="@+id/standard"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:buttonTint="@color/light_blue"
-            android:text="     Standard     € 150/year"
-            android:textColor="@color/black" />
 
         <RadioButton
-            android:fontFamily="@font/bold"
-            android:id="@+id/premium"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:buttonTint="@color/light_blue"
-            android:text="     Premium     € 300/year"
-            android:textColor="@color/black" />
-
-        <RadioButton
-            android:fontFamily="@font/bold"
+            android:visibility="gone"
+            android:fontFamily="@font/opensans_bold"
             android:id="@+id/admin"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

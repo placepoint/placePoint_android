@@ -19,7 +19,7 @@
         android:layout_margin="8dp">
 
         <TextView
-            android:fontFamily="@font/bold"
+            android:fontFamily="@font/opensans_bold"
             android:visibility="gone"
             android:id="@+id/noPosts"
             android:layout_width="0dp"

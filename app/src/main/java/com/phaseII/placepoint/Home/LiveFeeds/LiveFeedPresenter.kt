@@ -13,16 +13,12 @@ import retrofit2.Response
 import java.io.IOException
 
 class LiveFeedPresenter(val view: LiveFeedHelper) {
-    fun prepareData(from: String) {
+    fun prepareData(from: String, mypost: String) {
         val auth_code = view.getAuthCode()
         val townId = view.getTownId()
         val limit = "10000"
         val page = "0"
-        val timeline = if (from == "profile") {
-            "false"
-        } else {
-            "true"
-        }
+        val timeline = mypost
         var cat = 0
         val categoryId = if (from=="Taxi"){
             view.getTaxiID()
@@ -93,12 +89,12 @@ class LiveFeedPresenter(val view: LiveFeedHelper) {
     }
 
     fun claimPostCall(auth_code: String, postId: String, name: String, phone_no: String,
-                      email: String, position: String) {
+                      email: String, position: String, perPerson: String) {
         view.showLoader()
 
         val retrofit = Constants.getWebClient()
         val service = retrofit!!.create(Service::class.java)
-        val call: Call<ResponseBody> = service.claimPost(auth_code, postId, name,phone_no, email)
+        val call: Call<ResponseBody> = service.claimPost(auth_code, postId, name,phone_no, email,perPerson)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 view.hideLoader()
@@ -135,4 +131,50 @@ class LiveFeedPresenter(val view: LiveFeedHelper) {
         })
     }
 
+    fun BusinessDetailService( busId: String) {
+
+        val auth_code = view.getAuthCode()
+        // val business_id = view.getBusId()
+
+        var business_id = busId
+        if (business_id==null||business_id.isEmpty()){
+            business_id=view.getBusId()
+        }
+        val ifLoggedIn=view.getIfLoggedIn()
+        webService(auth_code, business_id,ifLoggedIn)
+    }
+    private fun webService(auth_code: String, business_id: String, ifLoggedIn: String) {
+        view.showLoader()
+        val retrofit = Constants.getWebClient()
+        val service = retrofit!!.create(Service::class.java)
+        val call: Call<ResponseBody> = service.getSingleBusiness(auth_code, business_id,ifLoggedIn)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                view.hideLoader()
+                if (response.isSuccessful) {
+                    try {
+                        val res = response.body()!!.string()
+                        val `object` = JSONObject(res)
+                        val status = `object`.optString("status")
+                        if (status.equals("true", ignoreCase = true)) {
+                            val data = `object`.optJSONArray("data")
+                            val posts = `object`.optJSONArray("posts")
+                            view.setBusinessData(data.toString(),posts.toString())
+                        }
+
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                view.hideLoader()
+                view.showNetworkError(R.string.network_error)
+            }
+        })
+    }
 }

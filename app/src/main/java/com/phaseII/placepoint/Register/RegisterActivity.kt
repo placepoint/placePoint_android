@@ -85,7 +85,7 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
         register.setOnClickListener {
 
             /////// //here user set to free user by default on registration//////////////////
-            Constants.getPrefs(this)!!.edit().putString(Constants.USERTYPE, "4").apply()
+            //Constants.getPrefs(this)!!.edit().putString(Constants.USERTYPE, "1").apply()
             //////////////////////////////////////////////////////
             val userType = Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "")
             if (userType.isEmpty()) {
@@ -122,9 +122,9 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
         if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "3") {
             choosedPlan.text = "Free  € 0/year"
         } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "2") {
-            choosedPlan.text = "Standard  € 150/year"
+            choosedPlan.text = "Standard  € 195/year"
         } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "1") {
-            choosedPlan.text = "Premium  € 300/year"
+            choosedPlan.text = "Pro  € 225/year"
         } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
             choosedPlan.text = "Admin"
         }
@@ -174,7 +174,7 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
         dialogBuilder.setPositiveButton("Ok", DialogInterface.OnClickListener { dialog, which ->
             if (value == 0) {
                 Constants.getPrefs(this)!!.edit().putString(Constants.USERTYPE, "1").apply()
-                choosedPlan.text = "Premium  € 300/year"
+                choosedPlan.text = "Pro  € 225/year"
                 overLay.visibility = View.GONE
             }
             if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "3") {
@@ -182,11 +182,11 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
                 couponId.setText("")
                 coupon_layout.visibility = View.GONE
             } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "2") {
-                choosedPlan.text = "Standard  € 150/year"
+                choosedPlan.text = "Standard  € 195/year"
                 couponId.setText("")
                 coupon_layout.visibility = View.VISIBLE
             } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "1") {
-                choosedPlan.text = "Premium  € 300/year"
+                choosedPlan.text = "Pro  € 225/year"
                 couponId.setText("")
                 coupon_layout.visibility = View.VISIBLE
             } else if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "") == "4") {
@@ -419,9 +419,9 @@ class RegisterActivity : AppCompatActivity(), RegisterHelper {
                 if (pass.length > 4) {
                     var amount = "300"
                     if (Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "1") == "1") {
-                        amount = "300"
+                        amount = "225"
                     } else {
-                        amount = "150"
+                        amount = "195"
                     }
                     var intent = Intent(this, PaymentActivity::class.java)
                     intent.putExtra("email", email)

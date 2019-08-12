@@ -18,9 +18,28 @@
         app:layout_constraintTop_toTopOf="@+id/desc1" />
 
 
-    <TextView
-        android:fontFamily="@font/regular"
+    <!--<com.skyhope.showmoretextview.ShowMoreTextView-->
+        <!--android:fontFamily="@font/opensans_regular"-->
+        <!--android:id="@+id/desc1"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="8dp"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:textColor="@color/black"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toEndOf="@+id/line"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+    <com.borjabravo.readmoretextview.ReadMoreTextView
         android:id="@+id/desc1"
+        app:trimExpandedText="show more"
+        app:showTrimExpandedText="true"
+        app:colorClickableText="@color/colormoreless"
+        app:trimCollapsedText=" ...show less"
+        app:trimMode="trimModeLength"
+        app:trimLength="130"
+        android:fontFamily="@font/opensans_regular"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -29,7 +48,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/line"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
+        app:layout_constraintTop_toTopOf="parent"/>
 </android.support.constraint.ConstraintLayout>

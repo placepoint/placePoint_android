@@ -1,6 +1,5 @@
 package com.phaseII.placepoint.Home.BusinessListing
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
 
@@ -21,20 +20,23 @@ import java.util.*
 import android.content.DialogInterface
 import android.net.Uri
 import android.support.v7.app.AlertDialog
-import android.content.pm.PackageManager
-import android.app.Activity
 import android.location.Location
-import android.support.v4.app.ActivityCompat
+import android.os.Bundle
 import android.support.v7.widget.RecyclerView
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.phaseII.placepoint.BusEvents.TAXI_EVENT
 import com.phaseII.placepoint.Constants
+import com.phaseII.placepoint.HomeNew.HomeFragment
 import kotlinx.android.synthetic.main.business_item.view.*
-import kotlin.collections.ArrayList
 
 
 class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
                           var relatedTo: String, var currentLatitude: Double,
-                          var currentLongitude: Double) : RecyclerView.Adapter<BusinessListAdapter.ViewHolder>() {
+                          var currentLongitude: Double,
+                          var hideTaxi: String) : RecyclerView.Adapter<BusinessListAdapter.ViewHolder>() {
+
+
+    var callPhone=context as callPermissionDialog
 
     val inflater = LayoutInflater.from(context)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -61,7 +63,7 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
         if (modelBusiness.user_type == null) {
             modelBusiness.user_type = ""
         }
-        if (modelBusiness.business_user_id == "0" || modelBusiness.user_type == "3") {
+        if (modelBusiness.business_user_id == "0" && modelBusiness.user_type .isEmpty()) {
             val taxiTownId = Constants.getPrefs(context)!!.getString(Constants.TAXI_TOWNID, "");
             val choosenTownId = Constants.getPrefs(context)!!.getString(Constants.TOWN_ID, "");
             val idList = taxiTownId!!.split(",")
@@ -71,6 +73,7 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
             } else {
                 holder.itemView.freeTaxi.visibility = View.GONE
             }
+
             if (nameCat == "Taxis" || relatedTo == "TaxiRelatedData") {
                 holder.itemView.freeTaxi.visibility = View.GONE
                 holder.itemView.freenavigationImage.visibility = View.GONE
@@ -138,6 +141,13 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
             holder.itemView.freeTaxi.setOnClickListener {
 
                 Constants.getBus().post(TAXI_EVENT("taxi"))
+               val nameEventS=Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,"")+" - "+"Taxi"
+                var  mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+                val bundle = Bundle()
+                bundle.putString("town",Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME,""))
+                bundle.putString("Category","Taxi")
+                mFirebaseAnalytics.logEvent(nameEventS, bundle)
+
             }
 
 
@@ -163,7 +173,6 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
                 intent.putExtra("subscriptionType", modelBusiness.user_type)
                 intent.putExtra("freeListing", "yes")
                 intent.putExtra("nameCat", relatedTo)
-
                 intent.putExtra("distance", holder.itemView.distance.text.toString().trim())
                 intent.putExtra("mobNumber", modelBusiness.contact_no)
                 intent.putExtra("lati", modelBusiness.lat)
@@ -175,7 +184,7 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
             val choosenTownId = Constants.getPrefs(context)!!.getString(Constants.TOWN_ID, "");
             val idList = taxiTownId!!.split(",")
             val nameCat = Constants.getPrefs(context)!!.getString(Constants.CATEGORY_NAMEO, "")
-            if (idList.contains(choosenTownId)) {
+            if (idList.contains(choosenTownId)&&hideTaxi.equals("showTaxi")) {
                 holder.itemView.taxiImage.visibility = View.VISIBLE
             } else {
                 holder.itemView.taxiImage.visibility = View.GONE
@@ -184,6 +193,12 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
                 holder.itemView.taxiImage.visibility = View.GONE
                 holder.itemView.navigationImage.visibility = View.GONE
             }
+
+//            if (hideTaxi.equals("showTaxi")) {
+//                holder.itemView.taxiImage.visibility = View.VISIBLE
+//            } else {
+//                holder.itemView.taxiImage.visibility = View.GONE
+//            }
 //            else{
 //                holder.itemView.taxiImage.visibility = View.VISIBLE
 //                holder.itemView.navigationImage.visibility = View.VISIBLE
@@ -282,6 +297,9 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
                 intent.putExtra("mobNumber", modelBusiness.contact_no)
                 intent.putExtra("lati", modelBusiness.lat)
                 intent.putExtra("longi", modelBusiness.long)
+                if (hideTaxi=="hideTaxi"){
+                    intent.putExtra("show",hideTaxi)
+                }
                 context.startActivity(intent)
             }
         }
@@ -313,15 +331,8 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
             //            val callIntent = Intent(Intent.ACTION_CALL)
 //            callIntent.data = Uri.parse(phoneNo)
 //            startActivity(callIntent)
-            val callIntent = Intent(Intent.ACTION_CALL)
-            callIntent.data = Uri.parse("tel:$phoneNo")
-            if (ActivityCompat.checkSelfPermission(context,
-                            Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.CALL_PHONE), 1)
-                return@OnClickListener
-            }
+            callPhone.callPhone(phoneNo)
 
-            context.startActivity(callIntent)
         })
                 .setNegativeButton("Cancel ", DialogInterface.OnClickListener { dialog, which ->
                     //Action for "Cancel".
@@ -331,23 +342,7 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
         alert.show()
     }
 
-    //@Override
-//public void onRequestPermissionsResult(int requestCode,
-//                                       String permissions[], int[] grantResults) {
-//    switch (requestCode) {
-//        case REQUEST_PHONE_CALL: {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "+918511812660"));
-//                startActivity(intent);
-//            }
-//            else
-//            {
-//
-//            }
-//            return;
-//        }
-//    }
-//}
+
     private fun logicForOpenCloseButton(modelBusiness: ModelBusiness, timing: TextView,
                                         statusLay: LinearLayout, openAt: TextView) {
         val currentDay = getCurrentTimeAndDate()
@@ -719,6 +714,9 @@ class BusinessListAdapter(val context: Context, var list: List<ModelBusiness>,
         notifyDataSetChanged()
     }
 
+interface callPermissionDialog{
+    fun callPhone(phoneNo: String)
+}
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     class ViewHolder0(itemView: View) : RecyclerView.ViewHolder(itemView)

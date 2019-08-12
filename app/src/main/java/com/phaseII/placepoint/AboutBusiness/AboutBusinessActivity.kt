@@ -20,8 +20,7 @@ import com.phaseII.placepoint.AboutBusiness.BusinessDetails.DetailFragment
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.R
 import android.support.v4.view.ViewPager.OnPageChangeListener
-
-
+import kotlinx.android.synthetic.main.toolbar_color_primary.*
 
 
 class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
@@ -47,6 +46,11 @@ class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
             showallpost = intent.extras.getString("showallpost")
             from = intent.extras.getString("from")
             busName = intent.extras.getString("busName")
+            if (intent.hasExtra("show")){
+                Constants.getPrefs(this)!!.edit().putString("showv", "yes").apply()
+            }else{
+                Constants.getPrefs(this)!!.edit().putString("showv", "no").apply()
+            }
 
             if (from == "businessListadapter") {
                 Constants.getPrefs(this)!!.edit().putString("distance", intent.getStringExtra("distance")).apply()
@@ -100,10 +104,10 @@ class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
         // title = ""
         //supportActionBar!!.setDisplayShowTitleEnabled(false)
         mText = toolbar.findViewById(R.id.toolbar_title) as TextView
-        val mArrow = toolbar.findViewById(R.id.arrow_down) as ImageView
+
          clainIcon = toolbar.findViewById(R.id.claim) as TextView
-        mArrow.visibility = View.GONE
-        clainIcon.visibility = View.VISIBLE
+
+
         // mText.text = "Name"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         clainIcon.setOnClickListener{
@@ -186,6 +190,14 @@ class AboutBusinessActivity() : AppCompatActivity(), DetailFragment.setTitle {
             }
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    override fun showHideClaim(value: Int) {
+        if (value==1){
+            claim.visibility= View.VISIBLE
+        }else{
+            claim.visibility= View.GONE
         }
     }
 }

@@ -13,7 +13,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:text="@string/enter_contact"
         android:textColor="@color/colorText"
         android:textSize="17sp"
@@ -30,7 +30,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/regular"
+        android:fontFamily="@font/opensans_regular"
         android:hint="Enter Contact Number"
         android:inputType="number"
         android:textColor="@color/black"
@@ -47,7 +47,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:text="Select Town"
         android:textColor="@color/colorText"
         android:textSize="17sp"
@@ -66,7 +66,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/outline"
-        android:fontFamily="@font/regular"
+        android:fontFamily="@font/opensans_regular"
         android:padding="8dp"
         android:text="Select Town"
         android:textColor="@color/black"
@@ -81,7 +81,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:text="Select Category"
         android:textColor="@color/colorText"
         android:textSize="17sp"
@@ -100,7 +100,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/outline"
-        android:fontFamily="@font/regular"
+        android:fontFamily="@font/opensans_regular"
         android:padding="8dp"
         android:text="Select Category"
         android:textColor="@color/black"
@@ -139,7 +139,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:text="@string/enter_email"
         android:textColor="@color/colorText"
         android:textSize="17sp"
@@ -165,7 +165,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:text="Subscription plans"
         android:textColor="@color/colorText"
         android:textSize="17sp"
@@ -173,7 +173,7 @@
         app:layout_constraintTop_toBottomOf="@+id/select_cate" />
 
     <TextView
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:id="@+id/textView3"
         android:layout_width="0dp"
         android:layout_height="1dp"
@@ -188,7 +188,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textVieww243" />
 
     <TextView
-        android:fontFamily="@font/regular"
+        android:fontFamily="@font/opensans_regular"
         android:id="@+id/packageName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -202,7 +202,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <TextView
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:id="@+id/change"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -221,7 +221,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/regular"
+        android:fontFamily="@font/opensans_regular"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

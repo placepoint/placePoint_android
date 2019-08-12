@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:fontFamily="@font/bold"
+            android:fontFamily="@font/opensans_bold"
             android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="48dp"

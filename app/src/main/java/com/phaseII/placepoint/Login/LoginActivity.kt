@@ -38,6 +38,7 @@ class LoginActivity : AppCompatActivity(), LoginHelper {
         }
 
         back.setOnClickListener {
+            Constants.getPrefs(this)?.edit()?.putString("doNothing", "no")?.apply()
             onBackPressed()
         }
     }
@@ -108,12 +109,20 @@ class LoginActivity : AppCompatActivity(), LoginHelper {
         Constants.getPrefs(this)?.edit()?.putBoolean(Constants.LOGIN, true)?.apply()
         Constants.getPrefs(this)?.edit()?.putString("firstTime", "login")?.apply()
         Constants.getPrefs(this)?.edit()?.putString("registers", "yes")?.apply()
-        val intent = Intent(this, DashBoardActivity::class.java)
-        intent.putExtra("goto", "businessProfile")
 
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-       // finish()
+        val doNothing = Constants.getPrefs(this)?.getString("doNothing", "no")
+        if (doNothing.equals("no")) {
+            val intent = Intent(this, DashBoardActivity::class.java)
+            intent.putExtra("goto", "businessProfile")
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        } else {
+           // Constants.getPrefs(this)?.edit()?.putString("doNothing", "no")?.apply()
+
+            finish()
+        }
+
+
     }
 
     override fun saveBusId(business_id: String, business_name: String, cat_id: String, password: String) {

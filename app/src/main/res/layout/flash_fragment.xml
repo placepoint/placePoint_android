@@ -12,7 +12,7 @@
         android:layout_margin="8dp">
 
         <TextView
-            android:fontFamily="@font/bold"
+            android:fontFamily="@font/opensans_bold"
             android:visibility="gone"
             android:id="@+id/noPosts"
             android:layout_width="0dp"
@@ -56,7 +56,7 @@
         <ImageView
             android:id="@+id/imageView4"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="100dp"
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:fontFamily="@font/bold"
+            android:fontFamily="@font/opensans_bold"
             android:text="Dear User"
             android:textColor="@color/colorPrimary"
             android:textSize="22dp"
@@ -78,7 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
-            android:fontFamily="@font/regular"
+            android:fontFamily="@font/opensans_regular"
             android:text="This is a Premium feature, click here to upgrade."
             android:textColor="@color/black"
             android:textSize="18dp"
@@ -92,7 +92,7 @@
             android:textColor="@color/white"
             android:text="Upgrade"
             android:textAllCaps="false"
-            android:fontFamily="@font/bold"
+            android:fontFamily="@font/opensans_bold"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_theme_shape"
             app:layout_constraintBottom_toBottomOf="parent"

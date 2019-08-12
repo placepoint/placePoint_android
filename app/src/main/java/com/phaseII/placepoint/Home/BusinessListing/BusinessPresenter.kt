@@ -20,7 +20,7 @@ class BusinessPresenter(val view: BusinessHelper) {
         //val auth_code: String? = "42a9e469d9ed1ebc5f42c4211ffb92c4"
         val auth_code: String = view.getAuthCode()
         val town_id: String = view.getTownId()
-        val limit: String = "100"
+        val limit: String = "2000"
         val page: String = "0"
         if (relatedTo=="TaxiRelatedData"){
             category_id=view.getTaxiCatId()

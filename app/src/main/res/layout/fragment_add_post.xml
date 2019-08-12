@@ -6,7 +6,7 @@
     tools:context=".Business.AddPost.AddPostFragment">
 
     <TextView
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Addpost" />

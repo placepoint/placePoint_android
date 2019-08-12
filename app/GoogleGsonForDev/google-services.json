@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "1026343698617",
+    "firebase_url": "https://placepointdev.firebaseio.com",
+    "project_id": "placepointdev",
+    "storage_bucket": "placepointdev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026343698617:android:18ada93a51a8c506",
+        "android_client_info": {
+          "package_name": "com.placepoint.devplacepoint"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUfqz3-r_WGglYe42HS-4Fn1GCvqEZ6jE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026343698617-g3b8tgbep11d9s5dplt051rdrpemuc1d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

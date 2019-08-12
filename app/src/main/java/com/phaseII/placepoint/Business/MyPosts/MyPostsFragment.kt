@@ -32,7 +32,7 @@ import java.util.HashSet
 
 
 
-class MyPostsFragment : Fragment(), MyTimelineHelper, MyTimelineAdapter.BumpPost {
+class MyPostsFragment : Fragment(), MyTimelineHelper, MyTimelineAdapter.BumpPost, MyTimelineAdapter.ShowViewMoreLess {
 
     private lateinit var mAdapter: MyTimelineAdapter
     lateinit var progressBar: ProgressBar
@@ -97,7 +97,7 @@ class MyPostsFragment : Fragment(), MyTimelineHelper, MyTimelineAdapter.BumpPost
                         noPosts.visibility = View.GONE
 
                         recyclerView.layoutManager = LinearLayoutManager(activity)
-                        mAdapter = MyTimelineAdapter(activity!!, postList)
+                        mAdapter = MyTimelineAdapter(activity!!, postList,this)
                         recyclerView.adapter = mAdapter
                     } else {
                         noPosts.visibility = View.VISIBLE
@@ -200,17 +200,21 @@ class MyPostsFragment : Fragment(), MyTimelineHelper, MyTimelineAdapter.BumpPost
 
     override fun onResume() {
         super.onResume()
-        if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE,"")=="3"){
-            noSubLay.visibility=View.VISIBLE
-            mainLay.visibility=View.GONE
-
-        }else{
+//        if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE,"")=="3"){
+//            noSubLay.visibility=View.VISIBLE
+//            mainLay.visibility=View.GONE
+//
+//        }else{
             noSubLay.visibility=View.GONE
             mainLay.visibility=View.VISIBLE
-        }
+//        }
     }
 
     override fun applyBumpPost(id: String) {
         mPresenter.apiForBump(id)
+    }
+
+    override fun showMoreLess(postion: Int) {
+        recyclerView.scrollToPosition(postion)
     }
 }

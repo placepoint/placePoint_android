@@ -72,7 +72,9 @@ class PaymentActivity : AppCompatActivity(), PaymentContract {
         if (gettypeIntent == "1") {
             layStandard.visibility = View.GONE
             premiumText.visibility = View.VISIBLE
-        } else if (gettypeIntent == "2") {
+      }
+
+        else if (gettypeIntent == "2") {
             layStandard.visibility = View.VISIBLE
             premiumText.visibility = View.GONE
         }

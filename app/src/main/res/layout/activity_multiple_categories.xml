@@ -7,7 +7,7 @@
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar_color_primary"
+        layout="@layout/toolbar_color_primarynew"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,7 +30,7 @@
         android:visibility="gone"
         android:gravity="center"
         android:text="No Data"
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:textColor="@color/colorText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/lvExp"

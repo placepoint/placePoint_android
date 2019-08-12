@@ -2,6 +2,7 @@ package com.phaseII.placepoint.Home.LiveFeeds
 
 import android.arch.lifecycle.LifecycleObserver
 import android.content.*
+import android.graphics.Paint
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -34,7 +35,7 @@ import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerList
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerInitListener
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerListener
-import kotlinx.android.synthetic.main.flash_main_item.view.*
+import kotlinx.android.synthetic.main.livefeed_adapter.view.*
 import okhttp3.ResponseBody
 import org.json.JSONException
 import org.json.JSONObject
@@ -42,13 +43,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
+import java.net.URLDecoder
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 
-class LiveFeedAdapter(private val context: Context, private val list: ArrayList<ModelHome>) :
+class LiveFeedAdapter(private val context: Context, private val list: ArrayList<ModelHome>,var  liveFeedFragment: LiveFeedFragment) :
         RecyclerView.Adapter<LiveFeedAdapter.ViewHolder>(), LifecycleObserver {
 
     var pos = 0;
@@ -64,9 +66,10 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
     private var clicked: Int = 0;
     var pause = 0
     var myView = 0
+    var moreless=liveFeedFragment as ShowViewMoreLess
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(context)
-        return ViewHolder(inflater.inflate(R.layout.flash_main_item, parent, false))
+        return ViewHolder(inflater.inflate(R.layout.livefeed_adapter, parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -86,16 +89,28 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
        // modelData = list[position]
+        holder.itemView.imagesLayout.visibility=View.GONE
         pos = position
         if (Constants.getPrefs(context)!!.getString(Constants.EMAIL, "").equals("help@placepoint.ie")) {
-            holder.bump.visibility = View.VISIBLE
+            holder.bump1.visibility = View.VISIBLE
         } else {
-            holder.bump.visibility = View.GONE
+            holder.bump1.visibility = View.GONE
         }
-        holder.bump.setOnClickListener {
+        holder.bump1.setOnClickListener {
             hitService(list[position].id)
         }
-
+        var retail:Double=list[position].retail_price.toDouble()
+        if (retail>0) {
+            holder.itemView.retailPrice.visibility = View.VISIBLE
+            holder.itemView.discount.visibility = View.VISIBLE
+            holder.itemView.retailPrice.text = list[position].retail_price
+            holder.itemView.retailPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            holder.itemView.discount.text = list[position].sale_price + "(" + list[position].discount_price + "% off)"
+        }else{
+            holder.itemView.retailPrice.visibility = View.GONE
+            holder.itemView.discount.visibility = View.GONE
+        }
+        holder.itemView.townName.visibility=View.GONE
 //        holder.itemView.youtube_view.initialize(YouTubePlayerInitListener {
 //            it.addListener(object : AbstractYouTubePlayerListener(), com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerListener {
 //                override fun onApiChange() {
@@ -148,20 +163,30 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
 
         if (list[position].created_by == "1") {
             holder.itemView.name.text = list[position].business_name
+            holder.itemView.shared.visibility=View.GONE
         } else {
-            var text2 = "(shared)"
-            var span1 = SpannableString(list[position].business_name);
-            span1.setSpan(AbsoluteSizeSpan(32), 0, list[position].business_name.length, SPAN_INCLUSIVE_INCLUSIVE);
-
-            var span2 = SpannableString(text2);
-            span2.setSpan(AbsoluteSizeSpan(22), 0, text2.length, SPAN_INCLUSIVE_INCLUSIVE);
-
-// let's put both spans together with a separator and all
-            var finalText = TextUtils.concat(span1, " ", span2)
-            holder.itemView.name.text = finalText
+            holder.itemView.shared.visibility=View.VISIBLE
+            holder.itemView.name.text = list[position].business_name
+//            var text2 = "(shared)"
+//            var span1 = SpannableString(list[position].business_name);
+//            span1.setSpan(AbsoluteSizeSpan(32), 0, list[position].business_name.length, SPAN_INCLUSIVE_INCLUSIVE);
+//
+//            var span2 = SpannableString(text2);
+//            span2.setSpan(AbsoluteSizeSpan(22), 0, text2.length, SPAN_INCLUSIVE_INCLUSIVE);
+//
+//// let's put both spans together with a separator and all
+//            var finalText = TextUtils.concat(span1, " ", span2)
+//            holder.itemView.name.text = finalText
         }
-
-        holder.itemView.postText.text = list[position].description
+        try{
+            holder.itemView.postText.text = URLDecoder.decode(list[position].description, "UTF-8")
+        }catch (e:Exception){
+            holder.itemView.postText.text = list[position].description
+        }
+        //Constants.setViewMoreLessFunctionality(holder.itemView.postText)
+        holder.itemView.postText.setOnClickListener{
+            moreless.showMoreLess(position)
+        }
         Linkify.addLinks(holder.itemView.postText, Linkify.WEB_URLS)
         holder.itemView.dateTime.text = Constants.getDate2(list[position].updated_at)
         if (!list[position].video_link.trim().isEmpty()) {
@@ -175,11 +200,12 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
             context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(list[position].video_link)))
 
         }
-        holder.itemView.shareFaceBook.setOnClickListener {
+        holder.itemView.shareFaceBook1.setOnClickListener {
             setClipboard(context, list[position].description, list[position])
 
 
         }
+
         holder.itemView.name.setOnClickListener {
 
             var townName = Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME, "")
@@ -200,7 +226,37 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
                 intent.putExtra("from", "homeadapter")
                 intent.putExtra("busName", list[position].business_name)
                 intent.putExtra("subscriptionType", list[position].user_type)
+                intent.putExtra("show","hideTaxi")
+                context!!.startActivity(intent)
+            }
+        }
+        val click = Constants.getPrefs(context!!)!!.getString(Constants.STOPCLICK, "")
+        if (click == "no") {
+            holder.itemView.infoLay.visibility=View.VISIBLE
+        }else{
+            holder.itemView.infoLay.visibility=View.INVISIBLE
+        }
+      holder.itemView.infoLay.setOnClickListener {
 
+            var townName = Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME, "")
+            var logEventN = townName + "-" + Constants.getPrefs(context)!!.getString(Constants.CATEGORY_NAMEO, "") + " - " + list[position].business_name;
+
+
+            val click = Constants.getPrefs(context!!)!!.getString(Constants.STOPCLICK, "")
+            if (click == "no") {
+                var mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+                val bundle = Bundle()
+                bundle.putString("town", Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME, ""))
+                bundle.putString("BusinessName", list[position].business_name)
+                mFirebaseAnalytics.logEvent(logEventN, bundle)
+
+                val intent = Intent(context, AboutBusinessActivity::class.java)
+                intent.putExtra("busId", list[position].bussness_id)
+                intent.putExtra("showallpost", "no")
+                intent.putExtra("from", "homeadapter")
+                intent.putExtra("busName", list[position].business_name)
+                intent.putExtra("subscriptionType", list[position].user_type)
+                intent.putExtra("show","hideTaxi")
                 context!!.startActivity(intent)
             }
         }
@@ -743,6 +799,20 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
         val name = mAlertDialog.findViewById<EditText>(R.id.name)
         val email = mAlertDialog.findViewById<EditText>(R.id.emailClaim)
         val phoneNo = mAlertDialog.findViewById<EditText>(R.id.phoneNo)
+        val mSpinner = mAlertDialog.findViewById<Spinner>(R.id.offerClaimed)
+        //--------------max no of claims per person spinner-------------------------------------
+        val array = ArrayList<String>()
+        for (i in 1 until modelData.per_person_redemption.toInt()+1) {
+            array.add("" + i)
+        }
+        val adapter = ArrayAdapter<String>(
+                context, R.layout.simple_spinner_item,array)
+        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        mSpinner!!.adapter = adapter
+        mSpinner.setSelection(0)
+        mSpinner.prompt = "Select Claims"
+        //--------------------------------------------------------------------------------------
+
         done!!.setOnClickListener {
             //dismiss dialog
             if (name!!.text.toString().isEmpty() || email!!.text.toString().isEmpty()) {
@@ -766,6 +836,7 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
             modelc.email = email.text.toString()
             modelc.phoneNo = phoneNo!!.text.toString()
             modelc.position = position.toString()
+            modelc.perPerson = mSpinner.selectedItem.toString()
             Constants.getBus().post(ClaimPostLiveFeed(modelc))
             mAlertDialog.dismiss()
             //get text from EditTexts of custom layout
@@ -812,7 +883,9 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
         val postImage = itemView.findViewById<ImageView>(R.id.postImage)
         val videoImage = itemView.findViewById<ImageView>(R.id.videoImage)
         val bump = itemView.findViewById<ImageView>(R.id.bump)
+        val bump1 = itemView.findViewById<ImageView>(R.id.bump1)
         var myVideo: VideoView = itemView.findViewById(R.id.myVideo)
+        var infoLay: LinearLayout = itemView.findViewById(R.id.infoLay)
     }
 
     private fun setClipboard(context: Context, text: String, modelData: ModelHome) {
@@ -902,5 +975,8 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
         }
         return ssb
 
+    }
+    interface ShowViewMoreLess{
+        fun showMoreLess(postion:Int)
     }
 }

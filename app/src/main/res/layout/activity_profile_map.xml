@@ -9,7 +9,7 @@
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar_color_primary" />
+        layout="@layout/toolbar_color_primarynew" />
 
 
     <!-- <EditText

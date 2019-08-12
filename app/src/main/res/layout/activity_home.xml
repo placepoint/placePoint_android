@@ -79,11 +79,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-
-
                 </android.support.v4.widget.SwipeRefreshLayout>
                 <TextView
-                    android:fontFamily="@font/bold"
+                    android:fontFamily="@font/opensans_bold"
                     android:visibility="gone"
                     android:padding="16dp"
                     android:id="@+id/noFlashData"

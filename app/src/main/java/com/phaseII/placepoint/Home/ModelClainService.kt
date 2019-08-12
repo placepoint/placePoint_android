@@ -6,4 +6,5 @@ class ModelClainService {
     lateinit var email:String
     lateinit var phoneNo:String
     lateinit var position:String
+    lateinit var perPerson:String
 }

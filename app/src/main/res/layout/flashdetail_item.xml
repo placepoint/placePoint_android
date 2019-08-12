@@ -41,7 +41,7 @@
                 <TextView
 
                     android:singleLine="true"
-                    android:fontFamily="@font/bold"
+                    android:fontFamily="@font/opensans_bold"
                     android:id="@+id/emailTextFlash"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -49,14 +49,14 @@
 
                 <TextView
                     android:singleLine="true"
-                    android:fontFamily="@font/regular"
+                    android:fontFamily="@font/opensans_regular"
                     android:id="@+id/nameTextFlash"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black" />
  <TextView
                     android:singleLine="true"
-                    android:fontFamily="@font/regular"
+                    android:fontFamily="@font/opensans_regular"
                     android:id="@+id/phoneTextFlash"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
             </LinearLayout>
             <TextView
                 android:singleLine="true"
-                android:fontFamily="@font/regular"
+                android:fontFamily="@font/opensans_regular"
                 android:gravity="center_horizontal"
                 android:id="@+id/dateTextFlash"
                 android:layout_width="match_parent"

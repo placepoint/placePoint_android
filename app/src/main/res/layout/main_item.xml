@@ -80,7 +80,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:fontFamily="@font/bold"
+                android:fontFamily="@font/opensans_bold"
                 android:text="Name"
                 android:textColor="@color/colorText"
                 android:textStyle="bold"
@@ -94,7 +94,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:fontFamily="@font/regular"
+                android:fontFamily="@font/opensans_regular"
                 android:text="May 15 at 6:00PM"
                 android:textColor="@color/grey"
                 app:layout_constraintBottom_toTopOf="@+id/postText"
@@ -110,7 +110,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
-                android:fontFamily="@font/regular"
+                android:fontFamily="@font/opensans_regular"
                 android:paddingBottom="4dp"
                 android:paddingEnd="4dp"
                 android:paddingRight="4dp"
@@ -123,7 +123,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/dateTime" />
 
             <TextView
-                android:fontFamily="@font/bold"
+                android:fontFamily="@font/opensans_bold"
                 android:id="@+id/videoUrl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

@@ -33,18 +33,18 @@ import retrofit2.Retrofit
 import java.io.IOException
 
 
-class MoreFragment : Fragment(){
+class MoreFragment : Fragment() {
 
     lateinit var list: RecyclerView
     lateinit var toolbar: Toolbar
     private lateinit var mTitle: TextView
     private lateinit var progressBar: ProgressBar
-//  lateinit var goToHome:HomeTab
+    //  lateinit var goToHome:HomeTab
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.fragment_more, container, false)
-    Constants.getSSlCertificate(activity!!)
-    init(view)
+        Constants.getSSlCertificate(activity!!)
+        init(view)
         setAdApter()
         setToolBar(view)
         return view
@@ -53,25 +53,28 @@ class MoreFragment : Fragment(){
     private fun setToolBar(view: View) {
         toolbar = view.findViewById(R.id.toolbar)
         mTitle = toolbar.findViewById(R.id.toolbar_title) as TextView
-        mTitle.text="More"
+        mTitle.text = "More"
 
     }
 
     private fun setAdApter() {
         val items: ArrayList<String> = ArrayList()
-        if (Constants.getPrefs(activity!!)!!.getBoolean(Constants.LOGGED,false)){
+        if (Constants.getPrefs(activity!!)!!.getBoolean(Constants.LOGGED, false)) {
             items.add("Choose Town")
             items.add("Reset Password")
             items.add("Terms and conditions")
             items.add("Privacy Policy")
             items.add("Business")
+            items.add("Chat Support")
+            items.add("Manage Notifications")
             items.add("Logout")
-        }else{
+        } else {
             items.add("Choose Town")
             items.add("Terms and conditions")
             items.add("Privacy Policy")
             items.add("Business")
-
+            items.add("Chat Support")
+            items.add("Manage Notifications")
         }
 
         var adapter = MoreAdapter(this.activity!!, items)
@@ -90,6 +93,7 @@ class MoreFragment : Fragment(){
         super.onResume()
         Constants.getBus().register(this)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         try {
@@ -98,17 +102,18 @@ class MoreFragment : Fragment(){
             e.printStackTrace()
         }
     }
+
     @Subscribe
     fun getMessage(event: LogoutEvent) {
-        progressBar.visibility=View.VISIBLE
-        var retrofit= Retrofit.Builder()
+        progressBar.visibility = View.VISIBLE
+        var retrofit = Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .build()
-        val service=retrofit.create(Service::class.java)
+        val service = retrofit.create(Service::class.java)
         val call: Call<ResponseBody> = service.logoutApp(event.value)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                progressBar.visibility=View.GONE
+                progressBar.visibility = View.GONE
                 if (response.isSuccessful) {
                     try {
                         val res = response.body()!!.string()
@@ -133,8 +138,8 @@ class MoreFragment : Fragment(){
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                progressBar.visibility=View.GONE
-                Toast.makeText(context,"Unable to Logout.", Toast.LENGTH_LONG).show()
+                progressBar.visibility = View.GONE
+                Toast.makeText(context, "Unable to Logout.", Toast.LENGTH_LONG).show()
             }
         })
     }

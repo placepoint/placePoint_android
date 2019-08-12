@@ -9,7 +9,7 @@
         android:id="@+id/add_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:paddingBottom="8dp"
         android:paddingLeft="8dp"
         android:paddingStart="8dp"

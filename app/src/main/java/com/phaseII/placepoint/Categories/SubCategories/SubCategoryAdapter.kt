@@ -73,6 +73,7 @@ class SubCategoryAdapter(var context: Context, var main: ArrayList<ModelCategory
                 }
                 val fromWhere=Constants.getPrefs(context)!!.getString("comingFrom", "")
                 if (fromWhere=="more") {
+
                     Constants.getPrefs(context)!!.edit().putString("showHomeBackButton", "yes").apply()
                 }
                 val showBack = Constants.getPrefs(context!!)!!.getString("showHomeBackButton", "no")

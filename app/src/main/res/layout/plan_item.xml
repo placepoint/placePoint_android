@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:padding="4dp"
         android:textSize="12dp"
-        android:fontFamily="@font/regular"
+        android:fontFamily="@font/opensans_regular"
         android:textColor="@color/black"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"

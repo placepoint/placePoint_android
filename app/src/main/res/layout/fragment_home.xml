@@ -9,11 +9,10 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/mainLay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="8dp">
+        android:layout_height="match_parent">
 
         <TextView
-            android:fontFamily="@font/bold"
+            android:fontFamily="@font/opensans_bold"
             android:visibility="gone"
             android:id="@+id/noPosts"
             android:layout_width="0dp"
@@ -93,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:fontFamily="@font/bold"
+            android:fontFamily="@font/opensans_bold"
             android:text="Dear User"
             android:textColor="@color/colorPrimary"
             android:textSize="22dp"
@@ -105,7 +104,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
-            android:fontFamily="@font/regular"
+            android:fontFamily="@font/opensans_regular"
             android:text="This is a Premium feature, click here to upgrade."
             android:textColor="@color/black"
             android:textSize="18dp"
@@ -118,7 +117,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_theme_shape"
-            android:fontFamily="@font/bold"
+            android:fontFamily="@font/opensans_bold"
             android:gravity="center"
             android:text="Upgrade"
             android:textAllCaps="false"

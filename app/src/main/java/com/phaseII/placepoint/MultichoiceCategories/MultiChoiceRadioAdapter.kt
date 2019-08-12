@@ -40,11 +40,11 @@ class MultiChoiceRadioAdapter(var context: Context,
 
         var userType=Constants.getPrefs(context)!!.getString(Constants.USERTYPE,"")
         for (i in 0 until allCatagories.size) {
-            if (userType=="3") {
-                if (allCatagories[i].checked) {
-                    choosedOne = 1
-                }
-            }
+//            if (userType=="3") {
+//                if (allCatagories[i].checked) {
+//                    choosedOne = 1
+//                }
+//            }
             if (allCatagories[i].id == childList[position].id) {
                 holder.itemView.radioImage.isChecked = allCatagories[i].checked
 
@@ -94,14 +94,14 @@ class MultiChoiceRadioAdapter(var context: Context,
                                 holder.itemView.radioImage.isChecked = allCatagories[i].checked
                             } else {
                                 val userType = Constants.getPrefs(context)!!.getString(Constants.USERTYPE, "")
-                                if (userType == "3") {
-                                    if (choosedOne == 1) {
-                                        Constants.subscriptionDialog(context)
-                                        holder.itemView.radioImage.isChecked=false
-                                        return@OnClickListener
-                                        break@outer
-                                    }
-                                }
+//                                if (userType == "3") {
+//                                    if (choosedOne == 1) {
+//                                        Constants.subscriptionDialog(context)
+//                                        holder.itemView.radioImage.isChecked=false
+//                                        return@OnClickListener
+//                                        break@outer
+//                                    }
+//                                }
                                 choosedOne = 1
                                 allCatagories[i].checked = true
                                 updateMain.notifyMainAdapter()
@@ -128,16 +128,17 @@ class MultiChoiceRadioAdapter(var context: Context,
                             holder.itemView.radioImage.isChecked = allCatagories[i].checked
                         } else {
                             val userType = Constants.getPrefs(context)!!.getString(Constants.USERTYPE, "")
-                            if (userType == "3") {
-                                if (choosedOne == 1) {
-                                    Constants.subscriptionDialog(context)
-                                    return@setOnClickListener
-                                }
-                            }
+//                            if (userType == "3") {
+//                                if (choosedOne == 1) {
+//                                    Constants.subscriptionDialog(context)
+//                                    return@setOnClickListener
+//                                }
+//                            }
                             choosedOne = 1
                             allCatagories[i].checked = true
                             updateMain.notifyMainAdapter()
-                            holder.itemView.radioImage.isChecked = allCatagories[i].checked
+            allCatagories[position].checked
+                          holder.itemView.radioImage.isChecked = allCatagories[position].checked
                         }
                     }
                 }

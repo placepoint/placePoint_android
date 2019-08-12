@@ -23,17 +23,144 @@ import com.phaseII.placepoint.Home.BusinessListing.BusinessListingFragment
 import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
 import com.phaseII.placepoint.Town.TownActivity
 import com.squareup.otto.Subscribe
-import java.util.ArrayList
 import android.content.DialogInterface
 import android.content.SharedPreferences
-import com.phaseII.placepoint.AboutBusiness.BusinessDetails.DetailFragment.setTitle
 import android.os.Build
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import java.util.*
+import java.util.regex.Pattern
 
 
-class DealsFragment : Fragment(), FlashContractHome.View {
+class DealsFragment : Fragment(), FlashContractHome.View, FlashHomeAdapter.CheckPostExpired {
+    override fun getMultiTowns(): String {
+
+        var pprefs:SharedPreferences =activity!!.getSharedPreferences("MultiTown",0);
+        return pprefs.getString("MultiTownIds","")
+    }
+
+    override fun showAlert(optString: String?) {
+        val dialog = AlertDialog.Builder(activity!!)
+        dialog.setCancelable(false)
+        dialog.setTitle("Alert!")
+        dialog.setMessage(optString)
+        dialog.setPositiveButton("Ok", DialogInterface.OnClickListener { dialog, id ->
+            dialog.dismiss()
+        })
+        val alert = dialog.create()
+        alert.show()
+    }
+    fun isEmailValid(email: String): Boolean {
+        var isValid = false
+
+        val expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$"
+
+        val pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE)
+        val matcher = pattern.matcher(email)
+        if (matcher.matches()) {
+            isValid = true
+        }
+        return isValid
+    }
+
+    override fun showNextDialog(position: Int, modelData: ModelHome) {
+        val mDialogView = LayoutInflater.from(context).inflate(R.layout.claim_layout, null)
+        //AlertDialogBuilder
+        val mBuilder = AlertDialog.Builder(activity!!)
+                .setView(mDialogView)
+                .setTitle("Enter Details")
+        //show dialog
+        val mAlertDialog = mBuilder.show()
+        //login button click of custom layout
+        val done = mAlertDialog.findViewById<TextView>(R.id.done)
+        val cancel = mAlertDialog.findViewById<TextView>(R.id.cancel)
+        val name = mAlertDialog.findViewById<EditText>(R.id.name)
+        val email = mAlertDialog.findViewById<EditText>(R.id.emailClaim)
+        val phoneNo = mAlertDialog.findViewById<EditText>(R.id.phoneNo)
+        val mSpinner = mAlertDialog.findViewById<Spinner>(R.id.offerClaimed)
+        //--------------max no of claims per person spinner-------------------------------------
+
+       var totalLeft:Int=(modelData.max_redemption).toInt()-modelData.redeemed.toInt();
+      if (totalLeft>modelData.per_person_redemption.toInt()) {
+          val array = ArrayList<String>()
+          for (i in 1 until modelData.per_person_redemption.toInt() + 1) {
+              array.add("" + i)
+          }
+          val adapter = ArrayAdapter<String>(
+                  context, R.layout.simple_spinner_item, array)
+          adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+          mSpinner!!.adapter = adapter
+          mSpinner.setSelection(0)
+          mSpinner.setPrompt("Select Claims")
+      }else{
+          val array = ArrayList<String>()
+          for (i in 1 until totalLeft + 1) {
+              array.add("" + i)
+          }
+          val adapter = ArrayAdapter<String>(
+                  context, R.layout.simple_spinner_item, array)
+          adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+          mSpinner!!.adapter = adapter
+          mSpinner.setSelection(0)
+          mSpinner.setPrompt("Select Claims")
+      }
+        //--------------------------------------------------------------------------------------
+
+        done!!.setOnClickListener {
+            //dismiss dialog
+            if (name!!.text.toString().isEmpty() || email!!.text.toString().isEmpty()) {
+                Toast.makeText(context, "Please enter details", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
+            val emailEntered = email.text.toString()
+            if (!isEmailValid(emailEntered)) {
+                Toast.makeText(context, "Please enter valid email.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            if (phoneNo != null) {
+                if (phoneNo.text.toString().trim().isEmpty() || phoneNo.text.toString().length < 10) {
+                    Toast.makeText(context, "Please enter 10 digit Phone Number.", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+            }
+            //update.claimPostService(modelData,name!!.text.toString(),email!!.text.toString())
+            if (emailClaim != email.text.toString()) {
+                countClaim = 0
+            }
+
+
+            var modelc = ModelClainService()
+            modelc.postId = modelData.id
+            modelc.name = name.text.toString()
+            modelc.email = email.text.toString()
+            modelc.position = position.toString()
+            modelc.phoneNo = phoneNo!!.text.toString()
+            modelc.perPerson = mSpinner.selectedItem.toString()
+            emailClaim = email.text.toString()
+            countClaim += 1
+            val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
+            mPresenter.claimPostCall(auth_code, modelc.postId, modelc.name,modelc.phoneNo, modelc.email, modelc.position,modelc.perPerson)
+
+            // Constants.getBus().post(ClaimPost(modelc))
+            mAlertDialog.dismiss()
+            //get text from EditTexts of custom layout
+        }
+        //cancel button click of custom layout
+        cancel!!.setOnClickListener {
+            //dismiss dialog
+            mAlertDialog.dismiss()
+        }
+
+
+    }
+
+    override fun getMultiCategories(): String {
+        var pprefs:SharedPreferences =activity!!.getSharedPreferences("MultiCategory",0);
+       return  pprefs.getString("MultiCategoryIds","")
+    }
+
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
     private lateinit var toolbar: Toolbar
@@ -50,7 +177,8 @@ class DealsFragment : Fragment(), FlashContractHome.View {
     private lateinit var pullToRefresh: SwipeRefreshLayout
     private lateinit var flashLish: ArrayList<ModelHome>
     private lateinit var flashAdapter: FlashHomeAdapter
-
+    private var emailClaim: String = ""
+    var countClaim: Int = 0
     private lateinit var mPresenter: FlashPresenterHome
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -100,9 +228,9 @@ class DealsFragment : Fragment(), FlashContractHome.View {
                 val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
                 val town_id = Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_ID, "")
                 val category_id = Constants.getPrefs(activity!!)!!.getString(Constants.CATEGORY_IDS, "")
-                mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0")
+                mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0", 0)
                 pullToRefresh.setOnRefreshListener {
-                    mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0")
+                    mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0", 0)
                     pullToRefresh.isRefreshing = false
                 }
                 //-------------------------------------------------------------------------------
@@ -145,14 +273,14 @@ class DealsFragment : Fragment(), FlashContractHome.View {
 
 
 
-    override fun setAdapter(data: String) {
+    override fun setAdapter(data: String, position: Int) {
 
         if (!data.isEmpty()) {
             val list = Constants.getHomeFeedData(data)
             flashLish = list
             if (list.size > 0) {
                 try {
-                    flashAdapter = FlashHomeAdapter(activity!!, flashLish)
+                    flashAdapter = FlashHomeAdapter(activity!!, flashLish,this)
                     noFlashData.visibility = View.GONE
                     flashPostList.visibility = View.VISIBLE
                     flashPostList.layoutManager = LinearLayoutManager(activity!!) as RecyclerView.LayoutManager?
@@ -169,13 +297,14 @@ class DealsFragment : Fragment(), FlashContractHome.View {
             flashPostList.visibility = View.GONE
             noFlashData.visibility = View.VISIBLE
         }
+        flashPostList.scrollToPosition(position)
     }
 
     private fun showCase() {
-        TutoShowcase.from(activity!!)
+       /* TutoShowcase.from(activity!!)
                 .setContentView(R.layout.tutorial_businesslist)
                 .showOnce("yes")
-                .show()
+                .show()*/
     }
 
     @SuppressLint("SetTextI18n")
@@ -304,7 +433,7 @@ class DealsFragment : Fragment(), FlashContractHome.View {
                     if (Constants.getPrefs(activity!!)!!.getString("showTLiveYes", "no") == "no") {
                         if (Constants.getPrefs(activity!!)!!.getString("showTLive", "no") == "yes") {
                             Constants.getPrefs(activity!!)!!.edit().putString("showTLiveYes", "yes").apply()
-                            showCaseLiveFeed()
+                           // showCaseLiveFeed()
                         }
                     }
 
@@ -464,17 +593,23 @@ class DealsFragment : Fragment(), FlashContractHome.View {
     fun getEventValue(event: ClaimPost) {
 
         val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
-        mPresenter.claimPostCall(auth_code, event.model.postId, event.model.name, event.model.phoneNo, event.model.email, event.model.position)
+        mPresenter.claimPostCall(auth_code, event.model.postId, event.model.name, event.model.phoneNo, event.model.email, event.model.position,event.model.perPerson)
     }
 
     override fun updateModeldata(position: String, claimed: String) {
         try {
-            val rr = flashLish[position.toInt()]
-            val countRe = rr.redeemed.toInt() + 1
-            rr.redeemed = countRe.toString()
-            rr.personRedeem = claimed
-            flashLish.set(position.toInt(), rr)
-            flashAdapter.notifyDataSetChanged()
+//            val rr = flashLish[position.toInt()]
+//            val countRe = rr.redeemed.toInt() + 1
+//            rr.redeemed = countRe.toString()
+//            rr.personRedeem = claimed
+//            flashLish.set(position.toInt(), rr)
+//            flashAdapter.notifyDataSetChanged()
+            val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
+            val town_id = Constants.getPrefs(activity!!)!!.getString(Constants.TOWN_ID, "")
+            val category_id = Constants.getPrefs(activity!!)!!.getString(Constants.CATEGORY_IDS, "")
+            mPresenter.getFlashPost(auth_code, town_id, category_id, "20", "0",position.toInt())
+
+
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -482,5 +617,17 @@ class DealsFragment : Fragment(), FlashContractHome.View {
 
     override fun showToast(optString: String?) {
         Toast.makeText(activity, optString, Toast.LENGTH_LONG).show()
+    }
+
+    override fun checkPostExpiredStatus(modelData: ModelHome, position: Int) {
+        val auth_code = Constants.getPrefs(activity!!)!!.getString(Constants.AUTH_CODE, "")
+
+        mPresenter.getPostExpiredStatus(auth_code,modelData,position)
+
+    }
+
+    override fun scroolToPositonOfclickedItem(position: Int) {
+
+        flashPostList.scrollToPosition(position)
     }
 }

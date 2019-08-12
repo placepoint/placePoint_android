@@ -110,10 +110,9 @@ class ProfileMapActivity : AppCompatActivity(), OnMapReadyCallback, ProfileMapHe
         title = ""
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         val mTitle = toolbar.findViewById(R.id.toolbar_title) as TextView
-        val mArrow = toolbar.findViewById(R.id.arrow_down) as ImageView
         val done = toolbar.findViewById(R.id.done) as TextView
         done.visibility = View.VISIBLE
-        mArrow.visibility = View.GONE
+
         mTitle.text = "Address"
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)

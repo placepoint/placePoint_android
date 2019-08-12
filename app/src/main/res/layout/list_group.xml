@@ -9,7 +9,7 @@
     >
 
     <TextView
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:id="@+id/lblListHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

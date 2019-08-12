@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar_color_primary"
+        layout="@layout/toolbar_color_primarynew"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

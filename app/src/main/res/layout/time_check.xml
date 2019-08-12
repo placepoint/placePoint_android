@@ -14,7 +14,7 @@
         android:layout_marginRight="8dp"
         android:layout_width="match_parent"
         android:textColor="@color/black"
-        android:fontFamily="@font/regular"
+        android:fontFamily="@font/opensans_regular"
         android:layout_height="match_parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,7 +22,7 @@
     <TextView
         android:layout_marginLeft="8dp"
         android:layout_weight="1"
-        android:fontFamily="@font/regular"
+        android:fontFamily="@font/opensans_regular"
         android:id="@+id/time"
         android:textColor="@color/black"
         android:layout_width="match_parent"

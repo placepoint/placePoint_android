@@ -18,7 +18,6 @@ import com.phaseII.placepoint.Home.TitleModel
 import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
 import com.phaseII.placepoint.R
 import com.squareup.otto.Subscribe
-import kotlinx.android.synthetic.main.business_listing_fragment.*
 import android.location.LocationManager
 import android.content.DialogInterface
 import android.content.Intent
@@ -33,6 +32,7 @@ import android.support.v7.widget.RecyclerView
 import com.github.florent37.tutoshowcase.TutoShowcase
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.phaseII.placepoint.ConstantClass.GpsTracker
+import com.phaseII.placepoint.HomeNew.HomeFragment
 import kotlinx.android.synthetic.main.filter_dialog.view.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -63,7 +63,7 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
     lateinit var taxiList: RecyclerView
     lateinit var businessList: RecyclerView
 
-    lateinit var toolbarArrow: ImageView
+
     lateinit var progressBar: ProgressBar
     var cat_list: ArrayList<ModelCategoryData> = arrayListOf()
     var cat_name: ArrayList<String> = arrayListOf()
@@ -161,7 +161,7 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
                             }
                         }
                         taxiList.layoutManager = LinearLayoutManager(this.activity!!) as RecyclerView.LayoutManager?
-                        adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, currentLatitude, currentLongitude)
+                        adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, currentLatitude, currentLongitude, "showTaxi")
                         taxiList.adapter = adapter
                         val modell = TitleModel()
 
@@ -190,17 +190,17 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
                         var gps = GpsTracker(this.activity)
                         noData.visibility = View.GONE
                         //  Constants.getBus().register(this)
-                        var permission = Constants.getPrefs(activity!!)!!.getString("permission", "")
-                        if (permission.isEmpty() || permission == "no") {
-                            if (Build.VERSION.SDK_INT >= 23 &&
-                                    ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(activity!!, arrayOf(
-                                        android.Manifest.permission.ACCESS_FINE_LOCATION
-                                ), 10)
-                            }
-                        }
+//                        var permission = Constants.getPrefs(activity!!)!!.getString("permission", "")
+//                        if (permission.isEmpty() || permission == "no") {
+//                            if (Build.VERSION.SDK_INT >= 23 &&
+//                                    ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                                ActivityCompat.requestPermissions(activity!!, arrayOf(
+//                                        android.Manifest.permission.ACCESS_FINE_LOCATION
+//                                ), 10)
+//                            }
+//                        }
                         businessList.layoutManager = LinearLayoutManager(this.activity!!) as RecyclerView.LayoutManager?
-                        adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, gps.getLatitude(), gps.getLongitude())
+                        adapter = BusinessListAdapter(this.activity!!, list1, relatedTo, gps.getLatitude(), gps.getLongitude(), "showTaxi")
                         businessList.adapter = adapter
                     }
 
@@ -212,15 +212,15 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
                         taxiList.visibility = View.VISIBLE
                         businessList.visibility = View.GONE
                         // Constants.getBus().register(this)
-                        val permission = Constants.getPrefs(activity!!)!!.getString("permission", "")
-                        if (permission.isEmpty() || permission == "no") {
-                            if (Build.VERSION.SDK_INT >= 23 &&
-                                    ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(activity!!, arrayOf(
-                                        android.Manifest.permission.ACCESS_FINE_LOCATION
-                                ), 10)
-                            }
-                        }
+//                        val permission = Constants.getPrefs(activity!!)!!.getString("permission", "")
+//                        if (permission.isEmpty() || permission == "no") {
+//                            if (Build.VERSION.SDK_INT >= 23 &&
+//                                    ActivityCompat.checkSelfPermission(activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                                ActivityCompat.requestPermissions(activity!!, arrayOf(
+//                                        android.Manifest.permission.ACCESS_FINE_LOCATION
+//                                ), 10)
+//                            }
+//                        }
                         val modell = TitleModel()
 
                         if (cat == 1) {
@@ -317,24 +317,15 @@ class BusinessListingFragment : Fragment(), BusinessHelper, LocationListener {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        if (ActivityCompat.checkSelfPermission(activity!!,
-                        Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity!! as Activity, arrayOf(Manifest.permission.CALL_PHONE), 1)
-            return
-        }
+//        if (ActivityCompat.checkSelfPermission(activity!!,
+//                        Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(activity!! as Activity, arrayOf(Manifest.permission.CALL_PHONE), 1)
+//            return
+//        }
 
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Constants.getPrefs(activity!!)!!.edit().putString("permission", "yes").apply()
-
-        } else {
-            Constants.getPrefs(activity!!)!!.edit().putString("permission", "no").apply()
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -457,7 +448,7 @@ Constants.getBus().register(this)
         //AlertDialogBuilder
         val mBuilder = AlertDialog.Builder(activity!!)
                 .setView(mDialogView)
-                .setTitle("SortBy")
+                .setTitle("Sort By")
         //.setCancelable(false)
         mAlertDialog = mBuilder.create()
         dialogsAll.add(mAlertDialog)
@@ -499,7 +490,7 @@ Constants.getBus().register(this)
                 val gps = GpsTracker(this.activity)
                 //   adapter.refreshApaper(sortedList)
                 businessList.layoutManager = LinearLayoutManager(activity!!)
-                adapter = BusinessListAdapter(activity!!, sortedList, mrelatedTo, gps.getLatitude(), gps.getLongitude())
+                adapter = BusinessListAdapter(activity!!, sortedList, mrelatedTo, gps.getLatitude(), gps.getLongitude(), "showTaxi")
                 businessList.adapter = adapter
 
             }
@@ -522,20 +513,6 @@ Constants.getBus().register(this)
 
         }
 
-
-
-//        dialogo = AlertDialog.Builder(activity!!)
-//                .setTitle("Alert!")
-//                .setMessage("Are you sure you want to  sort by Nearest Listing?")
-//                .setPositiveButton("Yes") { dialog, which ->
-//                    openingDialog = 0
-//
-//
-//                }
-//                .setNegativeButton("No") { dialog, Which ->
-//                    openingDialog = 0
-//                    dialog.dismiss()
-//                }.show()
 
     }
 

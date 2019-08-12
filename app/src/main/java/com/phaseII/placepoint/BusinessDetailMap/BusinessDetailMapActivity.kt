@@ -85,8 +85,8 @@ class BusinessDetailMapActivity : AppCompatActivity(), OnMapReadyCallback, Busin
         title = ""
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         val mTitle = toolbar.findViewById(R.id.toolbar_title) as TextView
-        val mArrow = toolbar.findViewById(R.id.arrow_down) as ImageView
-        mArrow.visibility = View.GONE
+//        val mArrow = toolbar.findViewById(R.id.arrow_down) as ImageView
+//        mArrow.visibility = View.GONE
         mTitle.text = "Address"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }

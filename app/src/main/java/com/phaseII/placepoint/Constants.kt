@@ -35,8 +35,11 @@ import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
 import com.phaseII.placepoint.Payment.PaymentActivity
 import com.phaseII.placepoint.SubscriptionPlan.SubscriptionActivity
 import com.phaseII.placepoint.Town.ModelTown
+import com.phaseII.placepoint.Town.MultipleTown.ModelMultiTown
+import com.skyhope.showmoretextview.ShowMoreTextView
 import com.squareup.otto.Bus
 import com.squareup.otto.ThreadEnforcer
+import kotlinx.android.synthetic.main.flash_main_item.view.*
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import org.jetbrains.anko.layoutInflater
@@ -61,7 +64,7 @@ class Constants {
 
         // const val BASE_URL = "http://34.254.213.227/webservices/data_v1/"
 //       const val BASE_URL = "https://www.placepoint.ie/webservices/data_v1/"
-//        const val STRIPE_KEY = "pk_live_kt0mTsSnlapCVN44Ilfy7snQ"
+        const val STRIPE_KEY = "pk_live_kt0mTsSnlapCVN44Ilfy7snQ"
 
         //"https://www.placepoint.ie/webservices/data_v1/"
         //=================================
@@ -69,7 +72,7 @@ class Constants {
         //Test---------------------------
         //  const val BASE_URL = "http://cloudart.com.au/projects/Placepoint/index.php/webservices/data_v1/"
         const val BASE_URL = "https://www.placepoint.ie/webservices/data_v1/"
-        const val STRIPE_KEY = "pk_test_IWmxeaTtErjZDGj3Dcu2oJw0"
+//        const val STRIPE_KEY = "pk_test_IWmxeaTtErjZDGj3Dcu2oJw0"
 
 
         var isAppOpenedFirstTime = false
@@ -128,6 +131,8 @@ class Constants {
         const val USERTYPE: String = "usertype"
         const val CATEGORY_IDSUB: String = "busListCat"
         const val MYBUSINESS_ID: String = "mybusId"
+        const val MYLIVEPOSTS: String = "myliveposts"
+
 
 
         fun getBus(): Bus {
@@ -139,9 +144,9 @@ class Constants {
 
         fun getWebClient(): Retrofit? {
             val builder = OkHttpClient.Builder()
-            builder.connectTimeout(5, TimeUnit.MINUTES)
-                    .writeTimeout(5, TimeUnit.MINUTES)
-                    .readTimeout(5, TimeUnit.MINUTES)
+            builder.connectTimeout(15, TimeUnit.MINUTES)
+                    .writeTimeout(15, TimeUnit.MINUTES)
+                    .readTimeout(15, TimeUnit.MINUTES)
             var client = OkHttpClient()
             client = builder.build()
             if (retrofit == null) {
@@ -191,6 +196,12 @@ class Constants {
         //-------------------------------------
         fun getTownData(data: String): java.util.ArrayList<ModelTown>? {
             val listType = object : TypeToken<List<ModelTown>>() {
+            }.type
+            return getGsonObject().fromJson(data, listType)
+        }
+ //-------------------------------------
+        fun getTownData2(data: String): java.util.ArrayList<ModelMultiTown>? {
+            val listType = object : TypeToken<List<ModelMultiTown>>() {
             }.type
             return getGsonObject().fromJson(data, listType)
         }
@@ -366,7 +377,7 @@ class Constants {
                     i.data = Uri.parse(link)
                     context.startActivity(i)
                 }
-                return
+                //return
                 // Toast.makeText(context, "Facebook app not found.", Toast.LENGTH_LONG).show()
             }
             context.startActivity(intent)
@@ -722,6 +733,15 @@ class Constants {
 //            alertDialog.show()
 Constants.getPrefs(context)!!.edit().putString("showImagePre","yes").apply()
 context.startActivity(Intent(context,ImagePreview::class.java).putExtra("image",image_url))
+        }
+
+        fun setViewMoreLessFunctionality(view: ShowMoreTextView) {
+            view.addShowMoreText("show more")
+            view.addShowLessText("show less")
+            view.setShowMoreColor(Color.parseColor("#0000EE")) // or other color
+            view.setShowLessTextColor(Color.parseColor("#0000EE")) // or other color
+            view.setShowingLine(6) // or other color
+
         }
     }
 }

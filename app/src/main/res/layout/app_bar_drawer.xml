@@ -11,7 +11,7 @@
 
         <include
             android:id="@+id/toolbar"
-            layout="@layout/toolbar_color_primary" />
+            layout="@layout/toolbar_color_primarynew" />
 
     </android.support.design.widget.AppBarLayout>
 

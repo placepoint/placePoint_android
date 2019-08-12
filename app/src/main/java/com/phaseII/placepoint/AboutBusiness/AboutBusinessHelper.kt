@@ -11,7 +11,7 @@ interface AboutBusinessHelper {
     fun showLoader()
     fun hideLoader()
     fun showNetworkError(resId: Int)
-    fun setBusinessData(data: String)
+    fun setBusinessData(data: String, toString: String)
     fun setSingleBusinessData()
     fun setAdapter(modelBusiness: ModelBusiness)
     fun getIfLoggedIn(): String

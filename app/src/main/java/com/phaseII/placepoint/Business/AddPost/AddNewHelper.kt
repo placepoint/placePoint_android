@@ -43,4 +43,10 @@ interface AddNewHelper {
     fun getFlashDate(): String
     fun getFlashTime(): String
     fun uploadVideo(): String
+    fun getRetailPrice(): String
+    fun getDiscountAmount(): String
+    fun getDiscountPercentage(): String
+    fun getAutomatedEmailText(): String
+    fun getExclusiveCheckBoxStatus(): Boolean
+    fun showErrorAlert(msg: String)
 }

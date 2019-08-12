@@ -13,5 +13,8 @@ interface LiveFeedHelper {
     fun getTaxiID(): String
     fun updateModeldata(position: String, claimed: String)
     fun showToast(optString: String?)
+    fun getBusId(): String
+    fun getIfLoggedIn(): String
+    fun setBusinessData(toString: String, toString1: String)
 
 }

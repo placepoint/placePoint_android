@@ -34,14 +34,14 @@ class CategoryPresenter(val view: CategoryHelper) {
 
                 for (l in 0 until list!!.size) {
                     for (m in 0 until idList.size) {
-                        if (list[l].id == idList[m]) {
+                        if (list[l].id.trim() == idList[m].trim()) {
                             list2.add(list[l])
                         }
                     }
                 }
                 for (l in 0 until list.size) {
                     for (m in 0 until list2.size) {
-                        if (list[l].id == list2[m].parent_category) {
+                        if (list[l].id.trim() == list2[m].parent_category.trim()) {
                             list2.add(list[l])
                         }
                     }
@@ -51,7 +51,7 @@ class CategoryPresenter(val view: CategoryHelper) {
                 list3 = list2.distinctBy { it.id } as ArrayList<ModelCategoryData>
                 //list2.distinctBy { Pair(it.id, it.id) }
                 for (p in 0 until list3!!.size) {
-                    if (list3[p].show_on_live != "0") {
+                    if (list3[p].show_on_live.trim() != "0") {
                         list4.add(list3[p])
                     }
                 }
@@ -60,13 +60,13 @@ class CategoryPresenter(val view: CategoryHelper) {
                 var sub = arrayListOf<ModelCategoryData>()
                 var mainCat1 = arrayListOf<ModelCategoryData>()
                 for (h in 0 until list.size) {
-                    if (list[h].parent_category == "0") {
+                    if (list[h].parent_category.trim() == "0") {
                         mainCat.add(list[h])
                     }else {
                         if (!selectedlist.isEmpty()) {
                             var selectedidList = selectedlist!!.split(",")
                             for (k in 0 until selectedidList.size) {
-                                if (selectedidList[k] == list[h].id) {
+                                if (selectedidList[k].trim() == list[h].id.trim()) {
                                     list[h].checked = true
                                 }
                             }
@@ -79,7 +79,7 @@ class CategoryPresenter(val view: CategoryHelper) {
                 for (g in 0 until mainCat.size) {
 
                     inn@ for (m in 0 until list!!.size) {
-                        if (mainCat[g].id == list[m].parent_category) {
+                        if (mainCat[g].id.trim() == list[m].parent_category.trim()) {
 
                             mainCat1.add(mainCat[g])
                             break@inn
@@ -104,7 +104,7 @@ class CategoryPresenter(val view: CategoryHelper) {
                         for (j in 0 until idList.size) {
                             for (k in 0 until list.size) {
 
-                                if (idList[j] == list[k].id) {
+                                if (idList[j].trim() == list[k].id.trim()) {
                                     list[k].checked = true
                                     highlightCat.add(list[k].parent_category)
                                 }

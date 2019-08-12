@@ -5,10 +5,13 @@ import android.Manifest
 import android.annotation.TargetApi
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.*
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -29,7 +32,9 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import android.support.constraint.ConstraintLayout
+import android.support.v4.content.PermissionChecker.checkCallingOrSelfPermission
 import android.support.v7.widget.RecyclerView
+import android.text.util.Linkify
 import android.util.Log
 import android.webkit.MimeTypeMap
 import com.bumptech.glide.Glide
@@ -46,13 +51,15 @@ import com.phaseII.placepoint.SubscriptionPlan.SubscriptionActivity
 
 import com.squareup.otto.Subscribe
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_add_new.*
+import org.jetbrains.anko.backgroundDrawable
 
 
 import org.json.JSONObject
 import java.io.*
-import java.lang.Byte.decode
-import java.net.HttpURLConnection
-import java.net.URL
+import java.lang.Double
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -99,6 +106,7 @@ class AddPostFragment : Fragment(), AddNewHelper
 
     lateinit var seText: TextView
     lateinit var nowCheck: CheckBox
+    lateinit var exclusiveCheckBox: CheckBox
     lateinit var expandLayout: ConstraintLayout
     lateinit var hidenLay: ConstraintLayout
 
@@ -127,6 +135,12 @@ class AddPostFragment : Fragment(), AddNewHelper
     lateinit var flashPerPerson: TextView
     lateinit var flashselectDay: TextView
     lateinit var flashdayTime: TextView
+
+    lateinit var automatedEmailText: EditText
+    lateinit var retailPrice: EditText
+    lateinit var discountPrice: EditText
+    lateinit var discountPercent: TextView
+
     var recyclerItems: ArrayList<Uri> = arrayListOf()
     var imageUri: Uri? = null
     var isServiceRunning = false
@@ -167,6 +181,15 @@ class AddPostFragment : Fragment(), AddNewHelper
         val view: View = inflater.inflate(R.layout.activity_add_new, container, false)
         Constants.getSSlCertificate(activity!!)
         mPresenter = AddNewPresenter(this)
+        exclusiveCheckBox = view.findViewById(R.id.exclusiveCheckBox)
+        automatedEmailText = view.findViewById(R.id.automatedEmailText)
+
+        discountPercent = view.findViewById(R.id.discountPercent)
+
+        discountPrice = view.findViewById(R.id.discountPrice)
+
+        retailPrice = view.findViewById(R.id.retailPrice)
+
         videoCancel = view.findViewById(R.id.videoCancel)
         videoName = view.findViewById(R.id.videoName)
         videoLayout = view.findViewById(R.id.videoLayout)
@@ -200,15 +223,15 @@ class AddPostFragment : Fragment(), AddNewHelper
         croppedImage = view.findViewById(R.id.croppedImage)
 
 
-        camera = view.findViewById(R.id.camera)
+        camera = view.findViewById(R.id.camera1)
         editText = view.findViewById(R.id.editText)
         mainLayout = view.findViewById(R.id.mainLay)
         sLayout = view.findViewById(R.id.slayout)
-        gallery = view.findViewById(R.id.gallery)
+        gallery = view.findViewById(R.id.gallery1)
         profileText = view.findViewById(R.id.profileText)
         selectCategory = view.findViewById(R.id.selectCategory)
         youtubeField = view.findViewById(R.id.youtubeField)
-        youtube = view.findViewById(R.id.youtube)
+        youtube = view.findViewById(R.id.youtube1)
         postText = view.findViewById(R.id.editText)
         cancel = view.findViewById(R.id.cancel)
         progressBar = view.findViewById(R.id.progressBar)
@@ -234,14 +257,24 @@ class AddPostFragment : Fragment(), AddNewHelper
         flashPerPerson.text = ""
         flashselectDay.text = ""
         flashdayTime.text = "Time"
+        discountPrice.setText("")
+        retailPrice.setText("")
+        discountPercent.text = ""
+        automatedEmailText.setText("")
+        exclusiveCheckBox.isChecked=false
         flashClick.setOnClickListener {
-            flashMax.setText("")
-            if (!isflashVisible) {
-                isflashVisible = true
-                flashHiddenLayout.visibility = View.VISIBLE
+
+            if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3") {
+                showAlertForSubscription(activity!!, getString(R.string.restrictionMsg))
             } else {
-                flashHiddenLayout.visibility = View.GONE
-                isflashVisible = false
+                flashMax.setText("")
+                if (!isflashVisible) {
+                    isflashVisible = true
+                    flashHiddenLayout.visibility = View.VISIBLE
+                } else {
+                    flashHiddenLayout.visibility = View.GONE
+                    isflashVisible = false
+                }
             }
         }
 
@@ -357,51 +390,59 @@ class AddPostFragment : Fragment(), AddNewHelper
 
         schedulePost.setOnClickListener {
             //Footer.requestFocus()
-
-            val post = addPost.text.toString()
-            if (post.equals("DONE")) {
-
+            if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3") {
+                showAlertForSubscription(activity!!, getString(R.string.restrictionMsg))
             } else {
-                var youtubetext = youtubeField.text.toString().trim()
-                clearPrefs()
-                if (!youtubetext.isEmpty()) {
-                    youtubeField.visibility = View.VISIBLE
-                    youtubeField.setText(youtubetext)
-                }
-                adposition = 0
-                adposition1 = 0
-                adposition2 = 0
-                checkedItem = -1
-                checkedItem1 = -1
-                checkedItem2 = -1
-                editType = ""
-                if (open == 0) {
-                    open = 1
-                    specificTime.text = "Time"
-                    dayTime.text = "Time"
-                    monthTime.text = "Time"
-                    seText.visibility = View.VISIBLE
-                    expandLayout.visibility = View.VISIBLE
-                    nowCheck.visibility = View.VISIBLE
-                    hidenLay.visibility = View.VISIBLE
-                    // scrollView.fullScroll(View.FOCUS_DOWN)
-                } else {
-                    open = 0
-                    expandLayout.visibility = View.GONE
-                    nowCheck.visibility = View.GONE
-                    seText.visibility = View.GONE
-                    hidenLay.visibility = View.GONE
-                    dayLay.visibility = View.GONE
-                    monthLay.visibility = View.GONE
-                    specificDayLay.visibility = View.GONE
-                    specificTime.text = ""
-                    dayTime.text = ""
-                    monthTime.text = ""
+                val post = addPost.text.toString()
+                if (post.equals("DONE")) {
 
-                    for (i in 0 until stringList.size) {
-                        stringList[i].checked = false
+                } else {
+                    var youtubetext = youtubeField.text.toString().trim()
+                    clearPrefs()
+                    if (!youtubetext.isEmpty()) {
+                        youtubeField.visibility = View.VISIBLE
+                        youtubeField.setText(youtubetext)
+                    }
+                    adposition = 0
+                    adposition1 = 0
+                    adposition2 = 0
+                    checkedItem = -1
+                    checkedItem1 = -1
+                    checkedItem2 = -1
+                    editType = ""
+                    if (open == 0) {
+                        open = 1
+                        specificTime.text = "Time"
+                        dayTime.text = "Time"
+                        monthTime.text = "Time"
+                        seText.visibility = View.VISIBLE
+                        expandLayout.visibility = View.VISIBLE
+                        nowCheck.visibility = View.VISIBLE
+                        hidenLay.visibility = View.VISIBLE
+                        // scrollView.fullScroll(View.FOCUS_DOWN)
+                    } else {
+                        open = 0
+                        expandLayout.visibility = View.GONE
+                        nowCheck.visibility = View.GONE
+                        seText.visibility = View.GONE
+                        hidenLay.visibility = View.GONE
+                        dayLay.visibility = View.GONE
+                        monthLay.visibility = View.GONE
+                        specificDayLay.visibility = View.GONE
+                        specificTime.text = ""
+                        dayTime.text = ""
+                        monthTime.text = ""
+
+                        for (i in 0 until stringList.size) {
+                            stringList[i].checked = false
+                        }
                     }
                 }
+                scrollView.post(Runnable() {
+
+                    scrollView.scrollTo(0, scrollView.bottom)
+
+                })
             }
 
 
@@ -519,8 +560,20 @@ class AddPostFragment : Fragment(), AddNewHelper
         editText.isFocusableInTouchMode = true
         editText.isFocusable = true
 
+        retailDiscountFuntionality()
+        exclusiveCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked){
+                highlighterLay.backgroundDrawable=resources.getDrawable(R.drawable.border_white)
 
+            }
+        }
         return view
+
+    }
+
+    private fun retailDiscountFuntionality() {
+        discountPrice.addTextChangedListener(mTextEditorWatcher2)
+        retailPrice.addTextChangedListener(mTextEditorWatcher3)
 
     }
 
@@ -559,9 +612,60 @@ class AddPostFragment : Fragment(), AddNewHelper
             var model = ShowFlashOrPost()
             model.ftype = ftype
             model.name = "change"
+            if (ftype == "1") {
+                showAlert(activity!!, model)
+            } else {
+                Constants.getBus().post(PositionChangEvent(model))
+            }
 
-            Constants.getBus().post(PositionChangEvent(model))
         }
+    }
+
+    fun showAlert(context: Context, model: ShowFlashOrPost) {
+        var alertDialog = Dialog(context)
+        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        alertDialog.setCancelable(false)
+        alertDialog.setContentView(R.layout.showflashalert)
+        var text = alertDialog.findViewById(R.id.text) as TextView
+       // text.text = "Thanks for placing a flash deal. Your flash deal is currently awaiting approval, this normally is approved in a short space of time, if it’s urgent please contact us via the Facebook page. https://www.facebook.com/placepoint.ireland/"
+        text.text = "Thanks for placing a flash deal. Your flash deal is currently awaiting approval, this normally is approved in a short space of time, If it's urgent please contact us via our live chat in the top right corner of the homepage on this app."
+        Linkify.addLinks(text, Linkify.WEB_URLS)
+        var ok = alertDialog.findViewById(R.id.ok) as TextView
+        ok.setOnClickListener {
+            Constants.getBus().post(PositionChangEvent(model))
+            alertDialog.dismiss()
+        }
+
+//
+        // alertDialog.getWindow().setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show()
+
+    }
+
+    fun showAlertForSubscription(context: Context, model: String) {
+        var alertDialog = Dialog(context)
+        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        alertDialog.setCancelable(false)
+        alertDialog.setContentView(R.layout.showflashalertsubscription)
+        var text = alertDialog.findViewById(R.id.text) as TextView
+        var textsub = alertDialog.findViewById(R.id.textsub) as TextView
+        var upgrade = alertDialog.findViewById(R.id.upgrade) as TextView
+//        text.text = getString(R.string.restrictionMsgwithImage)
+//    textsub.text = getString(R.string.restrictionMsgwithImagesub)
+        var ok = alertDialog.findViewById(R.id.ok) as TextView
+        ok.setOnClickListener {
+            alertDialog.dismiss()
+        }
+        upgrade.setOnClickListener {
+            alertDialog.dismiss()
+            val intent = Intent(context, SubscriptionActivity::class.java)
+            activity!!.startActivity(intent)
+        }
+
+//
+        // alertDialog.getWindow().setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show()
+
     }
 
     private fun datePicker(specificDay: TextView) {
@@ -901,6 +1005,88 @@ class AddPostFragment : Fragment(), AddNewHelper
         override fun afterTextChanged(s: Editable) {}
     }
 
+    val mTextEditorWatcher2 = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+
+        }
+
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+            try {
+                discountPercent.text = ""
+                if (!s.isEmpty()) {
+                    val retailAmount = retailPrice.text.toString().trim()
+                    if (retailAmount.isEmpty()) {
+                        discountPrice.setText("")
+                        Toast.makeText(activity, "Please Enter Retail Price.", Toast.LENGTH_LONG).show()
+                        return
+                    }
+
+                    val rAmount = retailAmount.toDouble()
+                    val dAmount = s.toString()
+                    val dAmou = dAmount.toDouble()
+
+                    if (dAmou <= rAmount) {
+                        var discount = rAmount - dAmou
+                        var disPercentage = (discount / rAmount) * 100
+                        // val disPer = ((dAmou * 100) / rAmount)
+                        var bd = BigDecimal(Double.toString(disPercentage))
+                        bd = bd.setScale(0, RoundingMode.HALF_UP)
+                        discountPercent.text = disPercentage.toInt().toString() + "%"
+                    } else {
+
+                        discountPrice.setText(dAmount.substring(0, dAmount.length - 1))
+                        val newDAmount = dAmount.substring(0, dAmount.length - 1).toDouble()
+                        var discount = rAmount - newDAmount
+                        var disPercentage = (discount / rAmount) * 100
+                        //val disPer = ((dAmou * 100) / rAmount)
+                        var bd = BigDecimal(Double.toString(disPercentage))
+                        bd = bd.setScale(0, RoundingMode.HALF_UP)
+                        discountPercent.text = disPercentage.toInt().toString() + "%"
+                        discountPrice.setSelection(discountPrice.getText().length)
+                        Toast.makeText(activity, "Discount Price cannot be greater than Retail price.", Toast.LENGTH_LONG).show()
+                    }
+
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        override fun afterTextChanged(s: Editable) {}
+    }
+    val mTextEditorWatcher3 = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+
+        }
+
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+            try {
+                discountPercent.text = ""
+                discountPrice.setText("")
+//                val retailAmount=retailPrice.text.toString().trim()
+//                val rAmount=retailAmount.toDouble()
+//                val dAmount=discountPrice.text.toString().trim()
+//                if (!dAmount.isEmpty()) {
+//                    val dAmou = dAmount.toDouble()
+//                        if (rAmount>dAmou) {
+//                            val disPer = ((dAmou * 100) / rAmount).toString()
+//                            discountPercent.text = disPer + "%"
+//                        }else{
+//                            discountPercent.text =""
+//                        }
+//
+//                }else{
+//                    discountPercent.text =""
+//                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        override fun afterTextChanged(s: Editable) {}
+    }
+
     private fun countWords(s: String): Int {
         val trim = s.trim { it <= ' ' }
         return if (trim.isEmpty()) 0 else trim.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().size
@@ -926,40 +1112,80 @@ class AddPostFragment : Fragment(), AddNewHelper
     private fun cameraIntent() {
         if (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.CAMERA), BaseActivity.REQUEST_CAMERA)
+            ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE), 9004)
         } else {
-            if (ContextCompat.checkSelfPermission(activity!!,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                //do your stuff
-                val values = ContentValues()
-                values.put(MediaStore.Images.Media.TITLE, "New Picture")
-                values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera")
-                imageUri = activity!!.contentResolver.insert(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-                startActivityForResult(intent, BaseActivity.REQUEST_CAMERA)
+            //do your stuff
+            val values = ContentValues()
+            values.put(MediaStore.Images.Media.TITLE, "New Picture")
+            values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera")
+            imageUri = activity!!.contentResolver.insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+            startActivityForResult(intent, BaseActivity.REQUEST_CAMERA)
 
-            } else {
-                requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        getString(R.string.permission_write_storage_rationale),
-                        REQUEST_STORAGE_WRITE_ACCESS_PERMISSION)
-            }
         }
 
     }
 
-    fun requestPermission(permission: String, rationale: String, requestCode: Int) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity!!, permission)) {
-            showAlertDialog(getString(R.string.permission_title_rationale), rationale,
-                    DialogInterface.OnClickListener { dialog, which ->
-                        ActivityCompat.requestPermissions(activity!!,
-                                arrayOf(permission), requestCode)
-                    }, getString(R.string.ok), null, getString(R.string.cancel))
-        } else {
-            ActivityCompat.requestPermissions(activity!!, arrayOf(permission), requestCode)
-        }
+    override fun openGallery() {
+        GALLERY = true
+        pickFromGallery()
     }
+
+
+    private fun pickFromGallery() {
+        if (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 894)
+        } else {
+            val photoLibraryIntent1 = Intent(Intent.ACTION_GET_CONTENT)
+            photoLibraryIntent1.type = "*/*"
+            startActivityForResult(Intent.createChooser(photoLibraryIntent1, "Select Picture"), SELECT_PICTURES)
+
+        }
+
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
+//                    getString(R.string.permission_read_storage_rationale),
+//                    REQUEST_STORAGE_READ_ACCESS_PERMISSION)
+//        } else if (ContextCompat.checkSelfPermission(activity!!,
+//                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                    getString(R.string.permission_write_storage_rationale),
+//                    REQUEST_STORAGE_WRITE_ACCESS)
+//        } else {
+////            val intent = Intent(Intent.ACTION_GET_CONTENT)
+////                    .setType("image/*")
+////                    .addCategory(Intent.CATEGORY_OPENABLE)
+////            val intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+////            intent.type = "image/* video/*"
+////            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+////                val mimeTypes = arrayOf("image/jpeg", "image/png")
+////                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+////            }
+//            val photoLibraryIntent1 = Intent(Intent.ACTION_GET_CONTENT)
+////            val photoLibraryIntent1 = Intent(Intent.ACTION_PICK,
+////                    android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+//            photoLibraryIntent1.type = "*/*"
+////            val intent1 = Intent()
+////            intent1.type = "image/*"
+////            intent1.setAction(Intent.ACTION_GET_CONTENT);
+//            startActivityForResult(Intent.createChooser(photoLibraryIntent1, "Select Picture"), SELECT_PICTURES)
+//        }
+    }
+//    fun requestPermission(permission: String, rationale: String, requestCode: Int) {
+//        if (ActivityCompat.shouldShowRequestPermissionRationale(activity!!, permission)) {
+//            showAlertDialog(getString(R.string.permission_title_rationale), rationale,
+//                    DialogInterface.OnClickListener { dialog, which ->
+//                        ActivityCompat.requestPermissions(activity!!,
+//                                arrayOf(permission), requestCode)
+//                    }, getString(R.string.ok), null, getString(R.string.cancel))
+//        } else {
+//            ActivityCompat.requestPermissions(activity!!, arrayOf(permission), requestCode)
+//        }
+//    }
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     private fun getRealPathFromURIForVideo(selectedVideoUri: Uri): String {
@@ -1056,76 +1282,79 @@ class AddPostFragment : Fragment(), AddNewHelper
     }
 
 
-    override fun openGallery() {
-        GALLERY = true
-        pickFromGallery()
+    private fun checkCameraPermission(): Boolean {
+        var permission = android.Manifest.permission.CAMERA;
+        var res = activity!!.checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
     }
 
-
-    private fun pickFromGallery() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && ActivityCompat.checkSelfPermission(activity!!, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
-                    getString(R.string.permission_read_storage_rationale),
-                    REQUEST_STORAGE_READ_ACCESS_PERMISSION)
-        } else if (ContextCompat.checkSelfPermission(activity!!,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    getString(R.string.permission_write_storage_rationale),
-                    REQUEST_STORAGE_WRITE_ACCESS)
-        } else {
-//            val intent = Intent(Intent.ACTION_GET_CONTENT)
-//                    .setType("image/*")
-//                    .addCategory(Intent.CATEGORY_OPENABLE)
-//            val intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-//            intent.type = "image/* video/*"
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//                val mimeTypes = arrayOf("image/jpeg", "image/png")
-//                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-//            }
-            val photoLibraryIntent1 = Intent(Intent.ACTION_GET_CONTENT)
-//            val photoLibraryIntent1 = Intent(Intent.ACTION_PICK,
-//                    android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
-            photoLibraryIntent1.type = "*/*"
-//            val intent1 = Intent()
-//            intent1.type = "image/*"
-//            intent1.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(photoLibraryIntent1, "Select Picture"), SELECT_PICTURES)
-        }
+    private fun checkWriteExternalPermission(): Boolean {
+        var permission = android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        var res = activity!!.checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            BaseActivity.REQUEST_STORAGE_READ_ACCESS_PERMISSION -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (GALLERY)
-                    pickFromGallery()
-            }
-            REQUEST_STORAGE_WRITE_ACCESS_PERMISSION ->
 
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    try {
-                        val packageManager = activity!!.packageManager
-                        if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-                            cameraIntent()
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+        if (requestCode == 900) {
+            if (checkCameraPermission()) {
+                val values = ContentValues()
+                values.put(MediaStore.Images.Media.TITLE, "New Picture")
+                values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera")
+                imageUri = activity!!.contentResolver.insert(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+                startActivityForResult(intent, BaseActivity.REQUEST_CAMERA)
 
-                }
-
-            REQUEST_CAMERA -> {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    cameraIntent()
-                } else {
-                    Toast.makeText(activity, "camera permission denied", Toast.LENGTH_LONG).show()
-                }
-            }
-
-            REQUEST_STORAGE_WRITE_ACCESS -> {
-                if (GALLERY)
-                    pickFromGallery()
             }
         }
+
+        if (requestCode == 89) {
+            if (checkWriteExternalPermission()) {
+                val photoLibraryIntent1 = Intent(Intent.ACTION_GET_CONTENT)
+                photoLibraryIntent1.type = "*/*"
+                startActivityForResult(Intent.createChooser(photoLibraryIntent1, "Select Picture"), SELECT_PICTURES)
+
+
+            }
+        }
+
+//        when (requestCode) {
+//
+//
+//            BaseActivity.REQUEST_STORAGE_READ_ACCESS_PERMISSION -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                if (GALLERY)
+//                    pickFromGallery()
+//            }
+//
+//            REQUEST_STORAGE_WRITE_ACCESS_PERMISSION ->
+//
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    try {
+//                        val packageManager = activity!!.packageManager
+//                        if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+//                            cameraIntent()
+//                        }
+//                    } catch (e: Exception) {
+//                        e.printStackTrace()
+//                    }
+//
+//                }
+//
+////            REQUEST_CAMERA -> {
+////                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+////                    cameraIntent()
+////                } else {
+////                    Toast.makeText(activity, "camera permission denied", Toast.LENGTH_LONG).show()
+////                }
+////            }
+//
+//            REQUEST_STORAGE_WRITE_ACCESS -> {
+//                if (GALLERY)
+//                    pickFromGallery()
+//            }
+//        }
 
     }
 
@@ -1249,23 +1478,23 @@ class AddPostFragment : Fragment(), AddNewHelper
 //                            recyclerItems.clear()
 //                             recyclerItems.add( data!!.data)
 //                        } else {
-                            if (youtubeField.text.toString().length > 0) {
-                                Toast.makeText(activity, "Please remove YouTube url first.", Toast.LENGTH_LONG).show()
+                        if (youtubeField.text.toString().length > 0) {
+                            Toast.makeText(activity, "Please remove YouTube url first.", Toast.LENGTH_LONG).show()
 
-                            } else {
-                                videoAttached = 1
-                                videoLayout.visibility = View.VISIBLE
-                                videoName.text = getFileName(uri)
-                                cancel.visibility = View.GONE
-                                youtubeField.visibility = View.GONE
-                                Glide.with(activity!!)
-                                        .load("")
-                                        .into(croppedImage)
-                                listFromCropper!!.clear()
-                                recyclerItems.clear()
-                                recyclerItems.add(data!!.data)
-                                Toast.makeText(activity, "Video is attached", Toast.LENGTH_LONG).show()
-                            }
+                        } else {
+                            videoAttached = 1
+                            videoLayout.visibility = View.VISIBLE
+                            videoName.text = getFileName(uri)
+                            cancel.visibility = View.GONE
+                            youtubeField.visibility = View.GONE
+                            Glide.with(activity!!)
+                                    .load("")
+                                    .into(croppedImage)
+                            listFromCropper!!.clear()
+                            recyclerItems.clear()
+                            recyclerItems.add(data!!.data)
+                            Toast.makeText(activity, "Video is attached", Toast.LENGTH_LONG).show()
+                        }
 //                        }
                     }
                 } else {
@@ -1356,11 +1585,11 @@ class AddPostFragment : Fragment(), AddNewHelper
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun uploadVideo(): String {
         try {
-            var ur:String=""
+            var ur: String = ""
             val uri = recyclerItems!!.get(0)
-            if (isGoogleDriveUri(uri)){
-                ur=GetGoogleDrivePath.getPath(activity!!,uri)
-            }else{
+            if (isGoogleDriveUri(uri)) {
+                ur = GetGoogleDrivePath.getPath(activity!!, uri)
+            } else {
                 ur = getRealPathFromURIForVideo(uri)
             }
             // val ur = uri.path
@@ -1411,7 +1640,7 @@ class AddPostFragment : Fragment(), AddNewHelper
     }
 
     override fun showEmptyPostMsg() {
-        Toast.makeText(activity!!, "Post is Empty", Toast.LENGTH_SHORT).show()
+        Toast.makeText(activity!!, "Select either Image/Video or provide some Description.", Toast.LENGTH_SHORT).show()
     }
 
     override fun getBusinessName(): String {
@@ -1469,15 +1698,15 @@ class AddPostFragment : Fragment(), AddNewHelper
         editText.setFocusable(false);
         editText.setFocusableInTouchMode(true);
         editText.setFocusable(true);
-        if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3" ||
-                Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "2") {
-            noSubLay.visibility = View.VISIBLE
-            mainLay.visibility = View.GONE
-
-        } else {
-            noSubLay.visibility = View.GONE
-            mainLay.visibility = View.VISIBLE
-        }
+//        if (Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "3" ||
+//                Constants.getPrefs(activity!!)!!.getString(Constants.USERTYPE, "") == "2") {
+//            noSubLay.visibility = View.VISIBLE
+//            mainLay.visibility = View.GONE
+//
+//        } else {
+        noSubLay.visibility = View.GONE
+        mainLay.visibility = View.VISIBLE
+//        }
         Constants.getBus().register(this)
     }
 
@@ -1496,6 +1725,7 @@ class AddPostFragment : Fragment(), AddNewHelper
         monthTime.text = "Time"
         selectCategory.text = "Choose a category"
         open = 0
+        flashHiddenLayout.visibility = View.GONE
         expandLayout.visibility = View.GONE
         nowCheck.visibility = View.GONE
         seText.visibility = View.GONE
@@ -1503,6 +1733,10 @@ class AddPostFragment : Fragment(), AddNewHelper
         dayLay.visibility = View.GONE
         monthLay.visibility = View.GONE
         specificDayLay.visibility = View.GONE
+        discountPrice.setText("")
+        retailPrice.setText("")
+        discountPercent.text = ""
+        automatedEmailText.setText("")
         clearPrefs()
         Constants.getPrefs(activity!!)!!.edit().remove(Constants.ADDPOST_CATEGORY).apply()
 
@@ -1554,6 +1788,11 @@ class AddPostFragment : Fragment(), AddNewHelper
         flashMax.setText("")
         flashPerPerson.text = ""
         flashselectDay.text = ""
+        discountPrice.setText("")
+        retailPrice.setText("")
+        discountPercent.text = ""
+        exclusiveCheckBox.isChecked = false
+        automatedEmailText.setText("")
         flashdayTime.text = "Time"
         flashHiddenLayout.visibility = View.GONE
         if (event.value.ftype.equals("1")) {
@@ -1782,5 +2021,59 @@ class AddPostFragment : Fragment(), AddNewHelper
         val imm = context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(activity.windowToken, 0)
     }
+
+    override fun getRetailPrice(): String {
+        return retailPrice.text.toString()
+    }
+
+    override fun getDiscountAmount(): String {
+        return discountPrice.text.toString()
+    }
+
+    override fun getDiscountPercentage(): String {
+        return discountPercent.text.toString().replace("%", "")
+    }
+
+    override fun getAutomatedEmailText(): String {
+        return automatedEmailText.text.toString().trim()
+    }
+
+    override fun getExclusiveCheckBoxStatus(): Boolean {
+        return exclusiveCheckBox.isChecked
+    }
+
+    override fun showErrorAlert(msg: String) {
+
+        highlighterLay.backgroundDrawable=resources.getDrawable(R.drawable.border_red)
+        val dialog = AlertDialog.Builder(activity!!)
+        dialog.setCancelable(false)
+        dialog.setTitle("Alert!")
+        dialog.setMessage(msg)
+        dialog.setPositiveButton("Ok", DialogInterface.OnClickListener { dialog, id ->
+            dialog.dismiss()
+        })
+        val alert = dialog.create()
+        alert.show()
+
+    }
+
+    fun showCamera() {
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.TITLE, "New Picture")
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera")
+        imageUri = activity!!.contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+        startActivityForResult(intent, BaseActivity.REQUEST_CAMERA)
+    }
+
+    fun showGallery() {
+        val photoLibraryIntent1 = Intent(Intent.ACTION_GET_CONTENT)
+        photoLibraryIntent1.type = "*/*"
+        startActivityForResult(Intent.createChooser(photoLibraryIntent1, "Select Picture"), SELECT_PICTURES)
+
+    }
+
 }
 

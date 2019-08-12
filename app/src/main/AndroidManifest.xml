@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.STORAGE"/>
+    <uses-permission android:name="android.permission.STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -28,15 +28,24 @@
 
     <application
         android:name=".AppClass"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:allowBackup="false"
-        tools:replace="android:allowBackup"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".ImagePreview"/>
+        android:theme="@style/AppTheme"
+        tools:replace="android:allowBackup">
+        <activity android:name=".AboutBusiness.BusinessDetails.ImageVideoPDF.ImagePDFVideoViewActivity"></activity>
+        <activity android:name=".Business.Profile.ViewImageActivity" />
+        <activity android:name=".Business.Profile.Subscription.SubscriptionDetailActivity" />
+        <activity android:name=".Business.Profile.AddImageVideo.HorzRecyclerAdapter" />
+        <activity android:name=".Business.Profile.AddImageVideo.ImageVideoActivity" />
+        <activity android:name=".Business.Profile.OpeiningHours.OpeningHourActivity" />
+        <activity android:name=".Business.Profile.BusinessDescription.BusinessDescriptionActivity" />
+        <activity android:name=".Town.MultiPatentCategories.MultipleParentCategories" />
+        <activity android:name=".Town.MultipleTown.MultipleTownActivity" />
+        <activity android:name=".ImagePreview" />
         <activity android:name=".UpdatePassword.UpdatePasswordActivity" />
         <activity
             android:name=".SplashActivity"
@@ -132,8 +141,9 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
+
         <receiver
             android:name="com.appsflyer.SingleInstallBroadcastReceiver"
             android:exported="true">
@@ -141,6 +151,11 @@
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".sdk.JivoActivity"
+            android:label=""
+            android:parentActivityName=".PrivacyPolicy.PrivacyPolicyActivity" />
     </application>
 
 </manifest>

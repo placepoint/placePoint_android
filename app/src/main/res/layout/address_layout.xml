@@ -11,7 +11,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:text="Enter Address"
         android:textColor="@color/colorText"
         android:textSize="17sp"
@@ -35,7 +35,7 @@
             android:id="@+id/pickAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/regular"
+            android:fontFamily="@font/opensans_regular"
             android:text="@string/pick_address_from_maps"
             android:textColor="@color/colorText"
             android:textSize="15sp" />
@@ -50,7 +50,7 @@
     </RelativeLayout>
 
     <TextView
-        android:fontFamily="@font/regular"
+        android:fontFamily="@font/opensans_regular"
 
         android:id="@+id/addresss"
         android:layout_width="200dp"

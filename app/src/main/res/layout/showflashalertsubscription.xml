@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:padding="16dp"
+            android:text="Restricted Feature"
+            android:textSize="18dp"
+            android:textColor="@color/primary_text"
+            android:fontFamily="@font/opensans_bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        <LinearLayout
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textSize="15dp"
+                android:visibility="gone"
+                android:text="Restricted Feature"
+                android:id="@+id/text"
+                android:fontFamily="@font/opensans_bold"
+                android:textColor="@color/primary_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textSize="12dp"
+                android:id="@+id/textsub"
+                android:text="Free users do not have access to the following features:
+\n1 - Create Posters (Web Only)
+\n2 - Schedule Posts
+\n3 - Flash Deals
+\n4 - Featured Listings on Homepage
+\n5 - Prominent placement in category view
+\n6 - Competitions (coming soon)
+\n7 - Featured Business of the week promotion
+\n8 - Unlimited Relevant Categories (Restricted to 2 max)
+
+\n\nTo unlock these features click upgrade."
+                android:fontFamily="@font/opensans_regular"
+                android:textColor="@color/primary_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:gravity="right"
+            android:padding="@dimen/_8dp"
+            android:layout_marginTop="@dimen/_8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/upgrade"
+                android:layout_width="80dp"
+                android:text="Upgrade"
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_bold"
+                android:gravity="center"
+                android:background="@color/light_blue"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="16dp"
+                android:layout_height="40dp" />
+            <TextView
+                android:id="@+id/ok"
+                android:layout_width="80dp"
+                android:text="@string/cancel"
+                android:textColor="@color/white"
+                android:fontFamily="@font/opensans_bold"
+                android:gravity="center"
+                android:background="@color/light_blue"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="16dp"
+                android:layout_height="40dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

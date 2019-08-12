@@ -48,9 +48,9 @@ class SubscriptionActivity : AppCompatActivity() {
     private fun setViewPager() {
         var userType = Constants.getPrefs(this)!!.getString(Constants.USERTYPE, "")
         var count = 2
-        if (userType == "2") {
-            count = 1
-        }
+//        if (userType == "2") {
+//            count = 1
+//        }
         pager = findViewById(R.id.photos_viewpager)
         tabLayout = findViewById(R.id.tabLayout)
         val adapter = ViewPagerAdapter(supportFragmentManager!!, count)

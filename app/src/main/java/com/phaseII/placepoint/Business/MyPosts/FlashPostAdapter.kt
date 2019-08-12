@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Paint
 import android.media.MediaPlayer
 import android.net.Uri
@@ -28,27 +29,37 @@ import com.phaseII.placepoint.ConstantClass.MySpannable
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.Home.ModelHome
 import com.phaseII.placepoint.R
+import com.phaseII.placepoint.Service
 import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerInitListener
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerListener
 import kotlinx.android.synthetic.main.flashpostadapter_item.view.*
+import okhttp3.ResponseBody
+import org.json.JSONException
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.IOException
+import java.net.URLDecoder
 import java.text.SimpleDateFormat
 import java.util.regex.Pattern
 
-class FlashPostAdapter(private val context: Context, private val list: ArrayList<ModelHome>) : RecyclerView.Adapter<FlashPostAdapter.ViewHolder>() {
+class FlashPostAdapter(private val context: Context, private val list: ArrayList<ModelHome>, var flashPostFragment: FlashPostFragment) : RecyclerView.Adapter<FlashPostAdapter.ViewHolder>() {
 
     var release = 0
     var state = 0
     var myPlay = 0
-    var from="none"
-    var pos=0;
+    var from = "none"
+    var pos = 0;
     var youtuber: YouTubePlayer? = null
-    private var stopPosition: Int=0
-    private var youPause: Int=0;
+    private var stopPosition: Int = 0
+    private var youPause: Int = 0;
     var pause = 0
     var pos2 = -99
     private var inflater = LayoutInflater.from(context)
+    var moreless = flashPostFragment as ShowViewMoreLess
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(inflater.inflate(R.layout.flashpostadapter_item, parent, false))
     }
@@ -94,7 +105,35 @@ class FlashPostAdapter(private val context: Context, private val list: ArrayList
             intent.putExtra("subscriptionType", Constants.getPrefs(context)!!.getString(Constants.USERTYPE, ""))
             context.startActivity(intent)
         }
+        holder.itemView.infoLay.setOnClickListener {
+            val intent = Intent(context, AboutBusinessActivity::class.java)
+            intent.putExtra("busId", modelData.bussness_id)
+            intent.putExtra("showallpost", "no")
+            intent.putExtra("from", "timelineadapter")
+            intent.putExtra("busName", modelData.business_name)
+            intent.putExtra("subscriptionType", Constants.getPrefs(context)!!.getString(Constants.USERTYPE, ""))
+            context.startActivity(intent)
+        }
+        holder.itemView.bump1.visibility=View.VISIBLE
+        holder.itemView.bump1.setOnClickListener {
+            hitService(modelData.id)
+        }
+        holder.itemView.shareFaceBook1.setOnClickListener {
+            setClipboard(context, list[position].description, list[position])
 
+        }
+        var retail:Double=list[position].retail_price.toDouble()
+        if (retail>0) {
+            holder.itemView.priceLay.visibility = View.VISIBLE
+
+            holder.itemView.retailPrice.text ="\u20ac"+ list[position].retail_price
+            holder.itemView.retailPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            holder.itemView.discount.text = "\u20ac"+list[position].sale_price
+            holder.itemView.percentage.text = ""+ list[position].discount_price.toDouble().toInt() + "% off"
+        }else{
+            holder.itemView.priceLay.visibility = View.GONE
+
+        }
         holder.itemView.flashImage.setOnClickListener {
             val intent = Intent(context, FlashDetailActivity::class.java)
             intent.putExtra("busId", modelData.id)
@@ -105,7 +144,20 @@ class FlashPostAdapter(private val context: Context, private val list: ArrayList
             context.startActivity(intent)
         }
 
-        holder.itemView.postText.text = modelData.description
+        try {
+            holder.itemView.postText.text = URLDecoder.decode(modelData.description, "UTF-8")
+        } catch (e: Exception) {
+            holder.itemView.postText.text = modelData.description
+        }
+//        holder.itemView.postText.addShowMoreText("show more")
+//        holder.itemView.postText.addShowLessText("show less")
+//        holder.itemView.postText.setShowMoreColor(Color.parseColor("#0000EE")) // or other color
+//        holder.itemView.postText.setShowLessTextColor(Color.parseColor("#0000EE")) // or other color
+//        holder.itemView.postText.setShowingLine(6)
+//        //Constants.setViewMoreLessFunctionality(holder.itemView.postText)
+        holder.itemView.postText.setOnClickListener {
+            moreless.showMoreLess(position)
+        }
         try {
             if (modelData.video_link.startsWith("http")) {
                 holder.itemView.name.videoUrl.visibility = View.VISIBLE
@@ -138,7 +190,7 @@ class FlashPostAdapter(private val context: Context, private val list: ArrayList
 
                 var thumb: Long = (position * 1000).toLong()
                 var options = RequestOptions().frame(thumb);
-              //  Glide.with(context).load(modelData.video_link).apply(options).into(holder.itemView.thumbNail);
+                //  Glide.with(context).load(modelData.video_link).apply(options).into(holder.itemView.thumbNail);
                 Glide.with(context).load(modelData.video_link).into(holder.itemView.thumbNail);
 //                Glide.with(context)
 //                        .load(ThumbnailUtils.createVideoThumbnail(modelData.video_link, MediaStore.Video.Thumbnails.MINI_KIND))
@@ -370,6 +422,46 @@ class FlashPostAdapter(private val context: Context, private val list: ArrayList
         }
     }
 
+
+        private fun hitService(post_id: String) {
+            var auth_code = Constants.getPrefs(context)?.getString(Constants.AUTH_CODE, "")!!
+            val retrofit = Constants.getWebClient()
+            val service = retrofit!!.create(Service::class.java)
+            val call: Call<ResponseBody> = service.bumpPost(auth_code, post_id)
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    //  view.hideLoader()
+                    if (response.isSuccessful) {
+                        try {
+                            val res = response.body()!!.string()
+                            val `object` = JSONObject(res)
+                            val status = `object`.optString("status")
+                            if (status.equals("true", ignoreCase = true)) {
+                                Toast.makeText(context, `object`.optString("msg"), Toast.LENGTH_LONG).show()
+
+                            } else {
+
+                                Toast.makeText(context, "Unable to bump the post.", Toast.LENGTH_LONG).show()
+                            }
+
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                        }
+
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+//                view.hideLoader()
+//                view.showNetworkError(R.string.network_error)
+                }
+            })
+        }
+
+
+
     public fun getVideoId(videoUrl: String): String {
         var reg = "(?:youtube(?:-nocookie)?\\.com\\/(?:[^\\/\\n\\s]+\\/\\S+\\/|(?:v|e(?:mbed)?)\\/|\\S*?[?&]v=)|youtu\\.be\\/)([a-zA-Z0-9_-]{11})"
         var pattern = Pattern.compile(reg, Pattern.CASE_INSENSITIVE)
@@ -574,5 +666,8 @@ class FlashPostAdapter(private val context: Context, private val list: ArrayList
         return ssb
     }
 
+    interface ShowViewMoreLess {
+        fun showMoreLess(postion: Int)
+    }
 }
 

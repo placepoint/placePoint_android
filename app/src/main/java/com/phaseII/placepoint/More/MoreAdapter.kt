@@ -22,7 +22,9 @@ import com.phaseII.placepoint.DashBoard.DashBoardActivity
 import com.phaseII.placepoint.Home.ModelClainService
 import com.phaseII.placepoint.PrivacyPolicy.PrivacyPolicyActivity
 import com.phaseII.placepoint.Service
+import com.phaseII.placepoint.Town.MultipleTown.MultipleTownActivity
 import com.phaseII.placepoint.UpdatePassword.UpdatePasswordActivity
+import com.phaseII.placepoint.sdk.JivoActivity
 import okhttp3.ResponseBody
 import org.json.JSONException
 import org.json.JSONObject
@@ -74,6 +76,18 @@ class MoreAdapter(var context: Context, var items: ArrayList<String>) : Recycler
                     businessFragment.openBusinessFragment()
                 }
                 if (position == 5) {
+                    val intent = Intent(context, JivoActivity::class.java)
+                    context.startActivity(intent)
+
+                }
+                if (position == 6) {
+                    Constants.getPrefs(context)?.edit()?.putString("changeMultiTown", "Town")?.apply()
+
+                    val intent = Intent(context, MultipleTownActivity::class.java)
+                    context.startActivity(intent)
+
+                }
+                if (position == 7) {
 
                     val cat = Constants.getPrefs(context)!!.getString(Constants.CATEGORY_IDS, "")
                     val townId = Constants.getPrefs(context)!!.getString(Constants.TOWN_ID, "")
@@ -126,6 +140,16 @@ class MoreAdapter(var context: Context, var items: ArrayList<String>) : Recycler
                 if (position == 3) {
                     Constants.getPrefs(context)?.edit()?.putString("showbb", "yes")?.apply()
                     businessFragment.openBusinessFragment()
+                }
+                if (position == 4) {
+
+                    val intent = Intent(context, JivoActivity::class.java)
+                    context.startActivity(intent)
+                }
+                if (position == 5) {
+                    Constants.getPrefs(context)?.edit()?.putString("changeMultiTown", "Town")?.apply()
+                    val intent = Intent(context, MultipleTownActivity::class.java)
+                    context.startActivity(intent)
                 }
             }
         }

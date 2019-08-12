@@ -8,11 +8,10 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/mainLay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="8dp">
+        android:layout_height="match_parent">
 
         <TextView
-            android:fontFamily="@font/bold"
+            android:fontFamily="@font/opensans_bold"
             android:visibility="gone"
             android:id="@+id/noPosts"
             android:layout_width="0dp"
@@ -56,8 +55,7 @@
         <ImageView
             android:id="@+id/imageView4"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="16dp"
+            android:layout_height="70dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -66,33 +64,52 @@
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/bold"
-            android:text="Dear User"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/opensans_bold"
+            android:text="Restricted Feature"
             android:textColor="@color/colorPrimary"
-            android:textSize="22dp"
+            android:textSize="20dp"
             app:layout_constraintStart_toStartOf="@+id/imageView4"
             app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/upgrade"
+            app:layout_constraintEnd_toEndOf="@+id/imageView4"
+            app:layout_constraintStart_toStartOf="@+id/textView4"
+            app:layout_constraintTop_toBottomOf="@+id/textView4">
         <TextView
             android:id="@+id/textView5"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/regular"
-            android:text="This is a Premium feature, click here to upgrade."
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/opensans_regular"
+            android:text="Free users do not have access to the following features:
+\n1 - Create Posters (Web Only)
+\n2 - Schedule Posts
+\n3 - Flash Deals
+\n4 - Featured Listings on Homepage
+\n5 - Prominent placement in category view
+\n6 - Competitions (coming soon)
+\n7 - Featured Business of the week promotion
+\n8 - Unlimited Relevant Categories (Restricted to 2 max)
+
+\n\nTo unlock these features click upgrade."
+
             android:textColor="@color/black"
-            android:textSize="18dp"
-            app:layout_constraintEnd_toEndOf="@+id/imageView4"
-            app:layout_constraintStart_toStartOf="@+id/textView4"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
-        <Button
+            android:textSize="14dp"
+             />
+        </ScrollView>
+   <Button
             android:id="@+id/upgrade"
             android:layout_width="0dp"
             android:gravity="center"
             android:textColor="@color/white"
             android:text="Upgrade"
             android:textAllCaps="false"
-            android:fontFamily="@font/bold"
+            android:fontFamily="@font/opensans_bold"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_theme_shape"
             app:layout_constraintBottom_toBottomOf="parent"

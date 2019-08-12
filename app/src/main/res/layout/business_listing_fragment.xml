@@ -22,7 +22,7 @@
     android:background="@color/background">
 
     <TextView
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:id="@+id/noData"
         android:visibility="gone"
         android:layout_width="0dp"

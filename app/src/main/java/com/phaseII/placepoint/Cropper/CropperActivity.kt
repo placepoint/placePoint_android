@@ -96,6 +96,7 @@ class CropperActivity : BaseActivity(), CropperHelper, ImageAdapter.sendDataList
         done.setOnClickListener {
 
             if (!image_profile.isChangingScale) {
+                try{
                 val b = image_profile.croppedImage
                 if (b != null) {
                     try {
@@ -110,6 +111,10 @@ class CropperActivity : BaseActivity(), CropperHelper, ImageAdapter.sendDataList
                     }
                 } else {
                     Toast.makeText(this@CropperActivity, R.string.fail_to_crop, Toast.LENGTH_SHORT).show();
+                }
+                }catch (e:Exception){
+                    Toast.makeText(this@CropperActivity, R.string.fail_to_crop, Toast.LENGTH_SHORT).show();
+                    e.printStackTrace()
                 }
             }
             val intent = Intent()

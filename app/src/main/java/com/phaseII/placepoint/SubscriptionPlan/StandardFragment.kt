@@ -25,13 +25,13 @@ class StandardFragment : Fragment() {
         recyclerView2=view.findViewById(R.id.recyclerView2)
         progressBar=view.findViewById(R.id.progressBar4)
         upgradeButton=view.findViewById(R.id.upgradeButton)
-        list.add(".  Allows you to add all business \n" +
-                "\tdetails including opening hours.")
-        list.add(".  Business Profile Page allowed.")
-        list.add(".  Unlimited Categories.")
-        list.add(".  No live feed.")
-        list.add(".  No scheduled posts allowed.")
-        list.add(".  Positioned in middle of listings.")
+        list.add("Features:")
+        list.add(" - Limited to 1 flash deal per month")
+        list.add(" - No Business of the week promo")
+        list.add(" - Not a featured business on homepage")
+        list.add(" - Below Pro Businesses on Listings")
+
+
         adapter = PlanFeaturesAdapter(activity!!, list)
         val linear = LinearLayoutManager(activity!!)
         recyclerView2.layoutManager = linear

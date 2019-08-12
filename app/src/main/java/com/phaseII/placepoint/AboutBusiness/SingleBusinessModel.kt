@@ -13,6 +13,7 @@ class SingleBusinessModel {
     var town_id = ""
     var category_id = ""
     var address = ""
+    var website = ""
     var email = ""
     var lat = ""
     var long = ""

@@ -3,71 +3,75 @@ package com.phaseII.placepoint.Business.Profile
 import android.net.Uri
 
 interface BusinessProfileHelper {
-    fun setRadioGroupListener()
-    fun showOpenStartTimePicker(day: String)
-    fun setAdapterForCroppedImages(list: ArrayList<Uri>?, croppedImages: java.util.ArrayList<Uri>, preLoadImages: MutableList<String>)
-    fun askForGPS()
-    fun showOpenEndTimePicker()
-    fun showCloseEndTimePicker()
-    fun showCloseStartTimePicker()
-    fun openCropper(list: java.util.ArrayList<Uri>, s: String)
-    fun openCamera()
-    fun openGallery()
-    fun requestAllPermissions()
-    fun setInitialData(timeList1: ArrayList<ModelTime>)
-    fun handleClicks()
+//    fun setRadioGroupListener()
+//    fun showOpenStartTimePicker(day: String)
+//    fun setAdapterForCroppedImages(list: ArrayList<Uri>?, croppedImages: java.util.ArrayList<Uri>, preLoadImages: MutableList<String>)
+//    fun askForGPS()
+//    fun showOpenEndTimePicker()
+//    fun showCloseEndTimePicker()
+//    fun showCloseStartTimePicker()
+//    fun openCropper(list: java.util.ArrayList<Uri>, s: String)
+//    fun openCamera()
+//    fun openGallery()
+//    fun requestAllPermissions()
+//    fun setInitialData(timeList1: ArrayList<ModelTime>)
+//    fun handleClicks()
     fun selectTownPopUp()
     fun selectCatPopUp()
-    fun getAuthCode(): String
+   fun getAuthCode(): String
     fun getTownId(): String
-    fun getCategoryId(): String
-    fun getVideoLink(): String
+   fun getCategoryId(): String
+   fun getVideoLink(): String
     fun getAddress(): String
     fun getContactNo(): String
-    fun getOpeningHours(): String
-    fun getClosingHours(): String
-    fun showLoader()
-    fun hideLoader()
+   fun getOpeningHours(): String
+//    fun getClosingHours(): String
+   fun showLoader()
+   fun hideLoader()
     fun showNetworkError(resId: Int)
-    fun getMultiPartFiles(): ArrayList<Uri>
+   fun getMultiPartFiles(): ArrayList<Uri>
     fun showMessage(msg: String?, busId: String)
-    fun getCatAndLocData()
-    fun showNoImageMessage(s: String)
-    fun setPreFilledData()
+  fun getCatAndLocData()
+//    fun showNoImageMessage(s: String)
+//    fun setPreFilledData()
     fun getLatitude(): String
     fun getLongitude(): String
-    fun saveBusId(busId: String?)
+   fun saveBusId(busId: String?)
     fun setTownError(s: String)
-    fun setCatError(s: String)
+  fun setCatError(s: String)
     fun setContactError(s: String)
     fun setAddressError(s: String)
-    fun getAuthCodeConstant(): String?
-    fun getTownIdConstant(): String?
-    fun getCatId(): String?
+//    fun getAuthCodeConstant(): String?
+//    fun getTownIdConstant(): String?
+//    fun getCatId(): String?
     fun setBusinessPreFilledData(data: String, end_time: String, user_type: String, bid: String)
     fun setSingleBusinessPreFilledData()
-    fun getBusId(): String
+   fun getBusId(): String
     fun getPreFillTownId():String
     fun getPreFillCatId():String
     fun getOldMultiPartFiles(): String
     fun saveBusinessName()
     fun getBusName(): String
-    fun getTimeArray(): ArrayList<ModelTime>
-    fun showMessageErr(s: String)
+   fun getTimeArray(): ArrayList<ModelTime>
+   fun showMessageErr(s: String)
     fun setDescError(s: String)
-    fun getBusDesc(): String
-    fun setCoverImage()
-    fun getCoverImage(): Uri?
+   fun getBusDesc(): String
+//    fun setCoverImage()
+   fun getCoverImage(): Uri?
     fun getCoverImageString(): String
-    fun getOldCoverImage(): String
-    fun saveMainCat(category_id: String)
+//    fun getOldCoverImage(): String
+   fun saveMainCat(category_id: String)
     fun getEmail(): String
     fun coverImageIssue(s: String)
-    fun getFromModel(): String
-    fun logOut()
-    fun setClickFalse()
-    fun setClickTrue()
-    fun checkingAllDaysValidation(): Boolean
-    fun getUserType(): String
+   fun getFromModel(): String
+   fun logOut()
+//    fun setClickFalse()
+   fun setClickTrue()
+   fun checkingAllDaysValidation(): Boolean
+   fun getUserType(): String
+    fun getPath(uri: Uri): String?
+    fun getPathFromURI(path: Uri): String?
+    fun getPDFPath(uri: Uri): String?
+    fun getwebsiteUrl(): String
 
 }

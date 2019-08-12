@@ -20,7 +20,7 @@
         app:srcCompat="@mipmap/ic_logo" />
 
     <TextView
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:id="@+id/textItem"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
         tools:ignore="VectorDrawableCompat" />
 
     <TextView
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:id="@+id/textView6"
         android:layout_width="0dp"
         android:layout_height="1dp"

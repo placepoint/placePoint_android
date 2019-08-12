@@ -4,13 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:focusableInTouchMode="true"
+    android:clickable="true"
     android:layout_height="wrap_content">
 
 
     <TextView
-        android:fontFamily="@font/bold"
+        android:fontFamily="@font/opensans_bold"
         android:id="@+id/serviceText"
         android:layout_width="0dp"
+        android:focusableInTouchMode="false"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
@@ -25,6 +28,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <CheckBox
+        android:focusableInTouchMode="false"
         android:id="@+id/radioImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,6 +43,7 @@
         tools:ignore="VectorDrawableCompat" />
 
     <ImageView
+        android:focusableInTouchMode="false"
         android:id="@+id/cat_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
