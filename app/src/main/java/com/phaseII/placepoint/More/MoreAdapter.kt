@@ -62,6 +62,7 @@ class MoreAdapter(var context: Context, var items: ArrayList<String>) : Recycler
                     val intent = Intent(context, UpdatePasswordActivity::class.java)
                     context.startActivity(intent)
                 }
+
                 if (position == 2) {
 
                 }
