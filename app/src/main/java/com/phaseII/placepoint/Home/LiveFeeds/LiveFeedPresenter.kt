@@ -107,7 +107,7 @@ class LiveFeedPresenter(val view: LiveFeedHelper) {
                         if (status == "true") {
                             val claimed = `object`.optString("claimed")
                             // Constants.getBus().post(ClaimRedeem(claimed))
-                            view.updateModeldata(position,claimed)
+                            view.updateModelData(position,claimed)
                             view.showToast(`object`.optString("msg"))
                         } else {
                             view.showToast(`object`.optString("msg"))

@@ -230,7 +230,7 @@ class MyLiveFeedFragment : Fragment(), LiveFeedHelper, MyLiveFeedAdapter.ShowVie
 
     }
 
-    override fun updateModeldata(position: String, claimed: String) {
+    override fun updateModelData(position: String, claimed: String) {
 
         try {
             val rr = list[position.toInt()]
