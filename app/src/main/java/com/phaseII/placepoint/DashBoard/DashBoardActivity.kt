@@ -487,7 +487,7 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
                     showMoreFragment()
                 } else if (Constants.getPrefs(this)!!.getString("showbb", "") == "back") {
                     Constants.getPrefs(this)?.edit()?.putString("showbb", "no")?.apply()
-                    Constants.getPrefs(this)?.edit()?.putString("comingFrom", "")?.apply()
+                  //  Constants.getPrefs(this)?.edit()?.putString("comingFrom", "")?.apply()
                     addHomeFragment()
                 } else {
                     finish()

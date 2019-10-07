@@ -72,7 +72,7 @@ class LiveFeedPresenter(val view: LiveFeedHelper) {
                             view.setDataToAdapter("", category.toString())
                         }
 
-                    } catch (e: IOException) {
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     } catch (e: JSONException) {
                         e.printStackTrace()

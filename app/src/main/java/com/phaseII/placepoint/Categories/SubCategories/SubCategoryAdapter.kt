@@ -64,7 +64,7 @@ class SubCategoryAdapter(var context: Context, var main: ArrayList<ModelCategory
                     Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_NAME, townName).apply()
                 } else {
                     Constants.getPrefs(context)!!.edit().putString("firstTime", "sub").apply()
-                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS, maincat).apply()
+                    Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDS,  main[position].id).apply()
                     Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_IDSUB, main[position].id).apply()
                     Constants.getPrefs(context)!!.edit().putString(Constants.CATEGORY_NAMEO, main[position].name).apply()
                     Constants.getPrefs(context)!!.edit().putString(Constants.TOWN_ID, savetownId).apply()
