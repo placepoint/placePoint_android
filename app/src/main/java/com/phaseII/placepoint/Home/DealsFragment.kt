@@ -335,7 +335,8 @@ class DealsFragment : Fragment(), FlashContractHome.View, FlashHomeAdapter.Check
         }
         back.setOnClickListener {
             try {
-                Constants.getBus().post(DoBackActionInDashBoard("value"))
+//                Constants.getBus().post(DoBackActionInDashBoard("valueE"))
+                popbl.showBacdk()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -399,15 +400,22 @@ class DealsFragment : Fragment(), FlashContractHome.View, FlashHomeAdapter.Check
                 tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#4F5D81"))
             } else {
 
+
                 viewPager.adapter = ViewPagerAdapter(fragmentManager!!, counter)
                 tabLayout.setupWithViewPager(viewPager)
                 tabLayout.getTabAt(0)!!.text = "Business listings"
                 tabLayout.getTabAt(1)!!.text = "Live feed"
                 tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#34b0f2"))
 
-
+                var cc=Constants.getPrefs(context!!)!!.getString("switchTab", "no")
+                if(cc=="yes"){
+                    //Constants.getPrefs(context!!)!!.edit().putString("switchTab", "").apply()
+                    tabLayout.getTabAt(1)!!.select()
+                    viewPager.setCurrentItem(1)
+                }
             }
         } else {
+
             viewPager.adapter = ViewPagerAdapter(fragmentManager!!, counter)
             tabLayout.setupWithViewPager(viewPager)
             tabLayout.getTabAt(0)!!.text = "Business listings"
@@ -566,6 +574,7 @@ class DealsFragment : Fragment(), FlashContractHome.View, FlashHomeAdapter.Check
 
     interface PopupShow {
         fun showPopUpBL()
+        fun showBacdk()
     }
 
     override fun showProgress() {
@@ -630,4 +639,6 @@ class DealsFragment : Fragment(), FlashContractHome.View, FlashHomeAdapter.Check
 
         flashPostList.scrollToPosition(position)
     }
+
+
 }

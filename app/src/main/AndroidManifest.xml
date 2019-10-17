@@ -36,7 +36,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".AboutBusiness.BusinessDetails.ImageVideoPDF.ImagePDFVideoViewActivity"></activity>
+        <activity android:name=".Home.LiveFeeds.MenuActivity"></activity>
+        <activity android:name=".AboutBusiness.BusinessDetails.ImageVideoPDF.ImagePDFVideoViewActivity" />
         <activity android:name=".Business.Profile.ViewImageActivity" />
         <activity android:name=".Business.Profile.Subscription.SubscriptionDetailActivity" />
         <activity android:name=".Business.Profile.AddImageVideo.HorzRecyclerAdapter" />

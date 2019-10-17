@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 
-class LiveFeedAdapter(private val context: Context, private val list: ArrayList<ModelHome>,var  liveFeedFragment: LiveFeedFragment) :
+class LiveFeedAdapter(private val context: Context, private val list: ArrayList<ModelHome>, var liveFeedFragment: LiveFeedFragment) :
         RecyclerView.Adapter<LiveFeedAdapter.ViewHolder>(), LifecycleObserver {
 
     var pos = 0;
@@ -66,7 +66,7 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
     private var clicked: Int = 0;
     var pause = 0
     var myView = 0
-    var moreless=liveFeedFragment as ShowViewMoreLess
+    var moreless = liveFeedFragment as ShowViewMoreLess
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(context)
         return ViewHolder(inflater.inflate(R.layout.livefeed_adapter, parent, false))
@@ -88,8 +88,8 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-       // modelData = list[position]
-        holder.itemView.imagesLayout.visibility=View.GONE
+        // modelData = list[position]
+        holder.itemView.imagesLayout.visibility = View.GONE
         pos = position
         if (Constants.getPrefs(context)!!.getString(Constants.EMAIL, "").equals("help@placepoint.ie")) {
             holder.bump1.visibility = View.VISIBLE
@@ -99,18 +99,26 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
         holder.bump1.setOnClickListener {
             hitService(list[position].id)
         }
-        var retail:Double=list[position].retail_price.toDouble()
-        if (retail>0) {
+
+        holder.itemView.menu.setOnClickListener {
+
+            val intent = Intent(context, MenuActivity::class.java)
+            intent.putExtra("menuImages",list[position].menu_images)
+            context.startActivity(intent)
+
+        }
+        var retail: Double = list[position].retail_price.toDouble()
+        if (retail > 0) {
             holder.itemView.retailPrice.visibility = View.VISIBLE
             holder.itemView.discount.visibility = View.VISIBLE
             holder.itemView.retailPrice.text = list[position].retail_price
             holder.itemView.retailPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
             holder.itemView.discount.text = list[position].sale_price + "(" + list[position].discount_price + "% off)"
-        }else{
+        } else {
             holder.itemView.retailPrice.visibility = View.GONE
             holder.itemView.discount.visibility = View.GONE
         }
-        holder.itemView.townName.visibility=View.GONE
+        holder.itemView.townName.visibility = View.GONE
 //        holder.itemView.youtube_view.initialize(YouTubePlayerInitListener {
 //            it.addListener(object : AbstractYouTubePlayerListener(), com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerListener {
 //                override fun onApiChange() {
@@ -163,9 +171,9 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
 
         if (list[position].created_by == "1") {
             holder.itemView.name.text = list[position].business_name
-            holder.itemView.shared.visibility=View.GONE
+            holder.itemView.shared.visibility = View.GONE
         } else {
-            holder.itemView.shared.visibility=View.VISIBLE
+            holder.itemView.shared.visibility = View.VISIBLE
             holder.itemView.name.text = list[position].business_name
 //            var text2 = "(shared)"
 //            var span1 = SpannableString(list[position].business_name);
@@ -178,13 +186,13 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
 //            var finalText = TextUtils.concat(span1, " ", span2)
 //            holder.itemView.name.text = finalText
         }
-        try{
+        try {
             holder.itemView.postText.text = URLDecoder.decode(list[position].description, "UTF-8")
-        }catch (e:Exception){
+        } catch (e: Exception) {
             holder.itemView.postText.text = list[position].description
         }
         //Constants.setViewMoreLessFunctionality(holder.itemView.postText)
-        holder.itemView.postText.setOnClickListener{
+        holder.itemView.postText.setOnClickListener {
             moreless.showMoreLess(position)
         }
         Linkify.addLinks(holder.itemView.postText, Linkify.WEB_URLS)
@@ -226,17 +234,19 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
                 intent.putExtra("from", "homeadapter")
                 intent.putExtra("busName", list[position].business_name)
                 intent.putExtra("subscriptionType", list[position].user_type)
-                intent.putExtra("show","hideTaxi")
+                intent.putExtra("show", "hideTaxi")
                 context!!.startActivity(intent)
             }
         }
         val click = Constants.getPrefs(context!!)!!.getString(Constants.STOPCLICK, "")
         if (click == "no") {
-            holder.itemView.infoLay.visibility=View.VISIBLE
-        }else{
-            holder.itemView.infoLay.visibility=View.INVISIBLE
+            holder.itemView.infoLay.visibility = View.VISIBLE
+            holder.itemView.menu.visibility = View.VISIBLE
+        } else {
+            holder.itemView.infoLay.visibility = View.INVISIBLE
+            holder.itemView.menu.visibility = View.INVISIBLE
         }
-      holder.itemView.infoLay.setOnClickListener {
+        holder.itemView.infoLay.setOnClickListener {
 
             var townName = Constants.getPrefs(context)!!.getString(Constants.TOWN_NAME, "")
             var logEventN = townName + "-" + Constants.getPrefs(context)!!.getString(Constants.CATEGORY_NAMEO, "") + " - " + list[position].business_name;
@@ -256,7 +266,7 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
                 intent.putExtra("from", "homeadapter")
                 intent.putExtra("busName", list[position].business_name)
                 intent.putExtra("subscriptionType", list[position].user_type)
-                intent.putExtra("show","hideTaxi")
+                intent.putExtra("show", "hideTaxi")
                 context!!.startActivity(intent)
             }
         }
@@ -802,11 +812,11 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
         val mSpinner = mAlertDialog.findViewById<Spinner>(R.id.offerClaimed)
         //--------------max no of claims per person spinner-------------------------------------
         val array = ArrayList<String>()
-        for (i in 1 until modelData.per_person_redemption.toInt()+1) {
+        for (i in 1 until modelData.per_person_redemption.toInt() + 1) {
             array.add("" + i)
         }
         val adapter = ArrayAdapter<String>(
-                context, R.layout.simple_spinner_item,array)
+                context, R.layout.simple_spinner_item, array)
         adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         mSpinner!!.adapter = adapter
         mSpinner.setSelection(0)
@@ -976,7 +986,8 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
         return ssb
 
     }
-    interface ShowViewMoreLess{
-        fun showMoreLess(postion:Int)
+
+    interface ShowViewMoreLess {
+        fun showMoreLess(postion: Int)
     }
 }

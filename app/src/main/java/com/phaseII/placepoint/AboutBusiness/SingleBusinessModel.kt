@@ -24,5 +24,6 @@ class SingleBusinessModel {
     var description=""
     var cover_image=""
     var image_url: Array<String> = arrayOf()
+    var menu_images: Array<String> = arrayOf()
 
 }

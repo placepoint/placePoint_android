@@ -44,6 +44,7 @@ import com.phaseII.placepoint.ConstantClass.GpsTracker
 import com.phaseII.placepoint.ConstantClass.Utils
 import com.phaseII.placepoint.Constants
 import com.phaseII.placepoint.Home.BusinessListing.ModelBusiness
+import com.phaseII.placepoint.Home.ModelHome
 import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
 
 import com.phaseII.placepoint.R
@@ -68,6 +69,7 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     private lateinit var long: String
     lateinit var view_pager_indicator: ViewPagerIndicator
     lateinit var horz_recycler: RecyclerView
+    lateinit var menu_recycler: RecyclerView
     private lateinit var mLocationRequest: LocationRequest
     private lateinit var result: PendingResult<LocationSettingsResult>
     private val requestCode: Int = 1
@@ -97,14 +99,18 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     private lateinit var taxiImage: ImageView
     private lateinit var callImage: ImageView
     private lateinit var more: TextView
+    private lateinit var menuMore: TextView
     private lateinit var descLayout: RelativeLayout
     private lateinit var label1: TextView
     private lateinit var label33: TextView
+    private lateinit var label333: TextView
     private lateinit var photoHeading: LinearLayout
+    private lateinit var menuHeading: LinearLayout
     private lateinit var openCloseLay: LinearLayout
     private lateinit var openStatusAt: TextView
     private lateinit var constraintLayout2: ConstraintLayout
     private lateinit var model1: ModelBusiness
+    private var modelHome = ModelHome()
     //  var busId: String = ""
     var cat_list: ArrayList<ModelCategoryData> = arrayListOf()
     private var modelBusiness: ModelBusiness = ModelBusiness()
@@ -115,6 +121,7 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     private val resultList = ArrayList<ResultModel>()
     lateinit var showHide: String
     private lateinit var arraylist: MutableList<String>
+    private lateinit var arraylist1: MutableList<String>
 
 
     @SuppressLint("ValidFragment")
@@ -147,9 +154,9 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
             utype = "Pro Package"
         } else if (usertye == "4") {
             utype = "Admin"
-        } else if (usertye=="3"){
+        } else if (usertye == "3") {
             utype = "Free Package"
-        }else{
+        } else {
             utype = "Standard Package"
         }
         subscriptionType.text = utype
@@ -159,8 +166,10 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
 
     private fun initialise(view: View, showHide: String) {
         photoHeading = view.findViewById(R.id.photoHeading)
+        menuHeading = view.findViewById(R.id.menuHeading)
         fullwebsiteUrlType = view.findViewById(R.id.fullwebsiteUrlType)
         more = view.findViewById(R.id.more)
+        menuMore = view.findViewById(R.id.menuMore)
         webHeading = view.findViewById(R.id.webHeading)
         websiteLay = view.findViewById(R.id.websiteLay)
         openStatus = view.findViewById(R.id.openStatus)
@@ -175,7 +184,9 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
         noTime = view.findViewById(R.id.noTime)
         descLayout = view.findViewById(R.id.descLayout)
         label33 = view.findViewById(R.id.label33)
+        label333 = view.findViewById(R.id.label333)
         horz_recycler = view.findViewById(R.id.horz_recycler)
+        menu_recycler = view.findViewById(R.id.menu_recycler)
         title = view.findViewById(R.id.title)
         description = view.findViewById(R.id.description)
         navigationImage = view.findViewById(R.id.navigationImage)
@@ -196,8 +207,11 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
             label1.visibility = View.GONE
             descLayout.visibility = View.GONE
             label33.visibility = View.GONE
+            label333.visibility = View.GONE
             photoHeading.visibility = View.GONE
+            menuHeading.visibility = View.GONE
             horz_recycler.visibility = View.GONE
+            menu_recycler.visibility = View.GONE
             subscriptionHeading.visibility = View.GONE
             subscripLay.visibility = View.GONE
 
@@ -205,19 +219,22 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
             label1.visibility = View.VISIBLE
             descLayout.visibility = View.VISIBLE
             label33.visibility = View.VISIBLE
+            label333.visibility = View.VISIBLE
             photoHeading.visibility = View.VISIBLE
+            menuHeading.visibility = View.VISIBLE
             horz_recycler.visibility = View.VISIBLE
+            menu_recycler.visibility = View.VISIBLE
             subscriptionHeading.visibility = View.VISIBLE
             subscripLay.visibility = View.VISIBLE
         }
 
         var catTaxi = Constants.getPrefs(activity!!)!!.getString("nameCat", "vv")
         if (catTaxi.equals("TaxiRelatedData") || catTaxi.equals("Taxi")) {
-            taxiImage.visibility=View.GONE
-            navigationImage.visibility=View.GONE
-        }else{
-            taxiImage.visibility=View.VISIBLE
-            navigationImage.visibility=View.VISIBLE
+            taxiImage.visibility = View.GONE
+            navigationImage.visibility = View.GONE
+        } else {
+            taxiImage.visibility = View.VISIBLE
+            navigationImage.visibility = View.VISIBLE
         }
 
     }
@@ -246,23 +263,28 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     private fun setClickHandler(view: View) {
 
 
-        more.setOnClickListener{
-            var array:ArrayList<String> = ArrayList()
+        more.setOnClickListener {
+            var array: ArrayList<String> = ArrayList()
             array.addAll(arraylist)
-            startActivity(Intent(activity!!,ImagePDFVideoViewActivity::class.java).putExtra("array",array))
+            startActivity(Intent(activity!!, ImagePDFVideoViewActivity::class.java).putExtra("array", array))
+        }
+        menuMore.setOnClickListener {
+            var array: ArrayList<String> = ArrayList()
+            array.addAll(arraylist1)
+            startActivity(Intent(activity!!, ImagePDFVideoViewActivity::class.java).putExtra("array", array))
         }
         callImage.setOnClickListener {
             try {
-            if (ActivityCompat.checkSelfPermission(activity!!,
-                            Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(activity!! as Activity, arrayOf(Manifest.permission.CALL_PHONE), 199)
+                if (ActivityCompat.checkSelfPermission(activity!!,
+                                Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(activity!! as Activity, arrayOf(Manifest.permission.CALL_PHONE), 199)
 
-            }else{
-                showDialog(Constants.getPrefs(activity!!)!!.getString("mobNumber", ""))
+                } else {
+                    showDialog(Constants.getPrefs(activity!!)!!.getString("mobNumber", ""))
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
 
         }
         taxiImage.setOnClickListener {
@@ -276,7 +298,7 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
                 val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
                 mapIntent.setPackage("com.google.android.apps.maps")
                 activity!!.startActivity(mapIntent)
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -342,7 +364,7 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
             }
         }
 
-    if (requestCode == 199) {
+        if (requestCode == 199) {
             try {
                 if (checkPhonePermission()) {
                     showDialog(Constants.getPrefs(activity!!)!!.getString("mobNumber", ""))
@@ -351,6 +373,7 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
             }
         }
     }
+
     private fun checkPhonePermission(): Boolean {
         var permission = android.Manifest.permission.CALL_PHONE;
         var res = activity!!.checkCallingOrSelfPermission(permission);
@@ -391,20 +414,37 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     }
 
 
-
     private fun setPager(model: SingleBusinessModel) {
-         arraylist = model.image_url.toMutableList()
+        arraylist = model.image_url.toMutableList()
+        arraylist1 = model.menu_images.toMutableList()
+
 
         if (arraylist != null) {
             if (arraylist.size > 0) {
-                photoHeading.visibility=View.VISIBLE
+                photoHeading.visibility = View.VISIBLE
                 val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
                 horz_recycler.layoutManager = linearLayoutManager
                 horz_recycler.adapter = BusinessHorzRecyclerAdapter(activity!!, arraylist as ArrayList<String>)
-            }else{
-                photoHeading.visibility=View.GONE
+            } else {
+                photoHeading.visibility = View.GONE
+
             }
         }
+//
+        if (arraylist1.isNotEmpty()) {
+            if (arraylist1.size > 0) {
+                menuHeading.visibility = View.VISIBLE
+                val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+                menu_recycler.layoutManager = linearLayoutManager
+                menu_recycler.adapter = BusinessHorzRecyclerAdapter(activity!!, arraylist1 as ArrayList<String>)
+
+            } else {
+                menuHeading.visibility = View.GONE
+            }
+        } else {
+            menuHeading.visibility = View.GONE
+        }
+
 
     }
 
@@ -435,7 +475,7 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
             Constants.getPrefs(activity!!)?.edit()?.remove(Constants.MYLIVEPOSTS)?.apply()
             Constants.getPrefs(activity!!)?.edit()?.putString(Constants.MYLIVEPOSTS, myPosts)?.apply()
             mPresenter.setSingleBusinessData()
-        }catch (e:java.lang.Exception){
+        } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
     }
@@ -472,21 +512,21 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
                         e.printStackTrace()
                     }
                     setPager(model)
-                    if (!model.website.isEmpty()){
-                        webHeading.visibility=View.VISIBLE
-                        websiteLay.visibility=View.VISIBLE
+                    if (!model.website.isEmpty()) {
+                        webHeading.visibility = View.VISIBLE
+                        websiteLay.visibility = View.VISIBLE
                         fullwebsiteUrlType.setText(model.website)
                         Linkify.addLinks(fullwebsiteUrlType, Linkify.WEB_URLS)
-                    }else{
-                        webHeading.visibility=View.GONE
-                        websiteLay.visibility=View.GONE
+                    } else {
+                        webHeading.visibility = View.GONE
+                        websiteLay.visibility = View.GONE
                     }
                     if (!model.email.isEmpty()) {
                         emailText.visibility = View.VISIBLE
                         emailText.text = model.email
-                        if (model.email.contains("@placepoint.ie")){
+                        if (model.email.contains("@placepoint.ie")) {
                             updateTitle.showHideClaim(1)
-                        }else{
+                        } else {
                             updateTitle.showHideClaim(0)
                         }
                     } else {
@@ -523,16 +563,16 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
                                 taxiImage.visibility = View.VISIBLE
                                 var catTaxi = Constants.getPrefs(activity!!)!!.getString("nameCat", "vv")
                                 if (catTaxi == "TaxiRelatedData" || catTaxi == "Taxi") {
-                                    taxiImage.visibility=View.GONE
-                                    navigationImage.visibility=View.GONE
+                                    taxiImage.visibility = View.GONE
+                                    navigationImage.visibility = View.GONE
                                 }
                             } else {
                                 taxiImage.visibility = View.GONE
                             }
-                            if ( Constants.getPrefs(activity!!)!!.getString("showv", "no")=="yes"){
-                                taxiImage.visibility=View.GONE
-                            }else{
-                                taxiImage.visibility=View.VISIBLE
+                            if (Constants.getPrefs(activity!!)!!.getString("showv", "no") == "yes") {
+                                taxiImage.visibility = View.GONE
+                            } else {
+                                taxiImage.visibility = View.VISIBLE
                             }
 
                         } catch (e: Exception) {
@@ -590,19 +630,19 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
 
                     //desc1.text = StringEscapeUtils.unescapeJava(URLDecoder.decode(bus_desc, "UTF-8"))
                     //desc1.text = URLDecoder.decode(bus_desc, "UTF-8")
-                    try{
+                    try {
                         desc1.text = URLDecoder.decode(bus_desc, "UTF-8")
-                    }catch (e:Exception){
+                    } catch (e: Exception) {
                         desc1.text = bus_desc
                     }
-                   // Constants.setViewMoreLessFunctionality(desc1)
+                    // Constants.setViewMoreLessFunctionality(desc1)
 
-                    if (model.description.isEmpty()){
-                        label1.visibility=View.GONE
-                        descLayout.visibility=View.GONE
-                    }else{
-                        label1.visibility=View.VISIBLE
-                        descLayout.visibility=View.VISIBLE
+                    if (model.description.isEmpty()) {
+                        label1.visibility = View.GONE
+                        descLayout.visibility = View.GONE
+                    } else {
+                        label1.visibility = View.VISIBLE
+                        descLayout.visibility = View.VISIBLE
                     }
                     val cat_id = model.category_id
                     val business_user_id = model.business_user_id
@@ -765,9 +805,7 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
                 } else {
                     checkInTodayTiming(dayValue1, timing, modelBusiness, currentTime)
                 }
-            }
-
-            else {
+            } else {
                 checkInTodayTiming(dayValue1, timing, modelBusiness, currentTime)
             }
         } catch (e: ParseException) {
@@ -813,7 +851,7 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
                     timing.text = "OPEN NOW"
                     openCloseLay.visibility = View.VISIBLE
                     openCloseLay.setBackgroundResource(R.drawable.background_timing_green)
-              } else {
+                } else {
                     timing.text = "CLOSED"
 
                     openCloseLay.visibility = View.VISIBLE
@@ -925,7 +963,6 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     }
 
 
-
     private fun checkStartTimings(time: String, endtime: String, from: String): Boolean {
 
         val pattern = "hh:mm:ss aa"
@@ -996,7 +1033,6 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
     }
 
 
-
     private fun getDayTimeString(timeToFind: DayModel, list: ArrayList<DayModel>): ModelMain {
         val modelMain = ModelMain()
         val subList = ArrayList<DayModel>()
@@ -1050,9 +1086,10 @@ class DetailFragment() : Fragment(), AboutBusinessHelper, Parcelable {
 
         return false
     }
+
     interface setTitle {
         fun setTitleBusiness(business_name: String)
-        fun showHideClaim(value:Int)
+        fun showHideClaim(value: Int)
     }
 
 }

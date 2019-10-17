@@ -171,7 +171,7 @@ class Constants {
 
             try {
                 val menuView = view.getChildAt(0) as BottomNavigationMenuView
-                val shiftingMode = menuView.javaClass.getDeclaredField("mShiftingMode")
+                 val shiftingMode = menuView.javaClass.getDeclaredField("mShiftingMode")
                 shiftingMode.isAccessible = true
                 shiftingMode.setBoolean(menuView, false)
                 shiftingMode.isAccessible = false

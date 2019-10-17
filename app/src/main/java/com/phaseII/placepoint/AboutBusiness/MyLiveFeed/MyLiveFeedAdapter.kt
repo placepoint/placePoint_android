@@ -234,8 +234,10 @@ class MyLiveFeedAdapter (private val context: Context, private val list: ArrayLi
         val click = Constants.getPrefs(context!!)!!.getString(Constants.STOPCLICK, "")
         if (click == "no") {
             holder.itemView.infoLay.visibility= View.VISIBLE
+            holder.itemView.menu.visibility= View.VISIBLE
         }else{
             holder.itemView.infoLay.visibility= View.INVISIBLE
+            holder.itemView.menu.visibility= View.INVISIBLE
         }
         holder.itemView.infoLay.setOnClickListener {
 

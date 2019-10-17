@@ -14,34 +14,34 @@
         android:orientation="vertical">
 
         <View
-            android:visibility="gone"
             android:id="@+id/line"
             android:layout_width="0.5dp"
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
             android:background="@color/colorText"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/layout"
             app:layout_constraintEnd_toStartOf="@+id/arrow"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:visibility="gone"
             android:id="@+id/circle"
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:layout_marginTop="16dp"
             android:src="@drawable/circle"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/line"
             app:layout_constraintStart_toStartOf="@+id/line"
             app:layout_constraintTop_toTopOf="@+id/layout" />
 
         <ImageView
-            android:visibility="gone"
             android:id="@+id/arrow"
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:src="@drawable/ic_arrow"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/circle"
             app:layout_constraintEnd_toStartOf="@+id/layout"
             app:layout_constraintStart_toEndOf="@+id/circle"
@@ -110,31 +110,32 @@
                         app:layout_constraintStart_toEndOf="@+id/logo"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_weight="1">
+
                         <TextView
                             android:id="@+id/name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/opensans_bold"
                             android:maxLines="3"
-                            android:textSize="16dp"
                             android:text="Name"
                             android:textAllCaps="false"
                             android:textColor="@color/colorText"
-                            android:textStyle="bold"
-                            />
+                            android:textSize="16dp"
+                            android:textStyle="bold" />
+
                         <TextView
-                            android:visibility="gone"
                             android:id="@+id/shared"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/opensans_bold"
-                            android:textAllCaps="false"
-                            android:textSize="12dp"
                             android:text="  (shared)"
+                            android:textAllCaps="false"
                             android:textColor="@color/colorText"
+                            android:textSize="12dp"
                             android:textStyle="bold"
-                            />
+                            android:visibility="gone" />
                     </LinearLayout>
+
                     <TextView
                         android:id="@+id/dateTime"
                         android:layout_width="0dp"
@@ -149,33 +150,34 @@
 
                     <!--<com.skyhope.showmoretextview.ShowMoreTextView-->
 
-                        <!--android:id="@+id/postText"-->
-                        <!--android:layout_width="0dp"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginTop="8dp"-->
-                        <!--android:layout_marginEnd="8dp"-->
-                        <!--android:fontFamily="@font/opensans_regular"-->
-                        <!--android:textColor="@color/black"-->
-                        <!--app:layout_constraintEnd_toStartOf="@+id/imagesLayout"-->
-                        <!--app:layout_constraintStart_toStartOf="@+id/nameLay"-->
-                        <!--app:layout_constraintTop_toBottomOf="@+id/nameLay" />-->
+                    <!--android:id="@+id/postText"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginTop="8dp"-->
+                    <!--android:layout_marginEnd="8dp"-->
+                    <!--android:fontFamily="@font/opensans_regular"-->
+                    <!--android:textColor="@color/black"-->
+                    <!--app:layout_constraintEnd_toStartOf="@+id/imagesLayout"-->
+                    <!--app:layout_constraintStart_toStartOf="@+id/nameLay"-->
+                    <!--app:layout_constraintTop_toBottomOf="@+id/nameLay" />-->
                     <com.borjabravo.readmoretextview.ReadMoreTextView
                         android:id="@+id/postText"
-                        app:trimExpandedText="show more"
-                        app:showTrimExpandedText="true"
-                        app:colorClickableText="@color/colormoreless"
-                        app:trimCollapsedText=" ...show less"
-                        app:trimMode="trimModeLength"
-                        app:trimLength="130"
-                        android:fontFamily="@font/opensans_regular"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/opensans_regular"
                         android:textColor="@color/black"
+                        app:colorClickableText="@color/colormoreless"
                         app:layout_constraintEnd_toStartOf="@+id/imagesLayout"
                         app:layout_constraintStart_toStartOf="@+id/nameLay"
-                        app:layout_constraintTop_toBottomOf="@+id/nameLay" />
+                        app:layout_constraintTop_toBottomOf="@+id/nameLay"
+                        app:showTrimExpandedText="true"
+                        app:trimCollapsedText=" ...show less"
+                        app:trimExpandedText="show more"
+                        app:trimLength="130"
+                        app:trimMode="trimModeLength" />
+
                     <TextView
                         android:id="@+id/videoUrl"
                         android:layout_width="0dp"
@@ -481,9 +483,9 @@
                             android:id="@+id/retailPrice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:fontFamily="@font/opensans_regular"
                             android:text=""
-                            android:layout_centerVertical="true"
                             android:textColor="@color/colorText"
                             android:textSize="12dp" />
 
@@ -493,15 +495,16 @@
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
                             android:layout_marginLeft="4dp"
-                            android:singleLine="true"
                             android:layout_toRightOf="@+id/retailPrice"
                             android:fontFamily="@font/opensans_regular"
                             android:gravity="center"
+                            android:singleLine="true"
                             android:text=""
                             android:textColor="@color/colorText"
                             android:textSize="15dp" />
                     </RelativeLayout>
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/menu"
                     android:layout_width="match_parent"
@@ -510,40 +513,43 @@
 
                     android:gravity="center"
                     android:orientation="horizontal">
+
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="4dp"
                         android:background="@drawable/fullroundblue"
-                        android:padding="2dp">
+                        android:padding="3dp">
 
                         <ImageView
-                            android:layout_marginTop="1dp"
+                            android:layout_centerVertical="true"
                             android:id="@+id/imageMenu"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
                             android:layout_marginLeft="4dp"
                             android:src="@drawable/ic_menulive" />
 
                         <TextView
-                            android:layout_marginBottom="1dp"
                             android:id="@+id/menuText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@+id/imageMenu"
                             android:fontFamily="@font/opensans_bold"
                             android:gravity="center"
+                            android:layout_centerInParent="true"
                             android:text="menu"
                             android:textColor="@color/white" />
                     </RelativeLayout>
                 </LinearLayout>
- <LinearLayout
+
+                <LinearLayout
                     android:id="@+id/infoLay"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1.5"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
+
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -552,7 +558,6 @@
                         android:padding="2dp">
 
                         <ImageView
-                            android:layout_marginTop="1dp"
                             android:id="@+id/imageInfo"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
@@ -560,7 +565,6 @@
                             android:src="@drawable/ic_info" />
 
                         <TextView
-                            android:layout_marginBottom="1dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"

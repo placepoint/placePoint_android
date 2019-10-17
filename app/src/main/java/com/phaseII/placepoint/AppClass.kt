@@ -81,12 +81,12 @@ class AppClass : Application(), AppsFlyerConversionListener {
 //            val alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn")
 //            val inboxStyle = NotificationCompat.InboxStyle()
             //inboxStyle.setBigContentTitle(notificationString)
-            var type="2"
+            var type = "2"
             try {
                 var obj: String = notification.payload.additionalData.toString()
                 var jsonObject: JSONObject = JSONObject(obj)
-                 type = jsonObject.optString("type")
-            }catch (e:Exception){
+                type = jsonObject.optString("type")
+            } catch (e: Exception) {
 
             }
 //            val pendingIntent = PendingIntent.getActivity(applicationContext, 0,
@@ -135,7 +135,7 @@ class AppClass : Application(), AppsFlyerConversionListener {
 //
 //            //val mBuilder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             var audio: AudioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            if (type == "1"||type == "0") {
+            if (type == "1" || type == "0") {
                 val mNotifyMgr = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 //
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -144,8 +144,8 @@ class AppClass : Application(), AppsFlyerConversionListener {
 //                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
 //                            .build();
 
-                   // var mChannel = NotificationChannel("uu5io",
-                    var mChannel = NotificationChannel("uu5io"+notification!!.androidNotificationId,
+                    // var mChannel = NotificationChannel("uu5io",
+                    var mChannel = NotificationChannel("uu5io" + notification!!.androidNotificationId,
                             applicationContext.getString(R.string.app_name),
                             NotificationManager.IMPORTANCE_HIGH)
                     mChannel.setSound(null, null)
@@ -162,7 +162,7 @@ class AppClass : Application(), AppsFlyerConversionListener {
                         //.setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
                         //  .setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
                         //.setChannelId("uu5io")
-                        .setChannelId("uu5io"+notification!!.androidNotificationId)
+                        .setChannelId("uu5io" + notification!!.androidNotificationId)
                         .setAutoCancel(true)
                         .setOnlyAlertOnce(false)
 
@@ -186,7 +186,7 @@ class AppClass : Application(), AppsFlyerConversionListener {
                                     .build();
 
                             //var mChannel = NotificationChannel("uu5io",
-                            var mChannel = NotificationChannel("uu5io"+notification!!.androidNotificationId,
+                            var mChannel = NotificationChannel("uu5io" + notification!!.androidNotificationId,
                                     applicationContext.getString(R.string.app_name),
                                     NotificationManager.IMPORTANCE_HIGH)
 
@@ -203,7 +203,7 @@ class AppClass : Application(), AppsFlyerConversionListener {
                                 //.setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_VIBRATE)
                                 //.setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + packageName + "/raw/bikehorn"))
                                 .setSound(Uri.parse("android.resource://" + applicationContext.getPackageName() + "/" + R.raw.bikehorn))
-                                .setChannelId("uu5io"+notification!!.androidNotificationId)
+                                .setChannelId("uu5io" + notification!!.androidNotificationId)
                                 .setAutoCancel(true)
                                 .setOnlyAlertOnce(false)
 
@@ -283,26 +283,36 @@ class AppClass : Application(), AppsFlyerConversionListener {
 
             // The following can be used to open an Activity of your choice.
             // Replace - getApplicationContext() - with any Android Context.
-            var type="1"
+            var type = "1"
             try {
                 var obj: String = result.notification.payload.additionalData.toString()
                 var jsonObject: JSONObject = JSONObject(obj)
-               type = jsonObject.optString("type")
-            }catch (e:java.lang.Exception){
+                type = jsonObject.optString("type")
+            } catch (e: java.lang.Exception) {
 
             }
-            if (type=="2") {
-                val intent = Intent(applicationContext, DashBoardActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                intent.putExtra("noti", true)
-                startActivity(intent)
-            }else{
-                val intent = Intent(applicationContext, DashBoardActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                intent.putExtra("noti2", true)
-                startActivity(intent)
+            when (type) {
+                "3" -> {
+                    val intent = Intent(applicationContext, DashBoardActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    intent.putExtra("noti1", true)
+                    startActivity(intent)
+                }
+                "2" -> {
+                    val intent = Intent(applicationContext, DashBoardActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    intent.putExtra("noti", true)
+                    startActivity(intent)
+                }
+                else -> {
+                    val intent = Intent(applicationContext, DashBoardActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    intent.putExtra("noti2", true)
+                    startActivity(intent)
+                }
             }
 
             // Add the following to your AndroidManifest.xml to prevent the launching of your main Activity

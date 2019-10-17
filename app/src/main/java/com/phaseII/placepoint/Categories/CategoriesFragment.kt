@@ -1,6 +1,8 @@
 package com.phaseII.placepoint.Categories
 
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -20,6 +22,7 @@ import com.phaseII.placepoint.BusEvents.DoBackActionInDashBoard
 import com.phaseII.placepoint.BusEvents.ShowHomeButton
 import com.phaseII.placepoint.BusEvents.SwitchToMainCategory
 import com.phaseII.placepoint.Constants
+import com.phaseII.placepoint.Home.DealsFragment
 import com.phaseII.placepoint.MultichoiceCategories.CategoryHelper
 import com.phaseII.placepoint.MultichoiceCategories.CategoryPresenter
 import com.phaseII.placepoint.MultichoiceCategories.ModelCategoryData
@@ -42,6 +45,7 @@ class CategoriesFragment : Fragment(), CategoryHelper {
     private lateinit var mTitle: TextView
     private lateinit var back: ImageView
     private var isRunning: Boolean = false
+    private lateinit var popbl:BackShow
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.categories_fragment, container, false)
@@ -103,10 +107,27 @@ class CategoriesFragment : Fragment(), CategoryHelper {
         back = toolbar.findViewById(R.id.back) as ImageView
         mTitle.text = "Categories " + " (" + Constants.getPrefs(activity!!)?.getString(Constants.TOWN_NAME, "") + ")"
         back.setOnClickListener {
-            Constants.getBus().post(DoBackActionInDashBoard("value"))
+            //Constants.getBus().post(DoBackActionInDashBoard("value"))
+            popbl.showBacdCategory()
+        }
+    }
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        try {
+            popbl = context as BackShow
+        } catch (e: Exception) {
+
         }
     }
 
+    override fun onAttach(activity: Activity?) {
+        super.onAttach(activity)
+        try {
+            popbl = activity as BackShow
+        } catch (e: Exception) {
+
+        }
+    }
     private fun initialize(view: View) {
         mPresenter = CategoryPresenter(this)
         recyclerView = view.findViewById(R.id.recyclerView)
@@ -329,6 +350,10 @@ class CategoriesFragment : Fragment(), CategoryHelper {
         back.setOnClickListener {
             Constants.getBus().post(DoBackActionInDashBoard("value"))
         }
+    }
+    interface BackShow {
+        fun showPopUpBL()
+        fun showBacdCategory()
     }
 
 }

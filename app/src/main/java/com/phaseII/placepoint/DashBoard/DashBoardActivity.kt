@@ -59,8 +59,10 @@ import java.util.regex.PatternSyntaxException
 @Suppress("DEPRECATED_IDENTITY_EQUALS")
 class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
         HomeFragment.SwitchFragment, MoreAdapter.OpenBusinessFragment,
-        BusinessFragment.BackToMoreFragment, BusinessListAdapter.callPermissionDialog {
+        BusinessFragment.BackToMoreFragment, BusinessListAdapter.callPermissionDialog,
+        CategoriesFragment.BackShow {
 
+    private var flag: Int=0
     lateinit var bottomNavigation: BottomNavigationView
     private lateinit var currentFragment: Fragment
     lateinit var ft: FragmentTransaction
@@ -70,7 +72,7 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
-
+        Constants.getPrefs(this)!!.edit().putString("switchTab", "").apply()
         OneSignal.idsAvailable { userId, registrationId ->
             //Log.d("debug", "User:$userId")
             System.out.println("User Id: " + userId)
@@ -83,11 +85,18 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
 //        System.out.println("Device Id: "+android_id)
         bottomNavigation = findViewById(R.id.navigationView)
         Constants.disableShiftMode(bottomNavigation)
-        if (intent.hasExtra("noti")) {
-            showDealsFragment()
+//        if (intent.hasExtra("noti")) {
+//            showDealsFragment()
+//        } else {
+//            addHomeFragment()
+//        }
+        if (intent.hasExtra("noti1")) {
+            showCategoryFragment()
         } else {
             addHomeFragment()
         }
+
+
         onBottomNavigationClicks()
         Constants.getPrefs(this)!!.edit().putString("showBackYesOrNo", "home").apply()
         try {
@@ -470,6 +479,7 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
 
     @SuppressLint("CommitTransaction")
     override fun onBackPressed() {
+        Constants.getPrefs(this)!!.edit().putString("switchTab", "").apply()
         if (Constants.getPrefs(this)!!.getString("backPress", "0") == "0") {
             if (positon == 0) {
                 val showback = Constants.getPrefs(this)!!.getString("showHomeBackButton", "no")
@@ -641,7 +651,10 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
     @Subscribe
     fun getMessage(event: DoBackActionInDashBoard) {
 
-        onBackPressed()
+
+            onBackPressed()
+
+
     }
 
     override fun showPopUpBL() {
@@ -649,6 +662,14 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
 //        var frag=BusinessListingFragment()
 //        frag.showData()
         Constants.getBus().post(ShowFilter("show"))
+    }
+
+    override fun showBacdk() {
+        onBackPressed()
+    }
+
+    override fun showBacdCategory() {
+        onBackPressed()
     }
 
     interface showpp {
@@ -795,6 +816,52 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
             i++
         }
     }
+    fun showCategoryFragment() {
+
+        positon = 2
+
+        replaceFragment(CategoriesFragment())
+        val menu = bottomNavigation.getMenu()
+        var i = 0
+        val size = menu.size()
+        our@ while (i < size) {
+            val item = menu.getItem(i)
+            if (item.itemId === R.id.nav_category) {
+                item.isChecked = item.itemId === R.id.nav_category
+                break@our
+            }
+            i++
+        }
+        Constants.getPrefs(this)!!.edit().putString("MainCatName", "Food & Drink").apply()
+        Constants.getPrefs(this)!!.edit().putString("position", 4.toString()).apply()
+       Constants.getBus().post(ShowHomeButton("value"))
+
+        Constants.getPrefs(this)!!.edit().putString("subcategory", "2").apply()
+        Constants.getPrefs(this)?.edit()!!.putString("doNothing", "dddd").apply()
+        Constants.getPrefs(this)!!.edit().putString("comingFrom", "addPost").apply()
+        Constants.getPrefs(this)!!.edit().putString("switchTab", "yes").apply()
+        Constants.getPrefs(this)!!.edit().putString(Constants.CATEGORY_IDS, "166").apply()
+        Constants.getPrefs(this)!!.edit().putString("firstTime", "sub").apply()
+        Constants.getPrefs(this)!!.edit().putString(Constants.CATEGORY_NAMEO,"All Food & Drink").apply()
+        Constants.getPrefs(this)!!.edit().putString(Constants.CATEGORY_IDSUB, "166").apply()
+        Constants.getPrefs(this)!!.edit().putString(Constants.TOWN_ID, "9").apply()
+        Constants.getPrefs(this)!!.edit().putString(Constants.TOWN_NAME, "Athlone").apply()
+        //   (context as Activity).finish()
+        Constants.getPrefs(this)?.edit()!!.putString(Constants.CATEGORY_LIST, "[{\"id\":\"1\",\"name\":\"Entertainment\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533919446_792502.png\",\"slug\":\"entertainment\",\"show_on_live\":\"1\",\"parent_category\":\"0\",\"hashtags\":null,\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-05-29 13:11:57\",\"updated_at\":\"2018-08-10 16:44:06\"},{\"id\":\"18\",\"name\":\"NightClubs\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1532644197_432170.jpg\",\"slug\":\"nightclubs\",\"show_on_live\":\"1\",\"parent_category\":\"1\",\"hashtags\":\"#nightlife #party #bar #dj #music\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-07-20 05:08:23\",\"updated_at\":\"2018-07-31 06:59:44\"},{\"id\":\"26\",\"name\":\"Food & Drink\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1532446929_888680.jpg\",\"slug\":\"food-drink\",\"show_on_live\":\"1\",\"parent_category\":\"0\",\"hashtags\":null,\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-07-24 15:42:09\",\"updated_at\":\"2018-08-17 13:57:54\"},{\"id\":\"29\",\"name\":\"Pubs\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1534509334_424042.png\",\"slug\":\"pubs\",\"show_on_live\":\"1\",\"parent_category\":\"1\",\"hashtags\":\"#pubs #livemusic #citylife #bars #irishpub\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-07-25 06:12:38\",\"updated_at\":\"2018-08-17 12:35:34\"},{\"id\":\"30\",\"name\":\"Live Music\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1532644274_798967.jpg\",\"slug\":\"live-music\",\"show_on_live\":\"1\",\"parent_category\":\"1\",\"hashtags\":\"#livemusic #musician #gig #irishmusic #singer \",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-07-25 06:12:57\",\"updated_at\":\"2019-02-08 01:47:45\"},{\"id\":\"33\",\"name\":\"Beauty\\/Wellness\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533923322_795176.png\",\"slug\":\"beauty-wellness-1\",\"show_on_live\":\"1\",\"parent_category\":\"0\",\"hashtags\":null,\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 17:24:09\",\"updated_at\":\"2018-08-10 17:48:42\"},{\"id\":\"37\",\"name\":\"Activities\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533924725_75540.png\",\"slug\":\"activities\",\"show_on_live\":\"1\",\"parent_category\":\"153\",\"hashtags\":\"#activities #outdooractivities  #thingstodo  #familyactivities #indooractivities\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 17:30:02\",\"updated_at\":\"2018-08-10 18:12:05\"},{\"id\":\"39\",\"name\":\"Places of Interest\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533924780_554615.png\",\"slug\":\"places-of-interest\",\"show_on_live\":\"1\",\"parent_category\":\"153\",\"hashtags\":\"#wonderful_places #beautifulplaces #picoftheday  #pinterestinspired #wonderfulplaces \",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 17:31:33\",\"updated_at\":\"2018-08-10 18:13:00\"},{\"id\":\"42\",\"name\":\"Restaurants\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533924991_275230.png\",\"slug\":\"restaurants\",\"show_on_live\":\"1\",\"parent_category\":\"26\",\"hashtags\":\"#foodie #instafood #dinner #lunch #delicious \",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 17:42:45\",\"updated_at\":\"2018-08-10 18:16:31\"},{\"id\":\"43\",\"name\":\"Cafe's\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533924933_675238.png\",\"slug\":\"cafe-s\",\"show_on_live\":\"1\",\"parent_category\":\"26\",\"hashtags\":\"#cafe #lunch #breakfast #coffeeshop #coffeetime \",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 17:43:24\",\"updated_at\":\"2018-08-10 18:15:33\"},{\"id\":\"44\",\"name\":\"Takeaways\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533925014_447981.png\",\"slug\":\"takeaways\",\"show_on_live\":\"1\",\"parent_category\":\"26\",\"hashtags\":\"#takeaway #pizza #chipper  #fishandchips \",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 17:44:28\",\"updated_at\":\"2018-08-10 18:16:54\"},{\"id\":\"45\",\"name\":\"Caterer's\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533924944_438901.png\",\"slug\":\"caterer-s\",\"show_on_live\":\"1\",\"parent_category\":\"26\",\"hashtags\":\"#mykitchen #irishfood #desserts #caterers \",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 17:45:15\",\"updated_at\":\"2018-08-10 18:15:44\"},{\"id\":\"48\",\"name\":\"Groceries\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533924957_286216.png\",\"slug\":\"groceries\",\"show_on_live\":\"1\",\"parent_category\":\"26\",\"hashtags\":\"#groceries #healthygroceries  #healthy #freshfruit #healthyfood\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 17:54:21\",\"updated_at\":\"2018-08-10 18:15:57\"},{\"id\":\"49\",\"name\":\"Off-License\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533925128_100751.png\",\"slug\":\"off-license\",\"show_on_live\":\"1\",\"parent_category\":\"26\",\"hashtags\":\"#offlicense #irishwhiskey #whiskeyshop #singlemalt #whiskeygram\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 17:54:49\",\"updated_at\":\"2018-08-10 18:18:48\"},{\"id\":\"70\",\"name\":\"Mens Barbers\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533923966_427177.png\",\"slug\":\"mens-barbers\",\"show_on_live\":\"1\",\"parent_category\":\"33\",\"hashtags\":\"#barber #barbershop #barberlife #irishbarber #athlonebarber\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 18:46:55\",\"updated_at\":\"2018-08-10 17:59:26\"},{\"id\":\"71\",\"name\":\"Hairdressers\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533923956_294123.png\",\"slug\":\"hairdressers\",\"show_on_live\":\"1\",\"parent_category\":\"33\",\"hashtags\":\"#hairdresser #irishhairdresser  #hairstylist #hairstyles #hairdresserlife\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 18:47:16\",\"updated_at\":\"2018-08-10 17:59:16\"},{\"id\":\"73\",\"name\":\"Beauty Salon\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533923930_526203.png\",\"slug\":\"beauty-salon\",\"show_on_live\":\"1\",\"parent_category\":\"33\",\"hashtags\":\"#beautysalon #instabeauty #beautyblogger #beautiful #gelnails\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 18:48:07\",\"updated_at\":\"2018-08-10 17:58:50\"},{\"id\":\"76\",\"name\":\"Gyms\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533923941_470032.png\",\"slug\":\"gyms\",\"show_on_live\":\"1\",\"parent_category\":\"33\",\"hashtags\":\"#gymlife #fitfam #gymmotivation #irishfitfam #bodybuilding\\r\\n\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 18:48:59\",\"updated_at\":\"2018-08-10 17:59:01\"},{\"id\":\"78\",\"name\":\"Weight Loss\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533924046_222742.png\",\"slug\":\"weight-loss\",\"show_on_live\":\"1\",\"parent_category\":\"33\",\"hashtags\":\"#weightloss #fitness #workout #healthy #fitfam\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-09 18:49:26\",\"updated_at\":\"2018-08-10 18:00:46\"},{\"id\":\"82\",\"name\":\"Taxis\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1533933062_228368.png\",\"slug\":\"taxis\",\"show_on_live\":\"0\",\"parent_category\":\"1\",\"hashtags\":\"#taxi #taxidriver\",\"town_id\":\",9,35,37,38,39,43,44,45,46,47,48,49,50,51,52,53,54,\",\"status\":\"0\",\"created_at\":\"2018-08-10 17:54:28\",\"updated_at\":\"2019-02-08 01:50:43\"},{\"id\":\"129\",\"name\":\"Kids\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1535584067_223055.png\",\"slug\":\"kids\",\"show_on_live\":\"1\",\"parent_category\":\"153\",\"hashtags\":\"#instakids #kidsofinstagram  #kidsactivities #toddleractivities #familyactivities\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-08-11 08:07:30\",\"updated_at\":\"2018-08-29 23:07:47\"},{\"id\":\"153\",\"name\":\"Activities\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1536638537_307925.jpg\",\"slug\":\"activities-1\",\"show_on_live\":\"1\",\"parent_category\":\"0\",\"hashtags\":null,\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2018-09-11 05:02:17\",\"updated_at\":\"2018-09-11 05:02:17\"},{\"id\":\"154\",\"name\":\"Parties\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1549591031_540811.png\",\"slug\":\"parties\",\"show_on_live\":\"1\",\"parent_category\":\"1\",\"hashtags\":\"#parties #birthdays #weddings #privateparty #stag #hens \",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2019-02-08 01:57:11\",\"updated_at\":\"2019-02-08 01:57:11\"},{\"id\":\"155\",\"name\":\"Sports\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1553366520_85985.jpg\",\"slug\":\"sports\",\"show_on_live\":\"1\",\"parent_category\":\"153\",\"hashtags\":\"#sports #watersports #sportsphotography #sportsnutrition #sportsphotographer\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2019-03-23 18:42:00\",\"updated_at\":\"2019-03-23 18:42:00\"},{\"id\":\"156\",\"name\":\"Events\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1553366716_133229.jpg\",\"slug\":\"events\",\"show_on_live\":\"1\",\"parent_category\":\"1\",\"hashtags\":\"#events #venue #event \",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2019-03-23 18:45:16\",\"updated_at\":\"2019-03-23 18:45:16\"},{\"id\":\"157\",\"name\":\"Live Sports\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1553366755_281187.png\",\"slug\":\"live-sports\",\"show_on_live\":\"1\",\"parent_category\":\"1\",\"hashtags\":\"#gaa #soccer #hurling #livesports #rubgy\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2019-03-23 18:45:55\",\"updated_at\":\"2019-03-23 18:45:55\"},{\"id\":\"158\",\"name\":\"Retail\\/Shopping\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1565082636_415665.jpg\",\"slug\":\"retail-shopping\",\"show_on_live\":\"1\",\"parent_category\":\"0\",\"hashtags\":null,\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2019-08-06 10:10:36\",\"updated_at\":\"2019-08-06 10:10:36\"},{\"id\":\"159\",\"name\":\"Accommodation\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1565082657_282041.jpg\",\"slug\":\"accommodation\",\"show_on_live\":\"1\",\"parent_category\":\"0\",\"hashtags\":null,\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2019-08-06 10:10:57\",\"updated_at\":\"2019-08-06 10:11:51\"},{\"id\":\"160\",\"name\":\"Other\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1565083353_881169.jpg\",\"slug\":\"other\",\"show_on_live\":\"1\",\"parent_category\":\"159\",\"hashtags\":\"#accommodation #bedandbreakfast #selfcateringaccommodation #nearestaccommodation #countryhouseaccommodation \",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2019-08-06 10:22:33\",\"updated_at\":\"2019-08-07 00:19:23\"},{\"id\":\"161\",\"name\":\"Other Retail\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1565083405_469422.jpg\",\"slug\":\"other-retail\",\"show_on_live\":\"1\",\"parent_category\":\"158\",\"hashtags\":\"#shopping #fashion #christmasshopping  #instagood #shoppingcentre \",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2019-08-06 10:23:25\",\"updated_at\":\"2019-08-07 00:19:51\"},{\"id\":\"162\",\"name\":\"Hotels\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1565132780_597098.png\",\"slug\":\"hotels\",\"show_on_live\":\"1\",\"parent_category\":\"159\",\"hashtags\":\"#hotels #irishhotels #tophotels #accommodation #accommodationinireland \",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2019-08-07 00:06:20\",\"updated_at\":\"2019-08-07 00:06:20\"},{\"id\":\"163\",\"name\":\"Bed & Breakfast\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1565132807_612894.png\",\"slug\":\"bed-breakfast\",\"show_on_live\":\"1\",\"parent_category\":\"159\",\"hashtags\":\"#bedandbreakfast #irishbreakfast #discoverireland #fullirishbreakfast #nearestaccommodation\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2019-08-07 00:06:47\",\"updated_at\":\"2019-08-07 00:06:47\"},{\"id\":\"164\",\"name\":\"Clothes\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1565133015_113508.png\",\"slug\":\"clothes\",\"show_on_live\":\"1\",\"parent_category\":\"158\",\"hashtags\":\"#shopping #fashion #christmasshopping #style #instagood #shoppingspree #shoppingcentre #shoppingcenter #giftideas #gift #stressfreeshopping\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2019-08-07 00:10:15\",\"updated_at\":\"2019-08-07 00:10:15\"},{\"id\":\"165\",\"name\":\"Groceries\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1565133028_195801.png\",\"slug\":\"groceries-1\",\"show_on_live\":\"1\",\"parent_category\":\"158\",\"hashtags\":\"#groceries #healthygroceries  #healthy #freshfruit #healthyfood\",\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2019-08-07 00:10:28\",\"updated_at\":\"2019-08-07 00:10:28\"},{\"id\":\"166\",\"name\":\"Daily Lunch Specials\",\"image_url\":\"https:\\/\\/www.placepoint.ie\\/upload\\/category\\/1569517346_331798.png\",\"slug\":\"daily-lunch-specials\",\"show_on_live\":\"1\",\"parent_category\":\"26\",\"hashtags\":null,\"town_id\":\"\",\"status\":\"0\",\"created_at\":\"2019-09-26 18:02:26\",\"updated_at\":\"2019-09-26 18:02:26\"}]").apply()
+
+        val editor = Constants.getPrefs(this)!!.edit()
+        editor.putString("showLay", "main")
+        editor.apply()
+
+    Constants.getPrefs(this)!!.edit().putString("showLay", "yes").apply()
+    Constants.getPrefs(this)!!.edit().putString("showHomeBackButton", "yes").apply()
+  //  Constants.getBus().post(SwitchToMainCategory("value"))
+        replaceFragment(DealsFragment())
+    val value=Constants.getPrefs(this)!!.getString("cc","0").toInt()
+    val dd=value+1
+    Constants.getPrefs(this)!!.edit().putString("cc", dd.toString()).apply()
+
+}
 
     private lateinit var callPhoneNO: String
 

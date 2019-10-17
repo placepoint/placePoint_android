@@ -27,11 +27,9 @@ class ModelHome() : Parcelable {
     lateinit var sale_price: String
     lateinit var discount_price: String
     var personRedeem: String = "0"
+    lateinit var menu_images: ArrayList<String>
 
     constructor(parcel: Parcel) : this() {
-        discount_price = parcel.readString()
-        sale_price = parcel.readString()
-        retail_price = parcel.readString()
         id = parcel.readString()
         image_url = parcel.readString()
         title = parcel.readString()
@@ -51,6 +49,9 @@ class ModelHome() : Parcelable {
         per_person_redemption = parcel.readString()
         validity_date = parcel.readString()
         created_by = parcel.readString()
+        retail_price = parcel.readString()
+        sale_price = parcel.readString()
+        discount_price = parcel.readString()
         personRedeem = parcel.readString()
     }
 
@@ -74,11 +75,10 @@ class ModelHome() : Parcelable {
         parcel.writeString(per_person_redemption)
         parcel.writeString(validity_date)
         parcel.writeString(created_by)
-        parcel.writeString(personRedeem)
         parcel.writeString(retail_price)
-        parcel.writeString(discount_price)
         parcel.writeString(sale_price)
-
+        parcel.writeString(discount_price)
+        parcel.writeString(personRedeem)
     }
 
     override fun describeContents(): Int {
