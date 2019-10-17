@@ -502,7 +502,6 @@
                             android:textSize="15dp" />
                     </RelativeLayout>
                 </LinearLayout>
-
                 <LinearLayout
                     android:id="@+id/infoLay"
                     android:layout_width="match_parent"
