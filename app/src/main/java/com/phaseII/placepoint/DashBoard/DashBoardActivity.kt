@@ -62,7 +62,7 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
         BusinessFragment.BackToMoreFragment, BusinessListAdapter.callPermissionDialog,
         CategoriesFragment.BackShow {
 
-    private var flag: Int=0
+    private var flag: Int = 0
     lateinit var bottomNavigation: BottomNavigationView
     private lateinit var currentFragment: Fragment
     lateinit var ft: FragmentTransaction
@@ -90,10 +90,12 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
 //        } else {
 //            addHomeFragment()
 //        }
-        if (intent.hasExtra("noti1")) {
-            showCategoryFragment()
-        } else {
-            addHomeFragment()
+
+
+        when {
+            intent.hasExtra("noti1") -> showCategoryFragment()
+            intent.hasExtra("noti") -> showDealsFragment()
+            else -> addHomeFragment()
         }
 
 
@@ -220,9 +222,9 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
     override fun onResume() {
         super.onResume()
         Constants.getSSlCertificate(this)
-        GetPlayStoreVersion(this,"https://play.google.com/store/apps/details?id=com.user24.placepoint").execute()
+        GetPlayStoreVersion(this, "https://play.google.com/store/apps/details?id=com.user24.placepoint").execute()
         val showback = Constants.getPrefs(this)!!.getString("showHomeBackButton", "no")
-        val doNothing =Constants.getPrefs(this)?.getString("doNothing", "no")
+        val doNothing = Constants.getPrefs(this)?.getString("doNothing", "no")
 
         if (showback == "no") {
             firstexe = 0
@@ -295,8 +297,8 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
                 }
 
             }
-        }else{
-            if ( Constants.getPrefs(this)?.getString("doNothing", "no").equals("yes")){
+        } else {
+            if (Constants.getPrefs(this)?.getString("doNothing", "no").equals("yes")) {
                 openBusinessFragment()
             }
             Constants.getPrefs(this)?.edit()?.putString("doNothing", "no")?.apply()
@@ -304,7 +306,6 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
         }
 
     }
-
 
 
     override fun onDestroy() {
@@ -465,8 +466,8 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
                     Constants.getPrefs(this)?.edit()?.putString("showbb", "back")?.apply()
                     Constants.getPrefs(this)!!.edit().putString("showTaxiAtHome", "no").apply()
                     //if (positon != 3) {
-                        positon = 3
-                        //viewPager.currentItem = 3
+                    positon = 3
+                    //viewPager.currentItem = 3
 
                     replaceFragment(MoreFragment())
                     //}
@@ -497,7 +498,7 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
                     showMoreFragment()
                 } else if (Constants.getPrefs(this)!!.getString("showbb", "") == "back") {
                     Constants.getPrefs(this)?.edit()?.putString("showbb", "no")?.apply()
-                  //  Constants.getPrefs(this)?.edit()?.putString("comingFrom", "")?.apply()
+                    //  Constants.getPrefs(this)?.edit()?.putString("comingFrom", "")?.apply()
                     addHomeFragment()
                 } else {
                     finish()
@@ -595,7 +596,6 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
     }
 
 
-
     private fun askBeforeExit() {
 
         AlertDialog.Builder(this)
@@ -652,7 +652,7 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
     fun getMessage(event: DoBackActionInDashBoard) {
 
 
-            onBackPressed()
+        onBackPressed()
 
 
     }
@@ -816,6 +816,7 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
             i++
         }
     }
+
     fun showCategoryFragment() {
 
         positon = 2
@@ -834,7 +835,7 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
         }
         Constants.getPrefs(this)!!.edit().putString("MainCatName", "Food & Drink").apply()
         Constants.getPrefs(this)!!.edit().putString("position", 4.toString()).apply()
-       Constants.getBus().post(ShowHomeButton("value"))
+        Constants.getBus().post(ShowHomeButton("value"))
 
         Constants.getPrefs(this)!!.edit().putString("subcategory", "2").apply()
         Constants.getPrefs(this)?.edit()!!.putString("doNothing", "dddd").apply()
@@ -842,7 +843,7 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
         Constants.getPrefs(this)!!.edit().putString("switchTab", "yes").apply()
         Constants.getPrefs(this)!!.edit().putString(Constants.CATEGORY_IDS, "166").apply()
         Constants.getPrefs(this)!!.edit().putString("firstTime", "sub").apply()
-        Constants.getPrefs(this)!!.edit().putString(Constants.CATEGORY_NAMEO,"All Food & Drink").apply()
+        Constants.getPrefs(this)!!.edit().putString(Constants.CATEGORY_NAMEO, "Daily Lunch Specials").apply()
         Constants.getPrefs(this)!!.edit().putString(Constants.CATEGORY_IDSUB, "166").apply()
         Constants.getPrefs(this)!!.edit().putString(Constants.TOWN_ID, "9").apply()
         Constants.getPrefs(this)!!.edit().putString(Constants.TOWN_NAME, "Athlone").apply()
@@ -853,40 +854,39 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
         editor.putString("showLay", "main")
         editor.apply()
 
-    Constants.getPrefs(this)!!.edit().putString("showLay", "yes").apply()
-    Constants.getPrefs(this)!!.edit().putString("showHomeBackButton", "yes").apply()
-  //  Constants.getBus().post(SwitchToMainCategory("value"))
+        Constants.getPrefs(this)!!.edit().putString("showLay", "yes").apply()
+        Constants.getPrefs(this)!!.edit().putString("showHomeBackButton", "yes").apply()
+        //  Constants.getBus().post(SwitchToMainCategory("value"))
         replaceFragment(DealsFragment())
-    val value=Constants.getPrefs(this)!!.getString("cc","0").toInt()
-    val dd=value+1
-    Constants.getPrefs(this)!!.edit().putString("cc", dd.toString()).apply()
+        val value = Constants.getPrefs(this)!!.getString("cc", "0").toInt()
+        val dd = value + 1
+        Constants.getPrefs(this)!!.edit().putString("cc", dd.toString()).apply()
 
-}
+    }
 
     private lateinit var callPhoneNO: String
 
     override fun callPhone(phoneNo: String) {
-        callPhoneNO=phoneNo
+        callPhoneNO = phoneNo
         if (ActivityCompat.checkSelfPermission(this,
                         Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this as Activity, arrayOf(Manifest.permission.CALL_PHONE), 167)
 
-        }
-        else{
+        } else {
             val callIntent = Intent(Intent.ACTION_CALL)
             callIntent.data = Uri.parse("tel:$phoneNo")
-          startActivity(callIntent)
+            startActivity(callIntent)
         }
     }
 
 
-
     private fun replaceFragment(fragment: Fragment) {
-        currentFragment=fragment
+        currentFragment = fragment
         ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.pager, fragment)
         ft.commit()
     }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -900,21 +900,22 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
                 if (checkPhonePermission()) {
                     val callIntent = Intent(Intent.ACTION_CALL)
                     callIntent.data = Uri.parse("tel:$callPhoneNO")
-                startActivity(callIntent)
+                    startActivity(callIntent)
                 }
             } catch (ignored: Exception) {
             }
         }
-        if (currentFragment is BusinessFragment){
+        if (currentFragment is BusinessFragment) {
             if (requestCode == 9004) {
                 (currentFragment as BusinessFragment).cameraShowAddPost()
             }
-       if (requestCode == 894) {
-           (currentFragment as BusinessFragment).galleryShowAddPost()
+            if (requestCode == 894) {
+                (currentFragment as BusinessFragment).galleryShowAddPost()
             }
 
         }
     }
+
     private fun checkPhonePermission(): Boolean {
         var permission = android.Manifest.permission.CALL_PHONE;
         var res = checkCallingOrSelfPermission(permission);
@@ -927,8 +928,8 @@ class DashBoardActivity : AppCompatActivity(), DealsFragment.PopupShow,
 //
 //    return playStoreAppVersion;
 //}
-private fun getAppVersion( patternString:String,  inputString:String):String{
-    try{
+private fun getAppVersion(patternString: String, inputString: String): String {
+    try {
         //Create a pattern
         var pattern: Pattern = Pattern.compile(patternString);
         if (null == pattern) {
@@ -941,7 +942,7 @@ private fun getAppVersion( patternString:String,  inputString:String):String{
             return matcher.group(1);
         }
 
-    }catch ( ex: PatternSyntaxException) {
+    } catch (ex: PatternSyntaxException) {
 
         ex.printStackTrace();
     }
@@ -949,25 +950,25 @@ private fun getAppVersion( patternString:String,  inputString:String):String{
     return "";
 }
 
- class GetPlayStoreVersion(
-         var context: DashBoardActivity,
-         var commingUrl: String
+class GetPlayStoreVersion(
+        var context: DashBoardActivity,
+        var commingUrl: String
 //        var listener : Constants.ClickListener
 ) : AsyncTask<Void, Void, Void>() {
-     var playStoreAppVersion :String= "";
-     var newVersion = "";
+    var playStoreAppVersion: String = "";
+    var newVersion = "";
 
-     override fun doInBackground(vararg params: Void?): Void? {
+    override fun doInBackground(vararg params: Void?): Void? {
 
-    try {
+        try {
 //It retrieves the latest version by scraping the content of current version from play store at runtime
-                var doc = Jsoup.connect("https://play.google.com/store/apps/details?id=com.user24.placepoint").get()
-        newVersion = doc.getElementsByClass("htlgb").get(6).text()
+            var doc = Jsoup.connect("https://play.google.com/store/apps/details?id=com.user24.placepoint").get()
+            newVersion = doc.getElementsByClass("htlgb").get(6).text()
 
-            }catch ( e:Exception){
-                e.printStackTrace();
+        } catch (e: Exception) {
+            e.printStackTrace();
 
-            }
+        }
 
         return null
     }
@@ -976,39 +977,39 @@ private fun getAppVersion( patternString:String,  inputString:String):String{
         super.onPostExecute(result)
         //Toast.makeText(context,newVersion,Toast.LENGTH_LONG).show()
         var oldVersionName = context.getPackageManager()
-                .getPackageInfo( context.getPackageName(), 0).versionName
-        if (!oldVersionName.equals(newVersion)){
-           // showUpdateAppDialog(newVersion,context)
+                .getPackageInfo(context.getPackageName(), 0).versionName
+        if (!oldVersionName.equals(newVersion)) {
+            // showUpdateAppDialog(newVersion,context)
         }
 
     }
 
-     private fun showUpdateAppDialog(mPlayStoreVersion: String, context: Context) {
-         val dialog = Dialog(context)
-         dialog.setContentView(R.layout.version_layout)
-         dialog.setCancelable(false)
-         //  dialog.setTitle("New App Update Available");
-         val tittle = dialog.findViewById(R.id.tittle) as TextView
-         val textMessage = dialog.findViewById(R.id.textMessage) as TextView
-         val upgrade = dialog.findViewById(R.id.upgradeNow) as TextView
-         val remind = dialog.findViewById(R.id.remind) as TextView
-         val cancelText = dialog.findViewById(R.id.cancel) as TextView
-         tittle.text = "New App Update Available"
-         textMessage.text = "A new update of PlacePoint App (Version #$mPlayStoreVersion) is available. Please Upgrade."
-         upgrade.setOnClickListener {
+    private fun showUpdateAppDialog(mPlayStoreVersion: String, context: Context) {
+        val dialog = Dialog(context)
+        dialog.setContentView(R.layout.version_layout)
+        dialog.setCancelable(false)
+        //  dialog.setTitle("New App Update Available");
+        val tittle = dialog.findViewById(R.id.tittle) as TextView
+        val textMessage = dialog.findViewById(R.id.textMessage) as TextView
+        val upgrade = dialog.findViewById(R.id.upgradeNow) as TextView
+        val remind = dialog.findViewById(R.id.remind) as TextView
+        val cancelText = dialog.findViewById(R.id.cancel) as TextView
+        tittle.text = "New App Update Available"
+        textMessage.text = "A new update of PlacePoint App (Version #$mPlayStoreVersion) is available. Please Upgrade."
+        upgrade.setOnClickListener {
 
-             val appPackageName = "com.user24.placepoint" // getPackageName() from Context or Activity object
-             try {
-                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName")))
-             } catch (anfe: android.content.ActivityNotFoundException) {
-                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")))
-             }
+            val appPackageName = "com.user24.placepoint" // getPackageName() from Context or Activity object
+            try {
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName")))
+            } catch (anfe: android.content.ActivityNotFoundException) {
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")))
+            }
 
-             dialog.dismiss()
-         }
+            dialog.dismiss()
+        }
 
-         dialog.show()
+        dialog.show()
 
-     }
+    }
 
- }
+}

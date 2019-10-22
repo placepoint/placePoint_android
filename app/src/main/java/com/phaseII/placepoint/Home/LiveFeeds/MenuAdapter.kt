@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.phaseII.placepoint.AboutBusiness.BusinessDetails.ImageVideoPDF.PDFAdapter
 import com.phaseII.placepoint.AboutBusiness.BusinessViewPager
+import com.phaseII.placepoint.AboutBusiness.MenuViewPager
 import com.phaseII.placepoint.R
 import kotlinx.android.synthetic.main.menu_adapter_view.view.*
 import kotlinx.android.synthetic.main.pdf_adapter_view.view.*
@@ -38,12 +39,12 @@ class MenuAdapter(var context: Context, var list: ArrayList<String>) :
 
         if (list[position].contains(".pdf")) {
             Glide.with(context)
-                    .load(list[position])
+                    .load(R.drawable.ic_pdf_large)
                     .apply(RequestOptions()
                             .centerCrop()
                             .placeholder(R.mipmap.ic_launcher))
                     .into(holder.itemView.image)
-        } else if (list[position].contains(".png") || list[position].contains(".jpg")) {
+        } else  {
             try {
                 Glide.with(context)
                         .load(list[position])
@@ -74,8 +75,8 @@ class MenuAdapter(var context: Context, var list: ArrayList<String>) :
                 } catch (e: ActivityNotFoundException) {
                     // Instruct the user to install a PDF reader here, or something
                 }
-            } else if(list[position].contains(".png") || list[position].contains(".jpg")) {
-                val intent = Intent(context, BusinessViewPager::class.java)
+            } else  {
+                val intent = Intent(context, MenuViewPager::class.java)
                 val args = Bundle()
                 args.putStringArrayList("list", list)
                 intent.putExtra("BUN", args)

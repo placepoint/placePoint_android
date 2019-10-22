@@ -105,6 +105,7 @@
             android:label="@string/title_activity_profile_map"
             tools:ignore="InnerclassSeparator" />
         <activity android:name=".AboutBusiness.BusinessViewPager" />
+        <activity android:name=".AboutBusiness.MenuViewPager" />
         <activity
             android:name=".Categories.CategoryActivity"
             android:label="" />

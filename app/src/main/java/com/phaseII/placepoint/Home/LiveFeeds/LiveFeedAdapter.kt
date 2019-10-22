@@ -69,6 +69,7 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
     var moreless = liveFeedFragment as ShowViewMoreLess
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(context)
+
         return ViewHolder(inflater.inflate(R.layout.livefeed_adapter, parent, false))
     }
 
@@ -90,6 +91,10 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // modelData = list[position]
         holder.itemView.imagesLayout.visibility = View.GONE
+
+        if (list[position].menu_images.size != 0) {
+            holder.itemView.menu.visibility = View.VISIBLE
+        }
         pos = position
         if (Constants.getPrefs(context)!!.getString(Constants.EMAIL, "").equals("help@placepoint.ie")) {
             holder.bump1.visibility = View.VISIBLE
@@ -103,7 +108,7 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
         holder.itemView.menu.setOnClickListener {
 
             val intent = Intent(context, MenuActivity::class.java)
-            intent.putExtra("menuImages",list[position].menu_images)
+            intent.putExtra("menuImages", list[position].menu_images)
             context.startActivity(intent)
 
         }
@@ -241,10 +246,10 @@ class LiveFeedAdapter(private val context: Context, private val list: ArrayList<
         val click = Constants.getPrefs(context!!)!!.getString(Constants.STOPCLICK, "")
         if (click == "no") {
             holder.itemView.infoLay.visibility = View.VISIBLE
-            holder.itemView.menu.visibility = View.VISIBLE
+            //holder.itemView.menu.visibility = View.VISIBLE
         } else {
             holder.itemView.infoLay.visibility = View.INVISIBLE
-            holder.itemView.menu.visibility = View.INVISIBLE
+            //holder.itemView.menu.visibility = View.INVISIBLE
         }
         holder.itemView.infoLay.setOnClickListener {
 

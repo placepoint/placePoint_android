@@ -509,10 +509,11 @@
                     android:id="@+id/menu"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1.5"
-
+                    android:layout_weight="1.1"
                     android:gravity="center"
-                    android:orientation="horizontal">
+
+                    android:orientation="horizontal"
+                    android:visibility="invisible">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -522,10 +523,10 @@
                         android:padding="3dp">
 
                         <ImageView
-                            android:layout_centerVertical="true"
                             android:id="@+id/imageMenu"
                             android:layout_width="18dp"
                             android:layout_height="18dp"
+                            android:layout_centerVertical="true"
                             android:layout_marginLeft="4dp"
                             android:src="@drawable/ic_menulive" />
 
@@ -533,11 +534,11 @@
                             android:id="@+id/menuText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
                             android:layout_toRightOf="@+id/imageMenu"
                             android:fontFamily="@font/opensans_bold"
                             android:gravity="center"
-                            android:layout_centerInParent="true"
-                            android:text="menu"
+                            android:text="menu/services"
                             android:textColor="@color/white" />
                     </RelativeLayout>
                 </LinearLayout>
